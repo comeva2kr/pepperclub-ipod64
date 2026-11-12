@@ -230,51 +230,241 @@
 @media (max-width:768px){.pp-landing [data-pp-s1] img,.pp-landing [data-pp-s1] canvas{position:absolute;left:-10%;top:-16.8%;width:120%;height:120%;max-width:none;margin:0}}
 /* ② 장면 04 위쪽 검은 띠: .pp-photo{padding-top:56px;background:#000} 가 영상 타일 위에 순흑 56px 를 남겼다 */
 .pp-landing .pp-photo{padding-top:0}
+/* pp-engine v4.4 — 감기 엔진용 최소 규칙. 모든 선택자는 .pp-landing 아래. 효과가 꺼져도(lite·reduced-motion·JS 꺼짐) 포스터가 보이고 이야기는 그대로 읽힌다. */
+.pp-landing [data-pp-seq],.pp-landing [data-pp-vscrub]{position:relative;overflow:hidden;aspect-ratio:var(--pp-w)/var(--pp-h)}
+.pp-landing [data-pp-seq]>img,.pp-landing [data-pp-seq]>canvas,.pp-landing [data-pp-vscrub]>img,.pp-landing [data-pp-vscrub]>video,.pp-landing [data-pp-vscrub]>canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing [data-pp-seq]>canvas,.pp-landing [data-pp-vscrub]>canvas,.pp-landing [data-pp-vscrub]>video{opacity:0}
+.pp-landing [data-pp-seq].pp-seq-on>canvas,.pp-landing [data-pp-vscrub].pp-seq-on>canvas,.pp-landing [data-pp-vscrub].pp-vid-on>video{opacity:1}
+/* full: 감는 중에는 즉시 보인다. lite: 장면 진입 때 끝 프레임이 천천히 페이드(장면 전환 연출은 길어도 된다) */
+.pp-landing.pp-lite [data-pp-seq]>canvas,.pp-landing [data-pp-seq].pp-end>canvas{transition:opacity .9s ease-out}
+.pp-landing [data-pp-vscrub][hidden],.pp-landing [data-pp-vscrub]>video[hidden]{display:none}
+/* pp-landing v4.4 '화려한 판' 마일스톤 1(1막 11장면) — pp_v43.css + pp_v431_fix.css + pp_v44_engine.css 뒤에 붙는다(빌더가 이어 붙임). 모든 선택자는 .pp-landing 아래. 시각 값은 v4.3.1 토큰 그대로(흰 바탕·#1d1d1f/#6e6e73/#f5f5f7·파랑 하나), 새 색 없음.
+   장면 틀: 키 큰 구간([data-pp-sticky], 높이 = --pp-k × 화면 높이) 안에 화면 한 장 높이의 .pp-st 가 CSS sticky 로 붙는다(GSAP pin 안 씀 → 핀 순서 문제 없음). 효과가 꺼지면(JS 꺼짐·움직임 줄이기·lite 등급) 키 큰 구간이 접히고 포스터·문구가 위에서 아래로 그대로 읽힌다.
+   효과 켜짐 = .pp-js 있고 .pp-lite 없음. JS 는 CSS 변수·클래스만 바꾸고, 변수는 효과 켜짐일 때만 CSS 가 쓴다(lite 로 내려가도 정지 상태가 안 깨진다). */
+
+/* ── 공통: 키 큰 구간 + sticky 한 장 ── */
+.pp-landing [data-pp-sticky]{position:relative;height:calc(var(--pp-k,3)*100vh)}
+@supports (height:100svh){.pp-landing [data-pp-sticky]{height:calc(var(--pp-k,3)*100svh)}}
+.pp-landing .pp-st{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--pp-bg)}
+@supports (height:100svh){.pp-landing .pp-st{height:100svh}}
+.pp-landing:not(.pp-js) [data-pp-sticky],.pp-landing.pp-lite [data-pp-sticky]{height:auto}
+.pp-landing:not(.pp-js) .pp-st,.pp-landing.pp-lite .pp-st{position:relative;height:auto;overflow:visible}
+.pp-landing [data-pp-kind="fs"],.pp-landing [data-pp-kind="stk"],.pp-landing [data-pp-kind="plug"],.pp-landing [data-pp-kind="hold"],.pp-landing [data-pp-kind="swipe"]{padding:0}
+.pp-landing .pp-dk{background:#000;color:#fff}
+.pp-landing .pp-dk .pp-st{background:#000}
+.pp-landing .pp-dk .pp-h2,.pp-landing .pp-dk .pp-lede{color:#fff}
+.pp-landing .pp-dk .pp-lede{color:rgba(255,255,255,.8)}
+.pp-landing .pp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
+.pp-landing.pp-js:not(.pp-lite) .pp-sronly{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
+.pp-landing .pp-note9{font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
+.pp-landing .pp-dk .pp-note9{color:rgba(255,255,255,.7)}
+
+/* ── 1-0 훅: 화면 가득 시퀀스 + 한 단어씩 ── */
+.pp-landing .pp-fs{position:relative;width:100%;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#dcdcde}
+.pp-landing.pp-js:not(.pp-lite) .pp-st>.pp-fs{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
+.pp-landing .pp-fs::after{content:"";position:absolute;left:0;right:0;bottom:0;height:26%;background:linear-gradient(rgba(255,255,255,0),#fff);pointer-events:none;z-index:2}   /* 영상 밝은 회색 → 페이지 흰 바탕 이음새(제품이 아니라 영상 가장자리만 흰색으로 풀어 줌) */
+.pp-landing .pp-words{display:none}
+.pp-landing.pp-js:not(.pp-lite) .pp-words{display:block;position:absolute;left:0;right:0;top:19%;height:1.3em;z-index:3;pointer-events:none;text-align:center;font-size:clamp(56px,17vw,132px);font-weight:800;line-height:1.1;letter-spacing:-.045em;color:var(--pp-ink)}
+.pp-landing .pp-wd{position:absolute;left:0;right:0;top:0;padding:0 var(--pp-gutter);opacity:0;transform:translateY(.28em);transition:opacity .35s ease-out,transform .5s var(--pp-ease)}
+.pp-landing .pp-wd.pp-on{opacity:1;transform:none}
+.pp-landing .pp-wd.pp-off{opacity:0;transform:translateY(-.2em)}
+.pp-landing .pp-hero-txt{padding:var(--pp-s5) var(--pp-gutter) 0;text-align:center}
+.pp-landing .pp-hero-txt .pp-h1x{font-size:clamp(40px,12vw,84px)}
+.pp-landing.pp-js:not(.pp-lite) .pp-hero-txt{position:absolute;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));z-index:3;padding:0 var(--pp-gutter);pointer-events:none}
+.pp-landing.pp-js:not(.pp-lite) .pp-hero-txt .pp-h1x{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pp-landing .pp-hero-txt .pp-name{margin-top:12px}
+.pp-landing .pp-cue9{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;text-align:center;font-size:13px;letter-spacing:.08em;color:var(--pp-ink3);display:none}
+.pp-landing.pp-js:not(.pp-lite) .pp-cue9{display:block}
+
+/* ── 1-0b 잭 끌어 꽂기 ── */
+.pp-landing [data-pp-kind="plug"]{padding:calc(52px + var(--pp-s5)) 0 0}
+.pp-landing .pp-plug{position:relative;width:100%;max-width:720px;margin:var(--pp-s4) auto 0;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#000;touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:ew-resize}
+.pp-landing .pp-plug img,.pp-landing .pp-plug canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing .pp-plug canvas{opacity:0}
+.pp-landing.pp-js .pp-plug:not(.pp-run) img{opacity:0}   /* 효과 켜짐: 첫 프레임이 그려지기 전엔 꽂힌 포스터를 보이지 않게(깜빡임 방지). 꺼짐·움직임 줄이기는 꽂힌 포스터 그대로 */
+.pp-landing .pp-plug.pp-run canvas{opacity:1}
+.pp-landing .pp-chip9{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:3;display:none;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--pp-r-pill);background:rgba(29,29,31,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;pointer-events:none;transition:opacity .3s ease}
+.pp-landing.pp-js .pp-chip9{display:inline-flex}
+.pp-landing .pp-chip9 i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#fff;animation:pp-nudge 1.4s ease-in-out infinite}
+@keyframes pp-nudge{0%,100%{transform:translateX(6px);opacity:.5}50%{transform:translateX(-6px);opacity:1}}
+.pp-landing [data-pp-kind="plug"].pp-plugged .pp-chip9,.pp-landing [data-pp-kind="plug"].pp-drag .pp-chip9{opacity:0}
+.pp-landing .pp-click9{min-height:2.4em;margin-top:var(--pp-s3);padding-bottom:var(--pp-s6);text-align:center;font-size:var(--pp-t-h3);font-weight:800;letter-spacing:-.03em;color:#fff;opacity:0;transform:scale(.9);transition:opacity .25s ease-out,transform .35s var(--pp-ease)}
+.pp-landing [data-pp-kind="plug"].pp-plugged .pp-click9,.pp-landing:not(.pp-js) .pp-click9{opacity:1;transform:none}
+.pp-landing .pp-ring9{position:absolute;right:11%;bottom:36%;width:56px;height:56px;margin:-28px -28px 0 0;border-radius:50%;border:3px solid #fff;opacity:0;pointer-events:none;z-index:2}
+.pp-landing [data-pp-kind="plug"].pp-plugged .pp-ring9{animation:pp-ring .7s ease-out 1}
+@keyframes pp-ring{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(2.4)}}
+
+/* ── 1-1 기억 / 1-2 등장 / 초점 ── */
+.pp-landing .pp-st.pp-ctr{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4)}
+.pp-landing:not(.pp-js) .pp-st.pp-ctr,.pp-landing.pp-lite .pp-st.pp-ctr{padding:var(--pp-s7) 0}
+.pp-landing .pp-sq{position:relative;width:min(100%,720px);aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#cfd6d8}
+.pp-landing .pp-sq::before{content:"";position:absolute;left:0;right:0;top:0;height:14%;background:linear-gradient(#fff,rgba(255,255,255,0));pointer-events:none;z-index:2}
+.pp-landing .pp-sq::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14%;background:linear-gradient(rgba(255,255,255,0),#fff);pointer-events:none;z-index:2}
+@media (min-width:769px){.pp-landing .pp-sq{border-radius:var(--pp-r-tile)}.pp-landing .pp-sq::before,.pp-landing .pp-sq::after{display:none}}
+.pp-landing .pp-ch{display:inline-block;white-space:pre}
+.pp-landing .pp-cw{display:inline-block;white-space:nowrap}
+.pp-landing.pp-js:not(.pp-lite) .pp-ch{opacity:.0;transform:translateY(.4em);transition:opacity .3s ease-out,transform .45s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-lite) .pp-ch.pp-on{opacity:1;transform:none}
+.pp-landing .pp-cap9{padding:0 var(--pp-gutter);text-align:center;font-size:var(--pp-t-h2);font-weight:700;letter-spacing:var(--pp-track-head);line-height:1.14;text-wrap:balance}
+.pp-landing .pp-zoomer{position:relative;width:100%;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#d9d9de}
+.pp-landing.pp-js:not(.pp-lite) .pp-ap-st .pp-zoomer{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto;transform:scale(var(--z,.58));transform-origin:50% 54%;border-radius:calc(var(--pp-r-tile)/var(--z,.58));will-change:transform}
+.pp-landing .pp-ap-title{position:relative;z-index:3;padding:0 var(--pp-gutter);text-align:center}
+.pp-landing.pp-js:not(.pp-lite) .pp-ap-title{position:absolute;left:0;right:0;top:clamp(64px,13vh,120px);opacity:var(--to,1);transform:translateY(calc((1 - var(--to,1))*-24px))}
+.pp-landing .pp-ap-title .pp-h2{font-size:clamp(40px,11.4vw,76px)}
+.pp-landing .pp-ap-st{background:#fff}
+.pp-landing .pp-focus9{position:relative;width:100%;overflow:hidden;margin:0 auto;max-width:860px}
+.pp-landing .pp-focus9 .pp-bandfx{position:relative;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#e9ecec}
+.pp-landing .pp-focus9::before,.pp-landing .pp-focus9::after{content:"";position:absolute;left:0;right:0;height:16%;z-index:2;pointer-events:none}
+.pp-landing .pp-focus9::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
+.pp-landing .pp-focus9::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
+.pp-landing [data-pp-kind="band"]{padding:var(--pp-s5) 0 var(--pp-s6)}
+
+/* ── 1-3 360: sticky 한 장 + 끌어 돌리기 ── */
+.pp-landing [data-pp-kind="s1"]{padding:0;background:#fff;min-height:0;display:block}
+.pp-landing.pp-js [data-pp-kind="s1"]{min-height:0;display:block}
+.pp-landing [data-pp-kind="s1"] .pp-st{display:flex;align-items:center;justify-content:center}
+.pp-landing [data-pp-kind="s1"] .pp-s1-wrap{padding-top:calc(52px + var(--pp-s3));touch-action:pan-y}
+.pp-landing [data-pp-s1]{touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.pp-landing [data-pp-s1].pp-grab{cursor:grabbing}
+.pp-landing .pp-hint9{display:none;margin:4px 0 0;font-size:14px;color:var(--pp-ink3);text-align:center}
+.pp-landing.pp-js:not(.pp-lite) .pp-hint9{display:block}
+@media (min-width:769px){.pp-landing [data-pp-kind="s1"] [data-pp-sticky]{--pp-k:4}}
+
+/* lite(느린 기기)·효과 꺼짐: 360 은 정지 컷 3장 + 각도 문구 목록이 위에서 아래로 그대로 읽힌다(JS 켜짐이어도 접힌 구간에서 문구가 겹치지 않게) */
+.pp-landing.pp-lite.pp-js .pp-cuts{display:flex}
+.pp-landing.pp-lite.pp-js [data-pp-s1]{display:none}
+.pp-landing.pp-lite.pp-js .pp-angles{position:static;min-height:0}
+.pp-landing.pp-lite.pp-js .pp-angles li{position:static;opacity:1;transform:none;pointer-events:auto;padding:18px 0;border-top:1px solid var(--pp-line)}
+.pp-landing.pp-lite.pp-js .pp-prog{display:none}
+.pp-landing.pp-lite [data-pp-kind="s1"] .pp-s1-wrap{padding-top:var(--pp-s6)}
+
+/* ── 1-4 거울 뒷판: 스크롤 감기 + 폰 기울이기/끌기 시차 ── */
+.pp-landing [data-pp-kind="mir"]{padding:0}
+.pp-landing .pp-mir-st{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4);background:#000;touch-action:pan-y}
+.pp-landing:not(.pp-js) .pp-mir-st,.pp-landing.pp-lite .pp-mir-st{padding:calc(52px + var(--pp-s6)) 0 var(--pp-s6)}
+.pp-landing .pp-mir-title{padding:0 var(--pp-gutter);text-align:center;color:#fff}
+.pp-landing .pp-mir-title .pp-h2{font-size:clamp(34px,9.6vw,64px);color:#fff}
+.pp-landing .pp-par{position:relative;width:min(100%,720px);aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#111}
+.pp-landing .pp-par>.pp-parin{position:absolute;left:0;top:0;width:100%;height:100%;transform:translate3d(var(--tx,0%),var(--ty,0%),0) scale(1.09);will-change:transform}
+.pp-landing:not(.pp-js) .pp-par>.pp-parin,.pp-landing.pp-lite .pp-par>.pp-parin{transform:none}
+.pp-landing .pp-parin>[data-pp-seq]{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
+.pp-landing .pp-mir-hint{display:none;color:rgba(255,255,255,.7);font-size:14px;text-align:center}
+.pp-landing.pp-js:not(.pp-lite) .pp-mir-hint{display:block}
+
+/* ── 1-6 줄 이어폰: 스크롤 감기 + 가로 넘기기 ── */
+.pp-landing .pp-bandst{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4);background:#fff}
+.pp-landing:not(.pp-js) .pp-bandst,.pp-landing.pp-lite .pp-bandst{padding:var(--pp-s7) 0 var(--pp-s5)}
+.pp-landing .pp-band9{position:relative;width:100%;max-width:860px;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#e6e9e6}
+.pp-landing .pp-band9::before,.pp-landing .pp-band9::after{content:"";position:absolute;left:0;right:0;height:14%;z-index:2;pointer-events:none}
+.pp-landing .pp-band9::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
+.pp-landing .pp-band9::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
+.pp-landing .pp-swipe{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:0 var(--pp-gutter);margin:0;list-style:none;scrollbar-width:none;touch-action:pan-x pan-y}
+.pp-landing .pp-swipe::-webkit-scrollbar{display:none}
+.pp-landing .pp-swipe>li{flex:0 0 82%;max-width:520px;scroll-snap-align:center;border-radius:var(--pp-r-card);overflow:hidden;background:var(--pp-alt)}
+.pp-landing .pp-swipe img{width:100%;height:100%;object-fit:cover}
+.pp-landing .pp-swipe>li.pp-ph{aspect-ratio:16/9}
+.pp-landing .pp-swipe>li.pp-pt{aspect-ratio:720/848}
+.pp-landing .pp-swipe>li.pp-ph img,.pp-landing .pp-swipe>li.pp-pt img{height:100%}
+.pp-landing .pp-swcap{margin-top:12px;text-align:center;font-size:var(--pp-t-cap);color:var(--pp-ink2)}
+.pp-landing .pp-dots{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.pp-landing .pp-dots i{width:7px;height:7px;border-radius:50%;background:var(--pp-line)}
+.pp-landing .pp-dots i.pp-on{background:var(--pp-ink)}
+.pp-landing .pp-swipe-wrap{padding:var(--pp-s3) 0 var(--pp-s6)}
+
+/* ── 1-7 소리: 길게 누르기 ── */
+.pp-landing [data-pp-kind="hold"]{padding:var(--pp-s7) 0 var(--pp-s6);background:#fff}
+.pp-landing .pp-holdbox{position:relative;width:100%;max-width:860px;margin:var(--pp-s5) auto 0;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#dfe3e0;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.pp-landing .pp-holdbox:focus-visible{outline:3px solid var(--pp-accent);outline-offset:-3px}
+.pp-landing .pp-holdbox img,.pp-landing .pp-holdbox canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover;pointer-events:none}
+.pp-landing .pp-holdbox canvas{opacity:0}
+.pp-landing .pp-holdbox.pp-run canvas{opacity:1}
+.pp-landing .pp-holdbox::before,.pp-landing .pp-holdbox::after{content:"";position:absolute;left:0;right:0;height:12%;z-index:3;pointer-events:none}
+.pp-landing .pp-holdbox::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
+.pp-landing .pp-holdbox::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
+.pp-landing .pp-dim9{position:absolute;inset:0;z-index:2;background:#000;opacity:0;pointer-events:none;transition:opacity .28s ease-out}
+.pp-landing.pp-js .pp-holdbox:not(.pp-on) .pp-dim9{opacity:.55}
+.pp-landing .pp-press9{position:absolute;left:50%;bottom:16%;z-index:4;transform:translateX(-50%);display:none;padding:10px 16px;border-radius:var(--pp-r-pill);background:rgba(29,29,31,.72);color:#fff;font-size:15px;font-weight:600;white-space:nowrap;pointer-events:none;transition:opacity .25s ease}
+.pp-landing.pp-js .pp-press9{display:block}
+.pp-landing .pp-holdbox.pp-on .pp-press9{opacity:0}
+
+/* ── 1-8 낭만: 풀화면 세로 영상 ── */
+.pp-landing .pp-rom-st{background:#000;color:#fff}
+.pp-landing .pp-rom-st>.pp-fs{background:#2a2a2c}
+.pp-landing .pp-rom-st>.pp-fs::after{display:none}
+.pp-landing .pp-rom-st .pp-fs::before{content:"";position:absolute;left:0;right:0;top:0;height:46%;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,0));z-index:2;pointer-events:none}
+.pp-landing .pp-rom-txt{padding:calc(52px + var(--pp-s4)) var(--pp-gutter) 0;text-align:center;color:#fff;position:relative;z-index:3;background:#000}
+.pp-landing.pp-js:not(.pp-lite) .pp-rom-txt{position:absolute;left:0;right:0;top:0;background:transparent;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.pp-landing .pp-rom-txt p{font-size:clamp(32px,9vw,56px);font-weight:800;letter-spacing:-.035em;line-height:1.16}
+.pp-landing.pp-js:not(.pp-lite) .pp-rl{opacity:0;transform:translateY(.4em);transition:opacity .4s ease-out,transform .55s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-lite) .pp-rl.pp-on{opacity:1;transform:none}
+.pp-landing .pp-rom-note{padding:var(--pp-s3) var(--pp-gutter) var(--pp-s5);text-align:center;font-size:13px;color:rgba(255,255,255,.72);background:#000}
+.pp-landing.pp-js:not(.pp-lite) .pp-rom-note{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;background:transparent;padding:0 var(--pp-gutter);text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.pp-landing .pp-songs{display:none;margin-top:var(--pp-s4);font-size:var(--pp-t-num);font-weight:800;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.pp-landing .pp-songs.pp-show{display:block}
+
+/* ── 1-9 넘어가기: 글자 걷힘 + PEPPER CLUB ── */
+.pp-landing .pp-t9-st{background:#fff}
+.pp-landing .pp-t9-st>.pp-fs{background:#e4e4e6}
+.pp-landing .pp-t9-st>.pp-fs::after{display:none}
+.pp-landing .pp-t9-txt{padding:var(--pp-s6) var(--pp-gutter) var(--pp-s4);text-align:center;position:relative;z-index:3}
+.pp-landing.pp-js:not(.pp-lite) .pp-t9-txt{position:absolute;left:0;right:0;top:12%;padding:0 var(--pp-gutter);pointer-events:none}
+.pp-landing .pp-t9-txt .pp-h2{font-size:clamp(40px,12.4vw,92px);line-height:1.12;text-shadow:0 0 28px rgba(255,255,255,.75)}
+.pp-landing .pp-ln{display:block;overflow:hidden;padding-bottom:.08em}
+.pp-landing .pp-ln>span{display:block;transition:transform .5s var(--pp-ease),opacity .4s ease-out}
+.pp-landing.pp-js:not(.pp-lite) .pp-ln.pp-out>span{transform:translateY(-112%);opacity:0}
+.pp-landing .pp-pc{display:block;margin-top:var(--pp-s4);font-size:clamp(22px,6.4vw,38px);font-weight:800;letter-spacing:.14em;color:var(--pp-ink)}
+.pp-landing.pp-js:not(.pp-lite) .pp-pc{position:absolute;left:0;right:0;top:46%;margin:0;text-align:center;opacity:0;transform:translateY(.5em);transition:opacity .6s ease-out,transform .7s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-lite) .pp-pc.pp-on{opacity:1;transform:none}
+.pp-landing.pp-js:not(.pp-lite) .pp-t9-st::after{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fade,0);pointer-events:none;z-index:2}
+.pp-landing.pp-js:not(.pp-lite) .pp-t9-txt,.pp-landing.pp-js:not(.pp-lite) .pp-pc{z-index:4}
+
+@media (prefers-reduced-motion:reduce){
+ .pp-landing .pp-chip9 i{animation:none}
+}
 </style></head>
 <body>
-<div class="pp-landing">
-<section id="pp-c0" data-pp-scene="c0" data-pp-act="1" data-pp-kind="hero">
-<div class="pp-wrap">
-<p class="pp-h1x" data-pp-split="load">가지고 싶어도<br>가질 수 없던 기억.</p>
-<p class="pp-lede" data-pp-r>어른이 된 지금은,<br>가질 수 있습니다.</p>
-<h1 class="pp-name" data-pp-r>아이팟 클래식 5세대 64GB</h1>
-</div>
-<div class="pp-vwrap"><div class="pp-vtile" data-pp-seqclip data-pp-base="assets/c0/seq/h_" data-pp-count="72" data-pp-ext=".webp" data-pp-fps="12" data-pp-w="720" data-pp-h="900" data-pp-eager="1" style="--pp-w:720;--pp-h:900"><img src="assets/c0/hero_menu.webp" alt="손에 든 아이팟 클래식 5세대가 뒷판에서 앞으로 돌며 화면이 켜지고 메뉴가 넘어가는 영상" width="720" height="900" fetchpriority="high" decoding="async"><canvas aria-hidden="true"></canvas></div></div>
-<p class="pp-cue">아래로</p>
+<div class="pp-landing" data-pp-snd="0">
+<section id="pp-h0" data-pp-scene="h0" data-pp-act="1" data-pp-kind="fs">
+<div data-pp-sticky style="--pp-k:5.5"><div class="pp-st">
+<div class="pp-fs" data-pp-seq data-pp-fx="hero" data-pp-base="assets/h0/f_" data-pp-count="54" data-pp-ext=".webp" data-pp-w="810" data-pp-h="1139" data-pp-map="0,0.62" data-pp-lite="1" style="--pp-w:810;--pp-h:1139"><img src="assets/h0/poster.webp" alt="흰 벽 앞에서 아이팟 클래식이 공중에 던져져 돌며 지나가는 영상" width="810" height="1139" fetchpriority="high" decoding="async"></div>
+<div class="pp-words" aria-hidden="true" data-pp-words="0,0.2,0.38,0.56,0.74"><span class="pp-wd pp-on">iPod</span><span class="pp-wd">그때는</span><span class="pp-wd">못 샀지만</span><span class="pp-wd">이제는</span><span class="pp-wd">살 수 있지</span></div>
+<div class="pp-hero-txt"><p class="pp-h1x">iPod<br>그때는 못 샀지만<br>이제는 살 수 있지</p><h1 class="pp-name">아이팟 클래식 5세대 64GB</h1></div>
+<p class="pp-cue9" aria-hidden="true">아래로</p>
+</div></div></section>
+<section id="pp-jack" class="pp-dk" data-pp-scene="jack" data-pp-act="1" data-pp-kind="plug">
+<div class="pp-wrap"><h2 class="pp-h2" data-pp-r>불편합니다.<br>그래서 갖고 싶습니다.</h2></div>
+<div class="pp-plug" data-pp-plug data-pp-grip tabindex="0" role="slider" aria-label="이어폰 잭을 끌어서 꽂기" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-pp-base="assets/c3/seq/p_" data-pp-count="22" data-pp-ext=".webp" data-pp-w="720" data-pp-h="848" style="--pp-w:720;--pp-h:848"><img src="assets/c3/seq/p_022.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="720" height="848" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas><span class="pp-ring9" aria-hidden="true"></span><span class="pp-chip9" aria-hidden="true"><i></i>끌어서 꽂아 보세요</span></div>
+<p class="pp-click9" aria-live="polite">딸깍.</p>
 </section>
-<section id="pp-c1" data-pp-scene="c1" data-pp-act="1" data-pp-kind="memory"><div class="pp-wrap">
-<h2 class="pp-h2 pp-g" data-pp-split="focus">그때는 비쌌고,<br>지금은 단종입니다.</h2>
-<h2 class="pp-h2" data-pp-split="focus" style="margin-top:6px">그래서 더 갖고<br>싶었던 물건.</h2>
-<div class="pp-tile" style="margin-top:var(--pp-s5)"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/c1/back_close.webp"><img class="pp-strip" src="assets/c1/mirror.webp" alt="은색과 검정 아이팟 클래식이 나무 책상 위에 놓여 있다가 거울 같은 뒷판이 보이는 영상" width="720" height="360" loading="lazy" decoding="async" data-pp-r></picture></div>
-<p><a class="pp-link" href="#pp-buy-area" data-pp-cta>64GB 보기</a></p>
-</div></section>
-<section id="pp-c2" data-pp-scene="c2" data-pp-act="1" data-pp-kind="s1" data-pp-end="300,200">
-<div class="pp-s1-wrap">
-<div data-pp-s1 data-pp-frames="98" data-pp-base="assets/s1/f_" data-pp-ext=".webp" data-pp-w="720" data-pp-h="720"><img src="assets/s1/f_001.webp" alt="독 위에 세워 둔 흰색 아이팟 클래식 5세대" width="720" height="720"></div>
-<ul class="pp-cuts">
-<li><img src="assets/s1/f_001.webp" alt="아이팟 클래식 5세대 0도" width="720" height="720" loading="lazy" decoding="async"><span>0°</span></li>
-<li><img src="assets/s1/f_040.webp" alt="아이팟 클래식 5세대 144도" width="720" height="720" loading="lazy" decoding="async"><span>144°</span></li>
-<li><img src="assets/s1/f_098.webp" alt="아이팟 클래식 5세대 360도" width="720" height="720" loading="lazy" decoding="async"><span>360°</span></li>
-</ul>
-<ol class="pp-angles">
-<li data-pp-ang="0"><span class="pp-deg">0°</span>스크롤 말고 휠로 넘깁니다</li>
-<li data-pp-ang="72"><span class="pp-deg">72°</span>얇습니다. 그냥 얇습니다</li>
-<li data-pp-ang="144"><span class="pp-deg">144°</span>비싼 거울 아닙니다. 아이팟 뒷판입니다</li>
-<li data-pp-ang="216"><span class="pp-deg">216°</span>다들 새것 쓸 때, 저는 이걸 씁니다</li>
-<li data-pp-ang="360"><span class="pp-deg">360°</span>한 바퀴 돌았습니다. 아직 안 질립니다</li>
-</ol>
+<section id="pp-mem" data-pp-scene="mem" data-pp-act="1" data-pp-kind="stk">
+<div data-pp-sticky style="--pp-k:3"><div class="pp-st pp-ctr">
+<div class="pp-sq" data-pp-seq data-pp-fx="mem" data-pp-base="assets/mem/f_" data-pp-count="24" data-pp-ext=".webp" data-pp-w="810" data-pp-h="810" data-pp-map="0.04,0.82" data-pp-lite="24" style="--pp-w:810;--pp-h:810"><img src="assets/mem/poster.webp" alt="아이팟 클래식 앞면 위로 흰 이어폰 줄이 놓여 있는 모습" width="810" height="810" decoding="async"></div>
+<p class="pp-cap9" data-pp-chars>지금 봐도 아이팟은 예뻐요</p>
+</div></div></section>
+<section id="pp-app" data-pp-scene="app" data-pp-act="1" data-pp-kind="stk">
+<div data-pp-sticky style="--pp-k:3.2"><div class="pp-st pp-ap-st">
+<div class="pp-ap-title"><h2 class="pp-h2">아이팟 클래식.<br>다시.</h2></div>
+<div class="pp-zoomer" data-pp-seq data-pp-fx="zoom" data-pp-base="assets/c0/seq/h_" data-pp-count="72" data-pp-ext=".webp" data-pp-w="720" data-pp-h="900" data-pp-map="0.08,0.92" data-pp-lite="72" style="--pp-w:720;--pp-h:900"><img src="assets/c0/hero_menu.webp" alt="손에 든 아이팟 클래식 5세대가 뒷판에서 앞으로 돌며 화면이 켜지고 메뉴가 넘어가는 영상" width="720" height="900" loading="lazy" decoding="async"></div>
+</div></div></section>
+<section id="pp-foc" data-pp-scene="foc" data-pp-act="1" data-pp-kind="band">
+<div class="pp-focus9"><div class="pp-bandfx" data-pp-seq data-pp-base="assets/g2/f_" data-pp-count="29" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" data-pp-map="0.1,0.62" data-pp-lite="29" style="--pp-w:720;--pp-h:404"><img src="assets/g2/poster.webp" alt="창가에 세워 둔 아이팟이 흐릿하다가 또렷해지는 영상" width="720" height="404" loading="lazy" decoding="async"></div></div>
+</section>
+<section id="pp-c2" data-pp-scene="c2" data-pp-act="1" data-pp-kind="s1">
+<div data-pp-sticky style="--pp-k:3"><div class="pp-st"><div class="pp-s1-wrap">
+<div data-pp-s1 data-pp-rotate data-pp-frames="98" data-pp-base="assets/s1/f_" data-pp-ext=".webp" data-pp-w="720" data-pp-h="720"><img src="assets/s1/f_001.webp" alt="독 위에 세워 둔 흰색 아이팟 클래식 5세대" width="720" height="720"></div>
+<p class="pp-hint9">손가락으로 돌려 보세요</p>
+<ul class="pp-cuts"><li><img src="assets/s1/f_001.webp" alt="아이팟 클래식 5세대 0도" width="720" height="720" loading="lazy" decoding="async"><span>0°</span></li><li><img src="assets/s1/f_040.webp" alt="아이팟 클래식 5세대 144도" width="720" height="720" loading="lazy" decoding="async"><span>144°</span></li><li><img src="assets/s1/f_098.webp" alt="아이팟 클래식 5세대 360도" width="720" height="720" loading="lazy" decoding="async"><span>360°</span></li></ul>
+<ol class="pp-angles"><li data-pp-ang="0"><span class="pp-deg">0°</span>앞은 화면.</li><li data-pp-ang="72"><span class="pp-deg">72°</span>옆은 두께.</li><li data-pp-ang="144"><span class="pp-deg">144°</span>뒤는 거울.</li><li data-pp-ang="330"><span class="pp-deg">330°</span>한 바퀴 돌았습니다. 아직 안 질립니다</li></ol>
 <div class="pp-prog" aria-hidden="true"><i data-pp-line></i></div>
-</div>
-</section>
-<section id="pp-c3" data-pp-scene="c3" data-pp-act="1" data-pp-kind="mood">
-<figure class="pp-photo"><div class="pp-vtile" data-pp-seqclip data-pp-base="assets/c3/seq/p_" data-pp-count="22" data-pp-ext=".webp" data-pp-fps="12" data-pp-w="720" data-pp-h="848" style="--pp-w:720;--pp-h:848"><img src="assets/c3/song.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="720" height="848" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas></div>
-<div class="pp-photo-txt"><p data-pp-split="focus">곡은 직접 담습니다.<br>줄은 엉킵니다.<br>알림은 안 옵니다.<br>불편해서 좋습니다.</p></div>
-<div class="pp-photo-cta"><a class="pp-link" href="#pp-buy-area" data-pp-cta>네이버에서 구입하기</a></div>
-</figure>
-</section>
+</div></div></div></section>
+<section id="pp-mir" class="pp-dk" data-pp-scene="mir" data-pp-act="1" data-pp-kind="mir">
+<div data-pp-sticky style="--pp-k:3.4"><div class="pp-st pp-mir-st">
+<div class="pp-mir-title"><h2 class="pp-h2" data-pp-r>얼굴이 비치는<br>뒷판, 그대로.</h2></div>
+<div class="pp-par" style="--pp-w:648;--pp-h:714"><div class="pp-parin"><div data-pp-seq data-pp-base="assets/mir/f_" data-pp-count="47" data-pp-ext=".webp" data-pp-w="648" data-pp-h="714" data-pp-map="0.04,0.96" data-pp-lite="24" style="--pp-w:648;--pp-h:714"><img src="assets/mir/poster.webp" alt="햇빛 아래 아이팟 뒷판의 거울 같은 면에 주변이 비치는 모습" width="648" height="714" loading="lazy" decoding="async"></div></div></div>
+<p class="pp-mir-hint" aria-hidden="true">폰을 기울이거나 손가락으로 밀어 보세요</p>
+</div></div></section>
 <section id="pp-bridge" data-pp-scene="bridge" data-pp-act="2" data-pp-kind="wheel"><div class="pp-wrap">
-<h2 class="pp-h2 pp-g" data-pp-split="focus">‘왜 아이팟인가’는<br>중요하지 않습니다.</h2>
-<h2 class="pp-h2" data-pp-split="focus" style="margin-top:6px">중요한 건,<br>어디에서 사느냐입니다.</h2>
+<h2 class="pp-h2" data-pp-split="focus">엄지로 돌립니다.<br>딸깍.</h2>
 <p class="pp-lede" data-pp-r>휠을 돌려 보세요.</p>
 </div>
 <div class="pp-stagewrap" data-pp-r><div class="pp-stage" style="--wx:46.40;--wy:58.40;--wa:10.00;--wb:13.30"><div class="pp-slot" data-pp-slot="wheel" data-pp-states="battery,check,kit,as" data-pp-cuts="{&quot;battery&quot;:&quot;assets/bridge/wheel_battery.webp&quot;,&quot;check&quot;:&quot;assets/bridge/wheel_check.webp&quot;,&quot;kit&quot;:&quot;assets/bridge/wheel_kit.webp&quot;,&quot;as&quot;:&quot;assets/bridge/wheel_as.webp&quot;}" data-pp-clips="{}" data-pp-labels="{&quot;battery&quot;:&quot;배터리&quot;,&quot;check&quot;:&quot;두 번 검사&quot;,&quot;kit&quot;:&quot;기본 구성&quot;,&quot;as&quot;:&quot;A/S&quot;}" style="--pp-w:1400;--pp-h:1400"><img class="pp-cur" src="assets/bridge/wheel_battery.webp" alt="클릭휠로 고르는 메뉴: 배터리, 두 번 검사, 기본 구성, A/S" width="1400" height="1400" loading="lazy" decoding="async"></div>
@@ -287,6 +477,29 @@
 </ul>
 <p class="pp-hint">가운데를 누르면 해당 장으로 이동합니다.</p></div>
 </section>
+<section id="pp-ear" data-pp-scene="ear" data-pp-act="1" data-pp-kind="stk">
+<div data-pp-sticky style="--pp-k:3.2"><div class="pp-st pp-bandst">
+<div class="pp-wrap"><h2 class="pp-h2">선을 꽂아야<br>소리가 납니다.<br>그게 좋습니다.</h2></div>
+<div class="pp-band9" data-pp-seq data-pp-base="assets/ear7/f_" data-pp-count="66" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" data-pp-map="0.06,0.94" data-pp-lite="66" style="--pp-w:720;--pp-h:404"><img src="assets/ear7/poster.webp" alt="줄 이어폰에서 줄을 따라 재생 중인 아이팟으로 다가가는 영상" width="720" height="404" loading="lazy" decoding="async"></div>
+</div></div>
+<div class="pp-swipe-wrap"><ul class="pp-swipe" aria-label="이어폰 사진 넘겨 보기"><li class="pp-ph"><img src="assets/cards/palm.webp" alt="손바닥 위에 올린 줄 이어폰 헤드" width="720" height="405" loading="lazy" decoding="async"></li><li class="pp-ph"><img src="assets/cards/ear6.webp" alt="이어폰 줄 너머로 초점이 옮겨 간 아이팟" width="720" height="404" loading="lazy" decoding="async"></li><li class="pp-pt"><img src="assets/c3/seq/p_022.webp" alt="아이팟에 이어폰 잭이 꽂힌 모습" width="720" height="848" loading="lazy" decoding="async"></li></ul><div class="pp-dots" aria-hidden="true"><i class="pp-on"></i><i></i><i></i></div></div>
+</section>
+<section id="pp-snd" data-pp-scene="snd" data-pp-act="1" data-pp-kind="hold">
+<div class="pp-wrap"><h2 class="pp-h2" data-pp-r>시간이 지나도<br>탁월한 음질.</h2></div>
+<div class="pp-holdbox" data-pp-hold tabindex="0" role="button" aria-label="누르고 있는 동안 재생 화면이 켜집니다" data-pp-base="assets/snd4/f_" data-pp-count="29" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" style="--pp-w:720;--pp-h:404"><img src="assets/snd4/poster.webp" alt="창가에 세워 둔 아이팟이 음악을 재생하는 화면" width="720" height="404" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas><div class="pp-dim9" aria-hidden="true"></div><span class="pp-press9" aria-hidden="true">길게 눌러 보세요</span></div>
+</section>
+<section id="pp-wc" class="pp-dk" data-pp-scene="wc" data-pp-act="1" data-pp-kind="stk">
+<div data-pp-sticky style="--pp-k:4"><div class="pp-st pp-rom-st">
+<div class="pp-fs" data-pp-seq data-pp-fx="rom" data-pp-base="assets/wc/f_" data-pp-count="60" data-pp-ext=".webp" data-pp-w="648" data-pp-h="1152" data-pp-map="0,0.95" data-pp-lite="1" style="--pp-w:648;--pp-h:1152"><img src="assets/wc/poster.webp" alt="손에 든 검은 아이팟의 화면에서 영상이 재생되는 모습" width="648" height="1152" loading="lazy" decoding="async"></div>
+<div class="pp-rom-txt"><p class="pp-rl">스트리밍 없음.</p><p class="pp-rl">알림 없음.</p><p class="pp-rl">곡은 직접 담습니다.</p></div>
+<p class="pp-rom-note">영상 속 아이팟은 검은색입니다. 판매 제품과 색이 다를 수 있습니다</p>
+</div></div></section>
+<section id="pp-t9" data-pp-scene="t9" data-pp-act="1" data-pp-kind="stk">
+<div data-pp-sticky style="--pp-k:4"><div class="pp-st pp-t9-st">
+<div class="pp-fs" data-pp-seq data-pp-fx="t9" data-pp-base="assets/t9/f_" data-pp-count="58" data-pp-ext=".webp" data-pp-w="648" data-pp-h="1152" data-pp-map="0,0.92" data-pp-lite="1" style="--pp-w:648;--pp-h:1152"><img src="assets/t9/poster.webp" alt="PEPPER CLUB 흰 상자 위에 놓인 거울 뒷판 아이팟을 카메라가 훑고 지나가는 영상" width="648" height="1152" loading="lazy" decoding="async"></div>
+<div class="pp-t9-txt"><h2 class="pp-h2" aria-label="이 낭만, 어디서 사야 할까요."><span class="pp-ln" aria-hidden="true"><span>이 낭만,</span></span><span class="pp-ln" aria-hidden="true"><span>어디서 사야</span></span><span class="pp-ln" aria-hidden="true"><span>할까요.</span></span></h2></div>
+<p class="pp-pc">PEPPER CLUB</p>
+</div></div></section>
 <section id="pp-c4" data-pp-scene="c4" data-pp-act="2" data-pp-kind="proof"><div class="pp-wrap">
 <h2 class="pp-h2" data-pp-split="rev">남기는 건<br>메인보드와<br>프레임뿐.</h2>
 <p class="pp-lede" data-pp-r>버튼 붙은 메인보드와 프레임만 남기고,<br>나머지는 전부 새것으로 다시 만듭니다</p>
@@ -353,6 +566,206 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
 <script>
+/* pp-engine v4.4 (마일스톤 1 확장: data-pp-sticky 장면 지원·data-pp-lite 끝 대신 보여 줄 프레임·el._ppp 진행도 콜백 — 기존 pin·순수 함수는 그대로): 스크롤 감기 엔진(프레임 시퀀스 canvas · 영상 currentTime) + 성능 등급(full/lite). 장면에 [data-pp-seq]·[data-pp-vscrub] 가 없으면 즉시 종료.
+   네트워크: 프레임·영상 파일을 읽을 뿐 보내는 데이터 없음(fetch·XHR·beacon 없음). 합성 없음 — 실촬 프레임만 canvas 에 그린다.
+   효과가 꺼져도(lite·reduced-motion·JS 꺼짐) 포스터/끝 프레임이 남아 이야기·구매 버튼은 그대로 읽힌다. */
+(function(){
+var d=document,w=window,nav=w.navigator;
+
+/*pure:start*/
+/* 기준값(한 곳) — 바꾸면 테스트가 같이 본다 */
+var PPK={NEAR:4,FPS_MED_MS:22,FPS_P95_MS:40,MEM_LOW:2,CORES_LOW:2,DEG_MED_MS:45,DEG_SLOW_MS:66,DEG_SLOW_FRAC:.4,DEG_MIN_SAMPLES:24,SEEK_MEAN_MS:220,SEEK_MAX_MS:900,SEEK_MIN_N:6};
+/* 거친 단계: 1·9·17…(8칸 간격)과 마지막 프레임이 0단계(전체 윤곽), 4칸·2칸·나머지가 1·2·3단계 */
+function levelOf(i,n){var k=i-1;return(k%8===0||i===n)?0:k%4===0?1:k%2===0?2:3}
+/* 처음부터 끝까지 받는 순서(진행도 정보가 없을 때): 0단계 -> 1 -> 2 -> 3 */
+function loadOrder(n){var a=[],i,L;for(L=0;L<4;L++)for(i=1;i<=n;i++)if(levelOf(i,n)===L)a.push(i);return a}
+/* 다음에 받을 프레임. have: 번호->받았거나 받는 중. cur: 지금 진행도의 프레임(0 = 아직 스크롤 안 함).
+   cur 이 있으면 cur±NEAR 안의 빈 프레임을 가까운 순으로 먼저, 그 밖은 (단계 * (n+1) + cur 과의 거리) 가 작은 것부터. 0 = 다 받음 */
+function nextFrame(n,have,cur){var i,j,best=0,bs=1e9,s,K=n+1,c=cur||1;
+ if(cur)for(j=0;j<=PPK.NEAR;j++){i=cur-j;if(i>=1&&i<=n&&!have[i])return i;i=cur+j;if(i>=1&&i<=n&&!have[i])return i}
+ for(i=1;i<=n;i++){if(have[i])continue;s=levelOf(i,n)*K+Math.abs(i-c);if(s<bs){bs=s;best=i}}
+ return best}
+/* 받은 프레임 중 k 에 가장 가까운 것(같은 거리면 앞쪽). 0 = 하나도 없음 */
+function nearestLoaded(ok,n,k){var j,a,b;for(j=0;j<=n;j++){a=k-j;if(a>=1&&a<=n&&ok[a])return a;b=k+j;if(b>=1&&b<=n&&ok[b])return b}return 0}
+/* 진행도 p(0~1)를 [from,to] 구간으로 늘려 프레임 번호(1~n) 로 */
+function progressToFrame(p,n,from,to){var q=to>from?(p-from)/(to-from):0;q=q<0?0:q>1?1:q;return 1+Math.round(q*(n-1))}
+function percentile(a,p){if(!a.length)return 0;var s=a.slice().sort(function(x,y){return x-y}),i=Math.min(s.length-1,Math.max(0,Math.ceil(p/100*s.length)-1));return s[i]}
+/* 성능 등급. s: {rm, forced('lite'|'full'|''), saveData, eff(effectiveType), mem(deviceMemory), cores, med, p95}. 움직임 줄이기는 항상 lite(접근성이 우선, 강제 full 도 따르지 않음) */
+function tierDecide(s){
+ if(s.rm)return{tier:'lite',reason:'reduced-motion'};
+ if(s.forced==='lite'||s.forced==='full')return{tier:s.forced,reason:'forced'};
+ if(s.saveData)return{tier:'lite',reason:'save-data'};
+ if(s.eff&&/^(slow-2g|2g|3g)$/.test(s.eff))return{tier:'lite',reason:'slow-network:'+s.eff};
+ if(s.mem&&s.mem<=PPK.MEM_LOW)return{tier:'lite',reason:'low-memory:'+s.mem};
+ if(s.cores&&s.cores<=PPK.CORES_LOW)return{tier:'lite',reason:'low-cores:'+s.cores};
+ if(s.med&&s.med>PPK.FPS_MED_MS)return{tier:'lite',reason:'slow-frames-median:'+Math.round(s.med)};
+ if(s.p95&&s.p95>PPK.FPS_P95_MS)return{tier:'lite',reason:'slow-frames-p95:'+Math.round(s.p95)};
+ return{tier:'full',reason:'ok'}}
+/* 실행 중 보호 장치: 스크롤 감는 동안의 프레임 간격(ms) 목록이 계속 길면 true */
+function shouldDegrade(dts){if(dts.length<PPK.DEG_MIN_SAMPLES)return false;var slow=0,i;for(i=0;i<dts.length;i++)if(dts[i]>PPK.DEG_SLOW_MS)slow++;return percentile(dts,50)>PPK.DEG_MED_MS||slow/dts.length>=PPK.DEG_SLOW_FRAC}
+/* 영상 감기 보호: seeked 까지 걸린 시간(ms) 목록이 느리면 true -> 시퀀스로 폴백 */
+function seekSlow(lats){if(lats.length&&Math.max.apply(null,lats)>PPK.SEEK_MAX_MS)return true;if(lats.length<PPK.SEEK_MIN_N)return false;var s=0,i;for(i=0;i<lats.length;i++)s+=lats[i];return s/lats.length>PPK.SEEK_MEAN_MS}
+/*pure:end*/
+
+var SQ=[].slice.call(d.querySelectorAll('[data-pp-seq]')),VS=[].slice.call(d.querySelectorAll('[data-pp-vscrub]'));
+if(!SQ.length&&!VS.length)return;
+
+var RM=!!(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches),G=w.gsap,T=w.ScrollTrigger,H=d.documentElement,
+ DBG=/[?&]ppdebug=1/.test(w.location.search)||!!w.PP_DEBUG,
+ Q=(w.location.search.match(/[?&]pp=(lite|full)(&|$)/)||[])[1]||'',MT=d.querySelector('meta[name=pp-tier]'),
+ FORCED=Q||(MT&&/^(lite|full)$/.test(MT.getAttribute('content'))?MT.getAttribute('content'):''),
+ C=nav.connection||{},SIG={rm:RM,forced:FORCED,saveData:!!C.saveData,eff:C.effectiveType||'',mem:nav.deviceMemory||0,cores:nav.hardwareConcurrency||0},
+ ST={tier:'full',reason:'',phase:'',log:[],probe:null,degraded:0,maxAlive:0,seqs:[],vids:[],sts:[]},
+ NETMAX=4,DECMAX=2,CAPFULL=24,idle=function(f){(w.requestIdleCallback||function(g){setTimeout(g,50)})(f,{timeout:900})};
+
+function setTier(tier,reason,phase){ST.tier=tier;ST.reason=reason;ST.phase=phase;H.setAttribute('data-pp-tier',tier);H.setAttribute('data-pp-tier-reason',reason);
+ H.classList[tier==='lite'?'add':'remove']('pp-lite');var LR=d.querySelector('.pp-landing');if(LR)LR.classList[tier==='lite'?'add':'remove']('pp-lite');
+ try{d.dispatchEvent(new CustomEvent('pp:tier',{detail:{tier:tier,reason:reason,phase:phase,signals:SIG,probe:ST.probe}}))}catch(x){}
+ if(w.console&&console.info)console.info('pp_v44 tier='+tier+' ('+reason+', '+phase+')')}
+function log(o){if(DBG){o.t=Math.round(w.performance.now());ST.log.push(o)}}
+
+/* ───── 프레임 시퀀스 ───── */
+function Seq(el,cfg,id){var s=this;s.el=el;s.id=id;s.base=cfg.base;s.n=cfg.n;s.ext=cfg.ext;s.pad=cfg.pad||3;s.W=cfg.W;s.H=cfg.H;s.map=cfg.map||[0,1];s.pin=cfg.pin||0;s.lf=cfg.lf||cfg.n;
+ s.cv=cfg.cv||el.querySelector('canvas');if(!s.cv){s.cv=d.createElement('canvas');s.cv.setAttribute('aria-hidden','true');el.appendChild(s.cv)}
+ s.cx=s.cv.getContext('2d');s.cv.width=s.W;s.cv.height=s.H;s.cache={};s.ok={};s.have={};s.bad={};s.alive=0;s.act=0;s.dec=0;s.dq=[];s.cur=0;s.want=1;s.shown=0;s.started=false;s.lite=false;s.rq=0;s.endDone=false;s.st=null;s.reqs=0}
+/* Image 를 놓아줄 때: 핸들러를 먼저 떼야 src='' 가 onerror 를 일으켜 진행 중 개수를 잘못 깎지 않는다 */
+function freeImg(im){if(im){im.onload=im.onerror=null;im.src=''}}
+Seq.prototype.url=function(k){return this.base+('00000'+k).slice(-this.pad)+this.ext};
+Seq.prototype.start=function(){if(this.started||this.lite)return;this.started=true;this.pump()};
+Seq.prototype.pump=function(){var s=this,k;if(!s.started||s.lite)return;
+ while(s.act<NETMAX&&(k=nextFrame(s.n,s.have,s.cur))){
+  /* 메모리 상한에 닿으면 지금 진행도 근처(±NEAR) 프레임만 더 받는다 — 상한 밖 프레임을 받았다 지웠다 하며 되풀이하지 않는다 */
+  if(s.alive+s.act>=CAPFULL&&!(s.cur&&Math.abs(k-s.cur)<=PPK.NEAR))break;
+  s.request(k)}};
+Seq.prototype.request=function(k){var s=this,im=new Image();s.have[k]=1;s.act++;s.reqs++;im.decoding='async';log({ev:'req',seq:s.id,k:k});
+ im.onload=function(){s.dq.push([im,k]);s.dpump()};
+ im.onerror=function(){s.bad[k]=1;s.act--;s.pump()};
+ im.src=s.url(k)};
+Seq.prototype.dpump=function(){var s=this,e;
+ while(s.dec<DECMAX&&(e=s.dq.shift())){(function(im,k){s.dec++;
+  var fin=function(){s.dec--;s.act--;if(s.started&&!s.lite||k===s.n){s.cache[k]=im;s.ok[k]=1;s.alive++;ST.maxAlive=Math.max(ST.maxAlive,seqAlive());s.evict();if(k===s.n)s.onLast();s.render()}else{freeImg(im)}s.dpump();s.pump()};
+  if(im.decode)im.decode().then(fin,fin);else fin()})(e[0],e[1])}};
+/* 메모리 상한: 받은(디코드된) 프레임이 CAPFULL 을 넘으면 지금 진행도에서 가장 먼 프레임부터(0단계 윤곽 프레임은 마지막에) 해제 */
+Seq.prototype.evict=function(){var s=this,k,v,vd,dd,pass;
+ while(s.alive>CAPFULL){v=0;vd=-1;
+  for(pass=0;pass<2&&!v;pass++)for(k in s.ok){if(!s.ok[k])continue;k=+k;if(pass===0&&levelOf(k,s.n)===0)continue;dd=Math.abs(k-(s.cur||s.want));if(dd>vd){vd=dd;v=k}}
+  if(!v)break;s.drop(v)}};
+Seq.prototype.drop=function(k){var s=this;if(s.cache[k]){freeImg(s.cache[k]);delete s.cache[k]}s.ok[k]=0;s.have[k]=0;s.alive--;log({ev:'drop',seq:s.id,k:k})};
+Seq.prototype.draw=function(k){var s=this,j=nearestLoaded(s.ok,s.n,k);if(!j||j===s.shown)return;s.cx.drawImage(s.cache[j],0,0,s.W,s.H);s.shown=j;s.el.classList.add('pp-seq-on')};
+Seq.prototype.render=function(){var s=this;if(s.rq)return;s.rq=w.requestAnimationFrame(function(){s.rq=0;s.draw(s.want)})};
+Seq.prototype.setProgress=function(p){var s=this,k=progressToFrame(p,s.n,s.map[0],s.map[1]);if(p>0)s.cur=k;s.want=k;s.render();s.pump()};
+/* 장면을 멀리 벗어나면 받은 프레임을 전부 놓아준다(캔버스에 그려진 마지막 그림은 남는다). 다시 가까워지면 처음 순서부터 다시 받는다 */
+Seq.prototype.release=function(){var s=this,k;for(k in s.cache){freeImg(s.cache[k])}s.cache={};s.ok={};s.have={};s.bad={};s.alive=0;s.dq=[];s.started=false;log({ev:'release',seq:s.id})};
+/* lite: 스크롤 감기·핀 없이 끝 프레임만 받아 장면에 들어올 때 페이드. 프레임 요청은 마지막 한 장 */
+Seq.prototype.toLite=function(){var s=this;s.lite=true;if(s.st){s.st.kill(true);s.st=null}s.release();s.started=false;s.liteWatch()};
+Seq.prototype.liteWatch=function(){var s=this;if(s.endDone)return;
+ function go(){if(s.endDone)return;s.endDone=true;s.want=s.lf;s.have[s.lf]=1;s.act++;s.reqs++;log({ev:'req',seq:s.id,k:s.lf,lite:1});var im=new Image();im.decoding='async';
+  im.onload=function(){s.act--;s.cache[s.lf]=im;s.ok[s.lf]=1;s.alive++;s.draw(s.lf);s.onLast();s.el.classList.add('pp-end')};im.onerror=function(){s.act--}; im.src=s.url(s.lf)}
+ if(RM||!w.IntersectionObserver)return go();
+ new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){o.disconnect();go()}},{threshold:.3}).observe(s.el)};
+Seq.prototype.onLast=function(){var f=this.onlast;if(f)f()};
+
+function seqAlive(){var a=0,i;for(i=0;i<ST.seqs.length;i++)a+=ST.seqs[i].alive;return a}
+function num(el,k,dv){var v=el.getAttribute(k);return v===null||v===''?dv:+v}
+function seqCfg(el,pre){var m=(el.getAttribute(pre+'map')||'0,1').split(',');pre=pre||'data-pp-';
+ return{base:el.getAttribute(pre+'base'),n:num(el,pre+'count',0),ext:el.getAttribute(pre+'ext')||'.webp',pad:num(el,pre+'pad',3),W:num(el,'data-pp-w',720),H:num(el,'data-pp-h',720),map:[+m[0]||0,m[1]===undefined?1:+m[1]],pin:num(el,'data-pp-pin',0),lf:num(el,'data-pp-lite',0)}}
+
+/* ScrollTrigger 묶기: 핀이 있으면 장면 전체를 고정하고 pin% 만큼 스크롤 동안 진행, 없으면 요소가 화면을 지나는 동안 진행 */
+function bind(el,pin,onp){var tg=pin?(el.closest('[data-pp-scene]')||el.parentNode):el,sk=pin?null:el.closest('[data-pp-sticky]'),
+ cfg={trigger:tg,start:pin?'top top':'top bottom',end:pin?'+='+pin+'%':'bottom top',scrub:true,pin:pin?tg:false,anticipatePin:1,onUpdate:function(self){onp(self.progress);if(el._ppp)el._ppp(self.progress);act()}},st;
+ /* v4.4: CSS sticky 장면(data-pp-sticky = 키 큰 구간 안에서 화면에 붙는 장면) — 핀(pin-spacer)을 쓰지 않고 구간 전체를 진행도 0~1 로 */
+ if(sk){cfg.trigger=sk;cfg.start='top top';cfg.end='bottom bottom'}
+ st=T.create(cfg);ST.sts.push(st);return st}
+
+/* 시퀀스 요소 하나 */
+function initSeq(el,i){var c=seqCfg(el,'data-pp-'),s;if(!c.base||!c.n)return;s=new Seq(el,c,'seq'+i);ST.seqs.push(s);return s}
+function runSeq(s){
+ if(RM){s.lite=true;s.liteWatch();return}
+ if(ST.tier==='lite'){s.lite=true;s.liteWatch();return}
+ s.st=bind(s.el,s.pin,function(p){s.setProgress(p)});
+ if(w.IntersectionObserver){
+  new w.IntersectionObserver(function(es){if(es[0].isIntersecting)s.start()},{rootMargin:w.innerHeight+'px 0px'}).observe(s.el);
+  new w.IntersectionObserver(function(es){if(!es[0].isIntersecting&&s.started)s.release()},{rootMargin:Math.round(w.innerHeight*1.5)+'px 0px'}).observe(s.el)
+ }else s.start()}
+
+/* ───── 영상 감기(video currentTime) → 느리면 시퀀스로 폴백 ───── */
+function Vid(el,i){var v=this;v.el=el;v.id='vid'+i;v.vd=el.querySelector('video');v.fb=null;v.lat=[];v.seeking=0;v.t0=0;v.last=0;v.dur=0;v.lastp=0;v.ready=false;v.dead=false;v.st=null;v.tm=0;v.pin=num(el,'data-pp-pin',0);v.rq=0;v.src=false}
+Vid.prototype.fbCfg=function(){return seqCfg(this.el,'data-pp-fb-')};
+Vid.prototype.mkFb=function(){var v=this,c=v.fbCfg();if(!c.base||!c.n)return null;if(!v.fb){c.pin=v.pin;c.cv=null;v.fb=new Seq(v.el,c,v.id+'-fb');ST.seqs.push(v.fb)}return v.fb};
+Vid.prototype.fallback=function(reason){var v=this,f;if(v.dead)return;v.dead=true;clearTimeout(v.tm);
+ if(v.vd){try{v.vd.pause()}catch(x){}v.vd.removeAttribute('src');while(v.vd.firstChild)v.vd.removeChild(v.vd.firstChild);try{v.vd.load()}catch(x2){}v.vd.hidden=true}
+ v.el.classList.remove('pp-vid-on');f=v.mkFb();
+ if(w.console&&console.info)console.info('pp_v44 vscrub -> sequence ('+reason+')');
+ try{d.dispatchEvent(new CustomEvent('pp:vscrub-fallback',{detail:{id:v.id,reason:reason,sequence:!!f}}))}catch(x3){}
+ if(!f)return;
+ if(ST.tier==='lite'||RM){f.lite=true;f.liteWatch();return}
+ f.start();if(v.lastp!==undefined)f.setProgress(v.lastp)};
+Vid.prototype.load=function(){var v=this,vd=v.vd,mp4=v.el.getAttribute('data-pp-src-mp4'),wb=v.el.getAttribute('data-pp-src-webm'),ok=false,so;if(v.src||v.dead||!vd)return;v.src=true;
+ if(vd.canPlayType){ok=(mp4&&vd.canPlayType('video/mp4'))||(wb&&vd.canPlayType('video/webm'))}else ok=true;
+ if(!ok)return v.fallback('no-codec');
+ vd.muted=true;vd.setAttribute('muted','');vd.playsInline=true;vd.setAttribute('playsinline','');vd.preload='auto';
+ [[mp4,'video/mp4'],[wb,'video/webm']].forEach(function(t){if(t[0]){so=d.createElement('source');so.src=t[0];so.type=t[1];vd.appendChild(so)}});
+ vd.addEventListener('loadedmetadata',function(){clearTimeout(v.tm);v.dur=vd.duration||0;v.ready=v.dur>0;if(!v.ready)v.fallback('no-duration');else v.tick()});
+ vd.addEventListener('error',function(){v.fallback('video-error')},true);
+ vd.addEventListener('seeked',function(){var l=w.performance.now()-v.t0;v.seeking=0;v.lat.push(l);if(v.lat.length>12)v.lat.shift();log({ev:'seeked',seq:v.id,ms:Math.round(l)});v.el.classList.add('pp-vid-on');
+  if(seekSlow(v.lat))return v.fallback('slow-seek');v.tick()});
+ v.tm=setTimeout(function(){if(!v.ready)v.fallback('metadata-timeout')},4000);
+ try{vd.load()}catch(x){v.fallback('load-throw')}};
+/* scroll -> currentTime: rAF 로 모으고, seeked 를 기다린 뒤 다음 seek(최대 30fps), 1.2초 안에 seeked 가 안 오면 폴백 */
+Vid.prototype.setProgress=function(p){var v=this;v.lastp=p;if(v.dead&&v.fb){v.fb.setProgress(p);return}v.tick()};
+Vid.prototype.tick=function(){var v=this;if(v.rq||v.dead||!v.ready)return;v.rq=w.requestAnimationFrame(function(){v.rq=0;var now=w.performance.now(),vd=v.vd;
+ var tg=(v.lastp||0)*v.dur;
+ if(v.dead)return;
+ if(v.seeking){if(now-v.t0>1200)v.fallback('seek-timeout');return}
+ if(Math.abs(vd.currentTime-tg)>.03&&now-v.last>=33){v.last=now;v.t0=now;v.seeking=1;try{vd.currentTime=tg}catch(x){v.fallback('seek-throw')}}})};
+Vid.prototype.toLite=function(){var v=this;if(v.st){v.st.kill(true);v.st=null}if(!v.dead){v.dead=true;clearTimeout(v.tm);if(v.vd){try{v.vd.pause()}catch(x){}}v.el.classList.remove('pp-vid-on')}
+ var f=v.mkFb();if(f){f.lite=true;f.liteWatch()}};
+function runVid(v){
+ if(RM||ST.tier==='lite'){v.toLite();return}
+ v.st=bind(v.el,v.pin,function(p){v.setProgress(p)});
+ if(w.IntersectionObserver)new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){o.disconnect();v.load()}},{rootMargin:w.innerHeight+'px 0px'}).observe(v.el);else v.load()}
+
+/* ───── 등급 판정: 정적 신호 -> 첫 1초 rAF 간격 실측 -> 실행 중 보호 ───── */
+var ring=[],lastScroll=0,lastT=0;
+function act(){lastScroll=w.performance.now()}
+function degrade(reason,phase){if(ST.degraded)return;ST.degraded=1;
+ ST.sts.forEach(function(s){try{s.kill(true)}catch(x){}});ST.sts=[];
+ ST.seqs.forEach(function(s){s.toLite()});ST.vids.forEach(function(v){v.toLite()});
+ setTier('lite',reason,phase)}
+/* 첫 1초: rAF 간격을 잰다. 한 프레임마다 장면 크기 캔버스에 포스터를 몇 번 그려(감기와 비슷한 일) 느린 기기를 드러낸다 */
+function probe(done){var t0=w.performance.now(),prev=0,dts=[],cv=d.createElement('canvas'),cx=cv.getContext('2d'),p0=d.querySelector('[data-pp-seq] img,[data-pp-vscrub] img'),n=w.PP_PROBE_LOAD||PROBE_LOAD,W=(SQ[0]&&+SQ[0].getAttribute('data-pp-w'))||720,Hh=(SQ[0]&&+SQ[0].getAttribute('data-pp-h'))||720,hid=false;
+ cv.width=W;cv.height=Hh;
+ function f(now){if(d.hidden)hid=true;if(prev&&dts.length<200)dts.push(now-prev);prev=now;
+  if(p0&&p0.naturalWidth){for(var i=0;i<n;i++){cx.globalAlpha=.99;cx.drawImage(p0,i,0,W,Hh)}}
+  if(now-t0<1000)return w.requestAnimationFrame(f);
+  dts=dts.slice(2);done({med:percentile(dts,50),p95:percentile(dts,95),n:dts.length,hidden:hid,load:n})}
+ w.requestAnimationFrame(f)}
+var PROBE_LOAD=10;
+/* 스크롤로 감는 동안만 프레임 간격을 모아, 계속 느리면 한 번만 lite 로 내려간다 */
+function watch(now){if(ST.degraded)return;if(lastT&&now-lastScroll<150){ring.push(now-lastT);if(ring.length>40)ring.shift();if(ring.length>=PPK.DEG_MIN_SAMPLES&&shouldDegrade(ring))return degrade('runtime-slow-frames:'+Math.round(percentile(ring,50))+'ms','runtime')}
+ lastT=now;w.requestAnimationFrame(watch)}
+
+/* ───── 시작 ───── */
+var s0=tierDecide(SIG);
+SQ.forEach(function(el,i){var s=initSeq(el,i);if(s)el._pp=s});
+VS.forEach(function(el,i){var v=new Vid(el,i);ST.vids.push(v);el._pp=v});
+if(s0.tier==='full'&&!(G&&T&&G.registerPlugin&&T.create))s0={tier:'lite',reason:'no-gsap'};
+if(s0.tier==='full'){G.registerPlugin(T);if(T.config)T.config({ignoreMobileResize:true})}
+setTier(s0.tier,s0.reason,'static');
+SQ.forEach(function(el){if(el._pp)runSeq(el._pp)});
+VS.forEach(function(el){runVid(el._pp)});
+if(s0.tier==='full'&&!RM){
+ probe(function(r){ST.probe=r;if(ST.degraded)return;
+  if(r.hidden){log({ev:'probe-skipped'});return}
+  var t=tierDecide({forced:FORCED,rm:RM,med:r.med,p95:r.p95});
+  if(t.tier==='lite'&&FORCED!=='full')degrade(t.reason,'measure');else{ST.reason='ok';try{d.dispatchEvent(new CustomEvent('pp:tier',{detail:{tier:'full',reason:'ok',phase:'measure',probe:r}}))}catch(x){}}
+  if(ST.tier==='full')w.requestAnimationFrame(watch)});
+ w.addEventListener('load',function(){if(T&&T.refresh)T.refresh()})
+}
+w.PPEngine={pure:{PPK:PPK,levelOf:levelOf,loadOrder:loadOrder,nextFrame:nextFrame,nearestLoaded:nearestLoaded,progressToFrame:progressToFrame,percentile:percentile,tierDecide:tierDecide,shouldDegrade:shouldDegrade,seekSlow:seekSlow},
+ state:ST,tier:function(){return ST.tier},stats:function(){return{tier:ST.tier,reason:ST.reason,phase:ST.phase,probe:ST.probe,degraded:ST.degraded,maxAlive:ST.maxAlive,alive:seqAlive(),
+  seqs:ST.seqs.map(function(s){return{id:s.id,n:s.n,reqs:s.reqs,alive:s.alive,shown:s.shown,started:s.started,lite:s.lite,endDone:s.endDone}}),log:ST.log}}};
+})();
 
 (function(){
 var d=document,w=window,S=d.querySelectorAll('[data-pp-scene]');
@@ -601,9 +1014,8 @@ function boot(){
    if(k.rm){T.create(st);return}
    slice.call(s.querySelectorAll('[data-pp-split]')).forEach(split);
    if(kd=='s1'){
-    var ed=(s.getAttribute('data-pp-end')||'300,200').split(','),e=+ed[k.dk?0:1]||0;
-    tl=G.timeline({scrollTrigger:{trigger:s,start:'top top',end:'+='+e+'%',pin:e>0,scrub:1,onToggle:ev}});
-    tl.to(tw,{p:1,ease:'none',duration:1,onUpdate:function(){F1&&F1(tw.p)}})
+    var sk=s.querySelector('[data-pp-sticky]')||s;
+    T.create({trigger:sk,start:'top top',end:'bottom bottom',scrub:.5,onUpdate:function(t){F1&&F1(t.progress)},onToggle:ev})
    }else{
     if(rs.length)G.from(rs,{opacity:0,y:12,duration:.35,stagger:.06,ease:'power1.out',scrollTrigger:st});else T.create(st)
    }
@@ -614,8 +1026,149 @@ function boot(){
  slice.call(R.querySelectorAll('img')).forEach(function(im){if(!im.complete)im.addEventListener('load',rf)});
  w.addEventListener('load',function(){rf();idle(function(){slice.call(R.querySelectorAll('img[loading=lazy]')).forEach(function(im){im.loading='eager';if(!im.complete)im.addEventListener('load',rf)})})})}
 
+
+function clamp(v,a,b){return v<a?a:v>b?b:v}
+function smooth(a,b,v){var t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t)}
+function qa(s,r){return slice.call((r||d).querySelectorAll(s))}
+var SND=R.getAttribute('data-pp-snd')==='1',AU=null,armed=0;
+/* 딸깍: 기본 무음(data-pp-snd 한 줄). 켜져 있고 사용자가 한 번 만진 뒤에만 WebAudio 짧은 클릭음(오디오 파일 없음). 햅틱 10ms 는 지원 기기만. */
+function tick(){ev2('pp:tick',{});
+ if(w.navigator.vibrate)try{w.navigator.vibrate(10)}catch(x){}
+ if(!SND||!armed)return;
+ try{var C=w.AudioContext||w.webkitAudioContext;if(!C)return;AU=AU||new C();var o=AU.createOscillator(),g=AU.createGain(),t=AU.currentTime;
+  o.type='square';o.frequency.setValueAtTime(1900,t);o.frequency.exponentialRampToValueAtTime(700,t+.03);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.04);
+  o.connect(g);g.connect(AU.destination);o.start(t);o.stop(t+.05)}catch(x){}}
+d.addEventListener('pointerdown',function(){armed=1;if(AU&&AU.state==='suspended')try{AU.resume()}catch(x){}},{once:true,capture:true});
+
+/* 프레임 묶음(끌어 꽂기·길게 누르기용): 근처에 오면 전부 받고, p(0~1) → 가장 가까운 받은 프레임을 canvas 에 그린다. */
+function Strip(box,cfg){var s=this;s.box=box;s.cv=box.querySelector('canvas');s.cx=s.cv&&s.cv.getContext&&s.cv.getContext('2d');s.n=cfg.n;s.base=cfg.base;s.ext=cfg.ext;s.W=cfg.W;s.H=cfg.H;s.Fr=[];s.shown=-1;s.want=0;s.started=0;s.onready=null;
+ if(s.cv){s.cv.width=s.W;s.cv.height=s.H}}
+Strip.prototype.url=function(k){return this.base+('00'+k).slice(-3)+this.ext};
+Strip.prototype.load=function(){var s=this,k=1,act=0;if(s.started||!s.cx)return;s.started=1;
+ function nx(){while(act<4&&k<=s.n){(function(i){act++;var im=new Image();im.decoding='async';im.onload=function(){s.Fr[i]=im;act--;if(i===1&&s.onready)s.onready();s.draw(s.want,1);nx()};im.onerror=function(){act--;nx()};im.src=s.url(i)})(k++)}}
+ nx()};
+Strip.prototype.draw=function(i,force){var s=this,j=clamp(i,0,s.n-1),a,b;if(!s.cx)return;s.want=j;
+ for(a=j;a>=0&&!(s.Fr[a+1]&&s.Fr[a+1].naturalWidth);a--);for(b=j;b<s.n&&!(s.Fr[b+1]&&s.Fr[b+1].naturalWidth);b++);
+ var pick=a<0?b:b>=s.n?a:(j-a<=b-j?a:b);if(pick<0||pick>=s.n||!(s.Fr[pick+1]&&s.Fr[pick+1].naturalWidth))return;
+ if(pick===s.shown&&!force)return;s.shown=pick;s.cx.drawImage(s.Fr[pick+1],0,0,s.W,s.H);s.box.classList.add('pp-run')};
+Strip.prototype.show=function(p){this.draw(Math.round(clamp(p,0,1)*(this.n-1)))};
+function stripOf(box){return new Strip(box,{n:num9(box,'data-pp-count'),base:box.getAttribute('data-pp-base'),ext:box.getAttribute('data-pp-ext')||'.webp',W:num9(box,'data-pp-w')||720,H:num9(box,'data-pp-h')||720})}
+function num9(el,k){var v=el.getAttribute(k);return v===null||v===''?0:+v}
+function near(el,f){if(!w.IntersectionObserver){f();return}
+ new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){o.disconnect();f()}},{rootMargin:'700px 0px'}).observe(el)}
+
+/* ── 진행도 → 장면 효과(엔진이 스크롤 감기를 하고, 진행도를 el._ppp 로 알려 준다) ── */
+var FX={
+ /* 1-0 훅: 한 단어씩(그 단어의 구간이 오면 이전 단어는 위로 사라지고 새 단어가 올라온다) */
+ hero:function(el,p){var sc=el.closest('[data-pp-sticky]'),ws=sc&&sc.querySelector('[data-pp-words]');if(!ws)return;
+  var th=ws.getAttribute('data-pp-words').split(','),k=-1,i,c=ws.children;for(i=0;i<th.length;i++)if(p>=+th[i])k=i;
+  if(ws._k===k)return;ws._k=k;for(i=0;i<c.length;i++)c[i].className='pp-wd'+(i===k?' pp-on':i<k?' pp-off':'')},
+ /* 1-1 기억: 글자 한 자씩 */
+ mem:function(el,p){var sc=el.closest('[data-pp-sticky]'),cs=sc&&(sc._ch||(sc._ch=qa('.pp-ch',sc)));if(!cs||!cs.length)return;
+  var n=cs.length,i,on;for(i=0;i<n;i++){on=p>=.1+.62*i/n;if(cs[i]._on!==on){cs[i]._on=on;cs[i].classList[on?'add':'remove']('pp-on')}}},
+ /* 1-2 등장: 작은 둥근 타일 → 화면 가득 확대(영상 프레임 자체를 키울 뿐) */
+ zoom:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;sc.style.setProperty('--z',(.58+.42*smooth(0,.6,p)).toFixed(4));sc.style.setProperty('--to',(1-smooth(.34,.62,p)).toFixed(3))},
+ /* 1-8 낭만: 줄이 하나씩, 곡 수 칸(설정이 켜져 있을 때만 존재)은 숫자 올라가기 */
+ rom:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var ls=sc._rl||(sc._rl=qa('.pp-rl',sc)),th=[.06,.26,.46],i,on;
+  for(i=0;i<ls.length;i++){on=p>=th[i];if(ls[i]._on!==on){ls[i]._on=on;ls[i].classList[on?'add':'remove']('pp-on')}}
+  var sg=sc._sg===undefined?(sc._sg=sc.querySelector('[data-pp-songs]')):sc._sg;
+  if(sg){var v=+sg.getAttribute('data-pp-songs')||0;sg.textContent=Math.round(v*smooth(.5,.95,p)).toLocaleString('ko-KR')+(sg.getAttribute('data-pp-unit')||'')}},
+ /* 1-9 넘어가기: 큰 글자가 줄 단위로 걷히고 PEPPER CLUB, 끝에서 흰 화면으로 */
+ t9:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var ls=sc._ln||(sc._ln=qa('.pp-ln',sc)),pc=sc.querySelector('.pp-pc'),i,out;
+  for(i=0;i<ls.length;i++){out=p>=.4+.07*i;if(ls[i]._o!==out){ls[i]._o=out;ls[i].classList[out?'add':'remove']('pp-out')}}
+  if(pc){var on=p>=.64;if(pc._on!==on){pc._on=on;pc.classList[on?'add':'remove']('pp-on')}}
+  sc.style.setProperty('--fade',smooth(.8,1,p).toFixed(3))}
+};
+function fxInit(){qa('[data-pp-seq][data-pp-fx]').forEach(function(el){var f=FX[el.getAttribute('data-pp-fx')];if(!f)return;el._ppp=function(p){f(el,p)};f(el,0)})}
+
+/* ── 1-0b 끌어 꽂기: 드래그 진행도 = 프레임. 끝까지 끌면 딸깍(햅틱·소리·링). 안 끌어도 3초 뒤 자동. 세로 스크롤은 그대로(touch-action:pan-y). ── */
+function plug(box){var sc=box.closest('[data-pp-scene]'),st=stripOf(box),p=0,pl=false,drag=0,x0=0,p0=0,idle=0,auto=0,raf=0,W=1;
+ var sl=box.hasAttribute('data-pp-grip')?box:null;
+ function set(v){p=clamp(v,0,1);st.show(p);var on=p>=.985;if(sl)sl.setAttribute('aria-valuenow',Math.round(p*100));
+  if(on!==pl){pl=on;sc.classList[on?'add':'remove']('pp-plugged');if(on){tick();ev2('pp:plug',{})}}}
+ if(RM){box.classList.remove('pp-run');sc.classList.add('pp-plugged');return}
+ near(box,function(){st.onready=function(){set(p)};st.load()});
+ function stop(){auto=0;cancelAnimationFrame(raf);clearTimeout(idle)}
+ function play(from,ms){stop();auto=1;var t0=w.performance.now();(function f(now){if(!auto)return;var t=clamp((now-t0)/ms,0,1),e=1-Math.pow(1-t,3);set(from+(1-from)*e);if(t<1)raf=requestAnimationFrame(f);else auto=0})(t0);}
+ function arm(){clearTimeout(idle);if(pl||drag)return;idle=setTimeout(function(){if(!pl&&!drag)play(p,1500)},3000)}
+ if(w.IntersectionObserver)new w.IntersectionObserver(function(es){if(es[0].isIntersecting)arm();else{clearTimeout(idle)}},{threshold:.6}).observe(box);
+ box.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;stop();drag=1;x0=e.clientX;p0=p;W=Math.max(200,box.clientWidth*.62);sc.classList.add('pp-drag');try{box.setPointerCapture(e.pointerId)}catch(x){}});
+ box.addEventListener('pointermove',function(e){if(!drag)return;set(p0+(x0-e.clientX)/W)});
+ function up(){if(!drag)return;drag=0;sc.classList.remove('pp-drag');arm()}
+ box.addEventListener('pointerup',up);box.addEventListener('pointercancel',up);
+ box.addEventListener('keydown',function(e){var k=e.key;if(k==='ArrowLeft'||k==='ArrowDown'){e.preventDefault();stop();set(p+.12)}else if(k==='ArrowRight'||k==='ArrowUp'){e.preventDefault();stop();set(p-.12)}else if(k==='Enter'||k===' '){e.preventDefault();play(p,900)}});
+ box.addEventListener('contextmenu',function(e){e.preventDefault()})}
+
+/* ── 1-7 길게 누르기: 누르는 동안 재생(프레임이 앞으로, 화면이 밝아짐), 떼면 처음으로 되감기. Space/Enter 도 같은 동작. ── */
+function hold(box){var st=stripOf(box),t=0,on=false,last=0,raf=0,FPS=12.5,n=st.n;
+ near(box,function(){st.load()});
+ function loop(now){var dt=Math.min(.1,(now-(last||now))/1000);last=now;
+  t=on?Math.min(n-1,t+dt*FPS):Math.max(0,t-dt*46);st.draw(Math.round(t));
+  if((on&&t<n-1)||(!on&&t>0))raf=requestAnimationFrame(loop);else{raf=0;last=0}}
+ function set(v){if(v===on)return;on=v;box.classList[v?'add':'remove']('pp-on');if(v)tick();if(!raf){last=0;raf=requestAnimationFrame(loop)}}
+ box.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;set(true);try{box.setPointerCapture(e.pointerId)}catch(x){}});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(function(n2){box.addEventListener(n2,function(){set(false)})});
+ box.addEventListener('keydown',function(e){if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();set(true)}});
+ box.addEventListener('keyup',function(e){if(e.key===' '||e.key==='Enter')set(false)});
+ box.addEventListener('blur',function(){set(false)});
+ box.addEventListener('contextmenu',function(e){e.preventDefault()})}
+
+/* ── 1-3 끌어 돌리기: 가로 드래그 = 스크롤 위치(= 360 프레임 진행도)를 옮긴다. 놓으면 관성. 세로 제스처는 그대로 스크롤. ── */
+function rotate(el){var sk=el.closest('[data-pp-sticky]');if(!sk)return;var drag=0,x0=0,y0=0,vx=0,lx=0,lt=0,raf=0;
+ function inRange(){var r=sk.getBoundingClientRect();return r.top<=2&&r.bottom>=w.innerHeight-2}
+ function travel(){return Math.max(1,sk.offsetHeight-w.innerHeight)}
+ function K(){return travel()/Math.max(260,Math.min(w.innerWidth,720)*1.7)}
+ function glide(){var v=clamp(vx*K(),-34,34);(function f(){if(Math.abs(v)<.15||!inRange())return;w.scrollBy(0,v);v*=.93;raf=requestAnimationFrame(f)})()}
+ el.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;cancelAnimationFrame(raf);drag=1;x0=lx=e.clientX;y0=e.clientY;vx=0;lt=w.performance.now();el.classList.add('pp-grab');try{el.setPointerCapture(e.pointerId)}catch(x){}});
+ el.addEventListener('pointermove',function(e){if(!drag||!inRange())return;var dx=e.clientX-lx,t=w.performance.now(),dt=Math.max(8,t-lt);
+  vx=.8*vx+.2*(-dx/dt*16);lx=e.clientX;lt=t;w.scrollBy(0,-dx*K())});
+ function up(){if(!drag)return;drag=0;el.classList.remove('pp-grab');if(Math.abs(vx)>.5)glide()}
+ el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)}
+
+/* ── 1-4 폰 기울이기: iOS 는 첫 터치에서 권한 요청. 거절·미지원·신호 없음이면 손가락 따라 보는 각도 이동으로. 이미지는 이동·확대(시차)만 — 합성·가짜 반사 없음. ── */
+function tilt(st){var par=st.querySelector('.pp-parin'),hint=st.querySelector('.pp-mir-hint'),ox=0,oy=0,mode='',got=0,drag=0,x0=0,y0=0,bx=0,by=0;if(!par)return;
+ function apply(x,y){ox=clamp(x,-1,1);oy=clamp(y,-1,1);par.style.setProperty('--tx',(-ox*3.6).toFixed(2)+'%');par.style.setProperty('--ty',(-oy*2.2).toFixed(2)+'%')}
+ function setHint(t){if(hint)hint.textContent=t}
+ function onOri(e){if(e.gamma===null||e.gamma===undefined)return;got=1;mode='tilt';apply(clamp(e.gamma/24,-1,1),clamp((e.beta-50)/30,-1,1));setHint('폰을 기울이는 대로 반사가 움직입니다')}
+ function listen(){w.addEventListener('deviceorientation',onOri);setTimeout(function(){if(!got)setHint('손가락으로 밀어 보세요')},1600)}
+ var asked=0;
+ function ask(){if(asked)return;asked=1;var D=w.DeviceOrientationEvent;
+  if(D&&typeof D.requestPermission==='function'){try{D.requestPermission().then(function(r){if(r==='granted')listen();else setHint('손가락으로 밀어 보세요')},function(){setHint('손가락으로 밀어 보세요')})}catch(x){setHint('손가락으로 밀어 보세요')}}
+  else if(D)listen()}
+ setHint('폰을 기울이거나 손가락으로 밀어 보세요');
+ st.addEventListener('pointerdown',function(e){ask();drag=1;x0=e.clientX;y0=e.clientY;bx=ox;by=oy;try{st.setPointerCapture(e.pointerId)}catch(x){}});
+ st.addEventListener('pointermove',function(e){if(!drag||mode==='tilt')return;apply(bx+(e.clientX-x0)/Math.max(160,st.clientWidth*.5),by+(e.clientY-y0)/Math.max(160,st.clientHeight*.5)*.0)});
+ function up(){drag=0}st.addEventListener('pointerup',up);st.addEventListener('pointercancel',up)}
+
+/* ── 1-6 가로 넘기기: 점 표시만(스크롤·스냅은 브라우저 기본). 마우스는 끌어서도 넘긴다. ── */
+function swipe(sw){var li=qa('li',sw),dots=sw.parentNode.querySelectorAll('.pp-dots i'),x0=0,s0=0,dn=0,moved=0;
+ function upd(){var c=sw.scrollLeft+sw.clientWidth/2,best=0,bd=1e9,i,m;for(i=0;i<li.length;i++){m=Math.abs(li[i].offsetLeft+li[i].offsetWidth/2-c);if(m<bd){bd=m;best=i}}
+  for(i=0;i<dots.length;i++)dots[i].classList[i===best?'add':'remove']('pp-on')}
+ sw.addEventListener('scroll',function(){upd()},{passive:true});upd();
+ sw.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;dn=1;moved=0;x0=e.clientX;s0=sw.scrollLeft;sw.style.scrollSnapType='none'});
+ sw.addEventListener('pointermove',function(e){if(!dn)return;moved=1;sw.scrollLeft=s0-(e.clientX-x0)});
+ function end(){if(!dn)return;dn=0;sw.style.scrollSnapType='';var c=sw.scrollLeft+sw.clientWidth/2,best=0,bd=1e9,i,m;for(i=0;i<li.length;i++){m=Math.abs(li[i].offsetLeft+li[i].offsetWidth/2-c);if(m<bd){bd=m;best=i}}
+  sw.scrollTo({left:li[best].offsetLeft-(sw.clientWidth-li[best].offsetWidth)/2,behavior:'smooth'})}
+ sw.addEventListener('pointerup',end);sw.addEventListener('pointerleave',end)}
+
+/* 글자 한 자씩(1-1): 단어는 안 끊기게 단어 span 안에 글자 span. 원문은 aria-label 로 한 번에 읽힌다. */
+function charify(el){var t=el.textContent,out=d.createDocumentFragment(),ws=t.split(' '),i,j,w1,s;el.setAttribute('aria-label',t);el.textContent='';
+ for(i=0;i<ws.length;i++){w1=d.createElement('span');w1.className='pp-cw';w1.setAttribute('aria-hidden','true');
+  for(j=0;j<ws[i].length;j++){s=d.createElement('span');s.className='pp-ch';s.textContent=ws[i].charAt(j);w1.appendChild(s)}
+  out.appendChild(w1);if(i<ws.length-1)out.appendChild(d.createTextNode(' '))}
+ el.appendChild(out)}
+
+function v44init(){
+ qa('[data-pp-chars]').forEach(charify);
+ fxInit();
+ qa('[data-pp-plug]').forEach(plug);
+ qa('[data-pp-hold]').forEach(hold);
+ qa('[data-pp-rotate]').forEach(rotate);
+ qa('.pp-mir-st').forEach(tilt);
+ qa('.pp-swipe').forEach(swipe)}
+
 try{
- buy();evInit();slice.call(d.querySelectorAll('[data-pp-slot]')).forEach(slot);slice.call(d.querySelectorAll('[data-pp-seqclip]')).forEach(seqclip);wheel();sound();
+ buy();evInit();slice.call(d.querySelectorAll('[data-pp-slot]')).forEach(slot);slice.call(d.querySelectorAll('[data-pp-seqclip]')).forEach(seqclip);wheel();sound();v44init();
  if(G&&T&&G.matchMedia){
   var e1=d.querySelector('[data-pp-s1]');if(e1&&!RM)s1(e1);
   boot()
