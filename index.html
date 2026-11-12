@@ -221,6 +221,15 @@
 @media (prefers-reduced-motion:reduce){
  .pp-landing *,.pp-landing *::before,.pp-landing *::after{transition-duration:.01ms!important;animation:none!important}
 }
+/* v4.3.1 수정 — pp_v43.css 뒤에 붙는다(v4.3 CSS 는 그대로).
+   ① 360 장면(S1) 비율: v4.3 의 @media(max-width:768px) 규칙이 이미지·캔버스에 width:128% 만 주고 height 는 위 기본 규칙의 100% 를 그대로 둬서
+      정사각 프레임(720x720)이 가로로만 28% 늘어나 보였다(폭 375 에서 480x375). 폭·높이를 같이 120% 로 키워 비율을 지킨다. 위치는 가운데가 아니라 아래를 맞춘다(위 -16.8%): 프레임 아래 11% 는 바닥 반사가 흰색으로 사라지는 구간이라 가운데 확대(위아래 11% 잘림)로 자르면 회색 가장자리가 흰 바탕에 선처럼 남는다. 제품 윗끝은 프레임 18% 지점이라 위 14% 잘림은 안전.
+      object-fit:contain 은 어떤 상자 비율이어도 늘어나지 않게 하는 안전장치. */
+.pp-landing .pp-s1-wrap{width:100%}   /* 이미지가 상자 안에서 절대 위치가 되면 안쪽 너비가 0 이라 flex 로 줄어든 래퍼가 44px 로 접힌다 — 래퍼 너비를 고정 */
+.pp-landing [data-pp-s1] img,.pp-landing [data-pp-s1] canvas{object-fit:contain}
+@media (max-width:768px){.pp-landing [data-pp-s1] img,.pp-landing [data-pp-s1] canvas{position:absolute;left:-10%;top:-16.8%;width:120%;height:120%;max-width:none;margin:0}}
+/* ② 장면 04 위쪽 검은 띠: .pp-photo{padding-top:56px;background:#000} 가 영상 타일 위에 순흑 56px 를 남겼다 */
+.pp-landing .pp-photo{padding-top:0}
 </style></head>
 <body>
 <div class="pp-landing">
@@ -258,7 +267,7 @@
 </div>
 </section>
 <section id="pp-c3" data-pp-scene="c3" data-pp-act="1" data-pp-kind="mood">
-<figure class="pp-photo"><div class="pp-vtile" data-pp-seqclip data-pp-base="assets/c3/seq/p_" data-pp-count="22" data-pp-ext=".webp" data-pp-fps="12" data-pp-w="720" data-pp-h="900" style="--pp-w:720;--pp-h:900"><img src="assets/c3/song.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="720" height="900" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas></div>
+<figure class="pp-photo"><div class="pp-vtile" data-pp-seqclip data-pp-base="assets/c3/seq/p_" data-pp-count="22" data-pp-ext=".webp" data-pp-fps="12" data-pp-w="720" data-pp-h="848" style="--pp-w:720;--pp-h:848"><img src="assets/c3/song.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="720" height="848" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas></div>
 <div class="pp-photo-txt"><p data-pp-split="focus">곡은 직접 담습니다.<br>줄은 엉킵니다.<br>알림은 안 옵니다.<br>불편해서 좋습니다.</p></div>
 <div class="pp-photo-cta"><a class="pp-link" href="#pp-buy-area" data-pp-cta>네이버에서 구입하기</a></div>
 </figure>
