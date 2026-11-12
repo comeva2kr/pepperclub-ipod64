@@ -10,7 +10,7 @@
 <style>
 
 .pp-landing{
- --pp-bg:#ffffff;--pp-alt:#f5f5f7;--pp-ink:#1d1d1f;--pp-ink2:#6e6e73;--pp-ink3:#86868b;--pp-line:#d2d2d7;--pp-line2:#e8e8ed;--pp-white:#ffffff;
+ --pp-bg:#ffffff;--pp-alt:#f5f5f7;--pp-ink:#1d1d1f;--pp-ink2:#6e6e73;--pp-ink3:#6e6e73;--pp-line:#d2d2d7;--pp-line2:#e8e8ed;--pp-white:#ffffff;
  --pp-bar:rgba(255,255,255,.82);--pp-scrim:rgba(29,29,31,.72);--pp-accent:#0071e3;--pp-accent-hover:#0077ed;--pp-link:#0066cc;--pp-on-accent:#ffffff;--pp-dark:#111111;--pp-on-dark:#f5f5f7;
  --pp-font:"SF Pro Display","SF Pro Text",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",Pretendard,"Noto Sans KR",sans-serif;
  --pp-t-hero:clamp(44px,12.4vw,96px);--pp-t-h2:clamp(34px,9.4vw,64px);--pp-t-h3:clamp(26px,7vw,40px);--pp-t-lede:clamp(21px,5.6vw,28px);--pp-t-body:17px;--pp-t-cap:14px;--pp-t-num:clamp(96px,32vw,220px);
@@ -67,8 +67,6 @@
 .pp-landing .pp-slot>img.pp-cur{opacity:1;z-index:2}
 .pp-landing .pp-slot>video.pp-cur{z-index:2}
 .pp-landing .pp-slot>video.pp-play{opacity:1}
-.pp-landing .pp-slot .pp-wait{position:absolute;left:12px;bottom:12px;z-index:3;margin:0;padding:6px 12px;border-radius:var(--pp-r-pill);background:rgba(255,255,255,.88);color:var(--pp-ink2);font-size:13px;font-weight:600;line-height:1.3;letter-spacing:0}
-.pp-landing .pp-slot .pp-wait[hidden]{display:none}
 .pp-landing .pp-snd{position:absolute;left:var(--pp-gutter);bottom:16px;width:44px;height:44px;border-radius:50%;border:0;background:var(--pp-scrim);display:grid;place-items:center;color:var(--pp-white);cursor:pointer;transition:background-color var(--pp-d-press) var(--pp-ease),transform var(--pp-d-press) var(--pp-ease)}
 .pp-landing .pp-snd[aria-pressed="true"]{background:var(--pp-accent)}
 .pp-landing .pp-snd svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -85,6 +83,25 @@
 .pp-landing .pp-evp small{display:block;margin-top:4px;font-size:14px;font-weight:500;color:var(--pp-ink2);letter-spacing:0}
 
 /* 글꼴 자체 호스팅 자리: assets.json 의 fonts.enabled 가 켜지면 빌더가 글꼴 규칙을 이 파일 앞에 만든다(지금은 꺼짐 = 위 --pp-font 시스템 스택 그대로). 파일은 assets/fonts/ 에 둔다. */
+
+/* 영상 프레임 타일(첫 화면·c3): 둥근 타일, 정지 이미지 위에 캔버스가 페이드로 올라온다. 전면 풀블리드 아님 */
+.pp-landing .pp-vwrap{position:relative;margin:var(--pp-s4) auto 0;max-width:calc(520px + 2*var(--pp-gutter));padding:0 var(--pp-gutter);box-sizing:border-box}
+.pp-landing .pp-vtile{position:relative;overflow:hidden;isolation:isolate;aspect-ratio:var(--pp-w)/var(--pp-h);background:#d9d9de}
+.pp-landing .pp-vwrap .pp-vtile{border-radius:var(--pp-r-tile)}
+.pp-landing .pp-vtile img,.pp-landing .pp-vtile canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing .pp-vtile canvas{opacity:0;transition:opacity .22s ease-out}
+.pp-landing .pp-vtile.pp-run canvas{opacity:1}
+.pp-landing .pp-vwrap .pp-snd{left:calc(var(--pp-gutter) + 14px);bottom:14px}
+.pp-landing .pp-photo .pp-vtile{width:min(100%,560px);margin:0 auto}
+/* c3: 영상 위 흰 글자가 밝은 부분에서도 읽히도록 위·아래에 어두운 그라데이션(영상 위에 얹는 장식이 아니라 가독성 보조) */
+/* 가격 칸 앞 글자(판매처 이름): 좁은 화면에서는 보조기기용으로만 */
+.pp-landing .pp-pfx{margin-right:6px;color:var(--pp-ink2);font-weight:500}
+@media (max-width:640px){.pp-landing .pp-pfx{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}}
+/* 좁은 화면: 위 줄의 상품명은 보조기기용으로만 남기고 가격·구매 버튼에 폭을 준다(버튼 글자가 길다) */
+@media (max-width:480px){.pp-landing .pp-nav .pp-nm{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+/* 버튼 아래 작은 한 줄 */
+.pp-landing .pp-btnnote{margin-top:12px;font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
+.pp-landing .pp-cta>.pp-btnnote{margin-top:12px}
 
 /* 장 0 */
 .pp-landing [data-pp-kind="hero"]{padding-top:calc(52px + var(--pp-s6))}
@@ -127,10 +144,9 @@
 .pp-landing [data-pp-kind="mood"]{padding:0;background:#000;color:#fff}
 .pp-landing .pp-photo{position:relative;margin:0;padding-top:56px;background:#000}
 .pp-landing .pp-photo>img{width:100%;height:min(150vw,980px);object-fit:cover;object-position:50% 62%}
-.pp-landing .pp-photo-txt{position:absolute;left:0;right:0;top:0;padding:clamp(48px,12vw,88px) var(--pp-gutter) 0}
+.pp-landing .pp-photo-txt{position:absolute;left:0;right:0;top:0;padding:clamp(48px,12vw,88px) var(--pp-gutter) var(--pp-s5);background:linear-gradient(rgba(0,0,0,.66),rgba(0,0,0,.4) 72%,rgba(0,0,0,0))}
 .pp-landing .pp-photo-txt p{font-size:clamp(34px,9.4vw,52px);font-weight:700;letter-spacing:var(--pp-track-head);line-height:1.18}
-.pp-landing .pp-photo-cap{position:absolute;left:0;right:0;bottom:8px;font-size:13px;color:rgba(255,255,255,.7);text-align:center}
-.pp-landing .pp-photo-cta{position:absolute;left:0;right:0;bottom:36px;text-align:center}
+.pp-landing .pp-photo-cta{position:absolute;left:0;right:0;bottom:0;padding:var(--pp-s4) 0 36px;text-align:center;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.5))}
 .pp-landing .pp-photo-cta .pp-link{color:#fff;font-size:21px;min-height:44px}
 
 /* 다리: 클릭휠 */
@@ -207,8 +223,6 @@
 }
 </style></head>
 <body>
-<!-- 미리보기 전용: 비공개 시험 페이지(noindex). 가짜 가격·가짜 구매 영역은 카페24 상품 페이지를 흉내 낸 것이며 가격은 코드에 굽지 않는다. -->
-<span id="ec-product-price-info" ec-data-price="267900" style="display:none"></span>
 <div class="pp-landing">
 <section id="pp-c0" data-pp-scene="c0" data-pp-act="1" data-pp-kind="hero">
 <div class="pp-wrap">
@@ -216,15 +230,13 @@
 <p class="pp-lede" data-pp-r>어른이 된 지금은,<br>가질 수 있습니다.</p>
 <h1 class="pp-name" data-pp-r>아이팟 클래식 5세대 64GB</h1>
 </div>
-<div class="pp-stagewrap"><div class="pp-stage"><div class="pp-slot" data-pp-slot="hero" data-pp-states="off,boot,menu,play" data-pp-cuts="{&quot;off&quot;:&quot;assets/c0/hero_off.webp&quot;,&quot;boot&quot;:&quot;assets/c0/hero_boot.webp&quot;,&quot;menu&quot;:&quot;assets/c0/hero_menu.webp&quot;,&quot;play&quot;:&quot;assets/c0/hero_play.webp&quot;}" data-pp-clips="{}" data-pp-labels="{&quot;off&quot;:&quot;꺼진 화면&quot;,&quot;boot&quot;:&quot;부팅&quot;,&quot;menu&quot;:&quot;메뉴&quot;,&quot;play&quot;:&quot;재생&quot;}" data-pp-seq="off:800,boot:1200,menu:1600,play:0" data-pp-rest="menu" data-pp-wait="1" style="--pp-w:1400;--pp-h:1400"><img class="pp-cur" src="assets/c0/hero_off.webp" alt="충전 독에 꽂혀 있는 아이팟 클래식 5세대" width="1400" height="1400" fetchpriority="high"><span class="pp-wait" hidden></span></div></div>
-<button type="button" class="pp-snd" data-pp-sound aria-pressed="false" aria-label="소리 켜기"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button></div>
+<div class="pp-vwrap"><div class="pp-vtile" data-pp-seqclip data-pp-base="assets/c0/seq/h_" data-pp-count="72" data-pp-ext=".webp" data-pp-fps="12" data-pp-w="720" data-pp-h="900" data-pp-eager="1" style="--pp-w:720;--pp-h:900"><img src="assets/c0/hero_menu.webp" alt="손에 든 아이팟 클래식 5세대가 뒷판에서 앞으로 돌며 화면이 켜지고 메뉴가 넘어가는 영상" width="720" height="900" fetchpriority="high" decoding="async"><canvas aria-hidden="true"></canvas></div></div>
 <p class="pp-cue">아래로</p>
 </section>
 <section id="pp-c1" data-pp-scene="c1" data-pp-act="1" data-pp-kind="memory"><div class="pp-wrap">
 <h2 class="pp-h2 pp-g" data-pp-split="focus">그때는 비쌌고,<br>지금은 단종입니다.</h2>
 <h2 class="pp-h2" data-pp-split="focus" style="margin-top:6px">그래서 더 갖고<br>싶었던 물건.</h2>
 <div class="pp-tile" style="margin-top:var(--pp-s5)"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/c1/back_close.webp"><img class="pp-strip" src="assets/c1/mirror.webp" alt="은색과 검정 아이팟 클래식이 나무 책상 위에 놓여 있다가 거울 같은 뒷판이 보이는 영상" width="720" height="360" loading="lazy" decoding="async" data-pp-r></picture></div>
-<p class="pp-cap">분위기 컷 · 판매 제품과 다를 수 있습니다</p>
 <p><a class="pp-link" href="#pp-buy-area" data-pp-cta>64GB 보기</a></p>
 </div></section>
 <section id="pp-c2" data-pp-scene="c2" data-pp-act="1" data-pp-kind="s1" data-pp-end="300,200">
@@ -246,10 +258,9 @@
 </div>
 </section>
 <section id="pp-c3" data-pp-scene="c3" data-pp-act="1" data-pp-kind="mood">
-<figure class="pp-photo"><img src="assets/c3/song.webp" alt="어두운 배경의 나무 책상 위에 세워 둔 아이팟 클래식" width="860" height="573" loading="lazy" decoding="async">
+<figure class="pp-photo"><div class="pp-vtile" data-pp-seqclip data-pp-base="assets/c3/seq/p_" data-pp-count="22" data-pp-ext=".webp" data-pp-fps="12" data-pp-w="720" data-pp-h="900" style="--pp-w:720;--pp-h:900"><img src="assets/c3/song.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="720" height="900" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas></div>
 <div class="pp-photo-txt"><p data-pp-split="focus">곡은 직접 담습니다.<br>줄은 엉킵니다.<br>알림은 안 옵니다.<br>불편해서 좋습니다.</p></div>
-<div class="pp-photo-cta"><a class="pp-link" href="#pp-buy-area" data-pp-cta>구입하기</a></div>
-<p class="pp-photo-cap">분위기 컷 · 판매 제품과 다를 수 있습니다</p>
+<div class="pp-photo-cta"><a class="pp-link" href="#pp-buy-area" data-pp-cta>네이버에서 구입하기</a></div>
 </figure>
 </section>
 <section id="pp-bridge" data-pp-scene="bridge" data-pp-act="2" data-pp-kind="wheel"><div class="pp-wrap">
@@ -257,7 +268,7 @@
 <h2 class="pp-h2" data-pp-split="focus" style="margin-top:6px">중요한 건,<br>어디에서 사느냐입니다.</h2>
 <p class="pp-lede" data-pp-r>휠을 돌려 보세요.</p>
 </div>
-<div class="pp-stagewrap" data-pp-r><div class="pp-stage" style="--wx:46.40;--wy:58.40;--wa:10.00;--wb:13.30"><div class="pp-slot" data-pp-slot="wheel" data-pp-states="battery,check,kit,as" data-pp-cuts="{&quot;check&quot;:&quot;assets/bridge/wheel_check.webp&quot;}" data-pp-clips="{}" data-pp-labels="{&quot;battery&quot;:&quot;배터리&quot;,&quot;check&quot;:&quot;두 번 검사&quot;,&quot;kit&quot;:&quot;기본 구성&quot;,&quot;as&quot;:&quot;A/S&quot;}" data-pp-wait="1" style="--pp-w:1400;--pp-h:1400"><span class="pp-wait">디자인팀 컷 대기 · 배터리</span></div>
+<div class="pp-stagewrap" data-pp-r><div class="pp-stage" style="--wx:46.40;--wy:58.40;--wa:10.00;--wb:13.30"><div class="pp-slot" data-pp-slot="wheel" data-pp-states="battery,check,kit,as" data-pp-cuts="{&quot;battery&quot;:&quot;assets/bridge/wheel_battery.webp&quot;,&quot;check&quot;:&quot;assets/bridge/wheel_check.webp&quot;,&quot;kit&quot;:&quot;assets/bridge/wheel_kit.webp&quot;,&quot;as&quot;:&quot;assets/bridge/wheel_as.webp&quot;}" data-pp-clips="{}" data-pp-labels="{&quot;battery&quot;:&quot;배터리&quot;,&quot;check&quot;:&quot;두 번 검사&quot;,&quot;kit&quot;:&quot;기본 구성&quot;,&quot;as&quot;:&quot;A/S&quot;}" style="--pp-w:1400;--pp-h:1400"><img class="pp-cur" src="assets/bridge/wheel_battery.webp" alt="클릭휠로 고르는 메뉴: 배터리, 두 번 검사, 기본 구성, A/S" width="1400" height="1400" loading="lazy" decoding="async"></div>
 <div class="pp-wheel" data-pp-wheel tabindex="0" role="group" aria-label="클릭휠. 돌리면 메뉴가 넘어갑니다. 위아래 화살표로 선택, Enter로 이동"></div></div></div>
 <div class="pp-wrap"><ul class="pp-list" data-pp-menu>
 <li class="pp-sel"><a href="#pp-battery" data-pp-d="1950mAh 새것입니다">배터리</a></li>
@@ -306,7 +317,7 @@
 <div class="pp-tl" data-pp-r><div><b>7일</b>교환<br>환불</div><div class="pp-x"><b>180일 무상</b>남긴 메인보드·프레임까지 포함</div><div class="pp-y"><b>그 뒤 평생 실비</b>부품값·공임만</div></div>
 <p class="pp-cap" style="margin-top:16px">7일이 지난 뒤 왕복 택배비 7,000원은 고객 부담입니다</p>
 <p class="pp-lede" style="font-size:19px;margin-top:12px" data-pp-r>문의는 톡톡 QR로 받습니다</p></div>
-<p style="margin-top:var(--pp-s4)"><a class="pp-link" href="#pp-buy-area" data-pp-cta data-pp-r>구입하기</a></p>
+<p style="margin-top:var(--pp-s4)"><a class="pp-link" href="#pp-buy-area" data-pp-cta data-pp-r>네이버에서 구입하기</a></p>
 </div></section>
 <section id="pp-faq" data-pp-scene="faq" data-pp-act="2" data-pp-kind="faq"><div class="pp-wrap">
 <h2 class="pp-h2">자주 묻는 질문</h2>
@@ -318,16 +329,17 @@
 <section id="pp-c8" data-pp-scene="c8" data-pp-act="2" data-pp-kind="end"><div class="pp-wrap"><div class="pp-cta">
 <h2 class="pp-h2" data-pp-split="rev">마음에 드셨다면,<br>지금 담으세요.</h2>
 <p data-pp-r>평일 15시 전 주문하면 당일출고<br>7일 교환·환불, 180일 무상 A/S</p>
-<div class="pp-evp" data-pp-evnode data-pp-r><span class="pp-evb">블프</span><s>₩288,000</s> → 쿠폰 적용 <b>₩259,200</b><small>10%, 5만 원 이상·최대 10만, ~11/29 23:59</small></div>
+<div class="pp-evp" data-pp-evnode data-pp-r><span class="pp-evb">블프</span><s>₩288,000</s> → 쿠폰 적용 <b>₩259,200</b> (~11.29)<small>10%, 5만 원 이상·최대 10만, ~11/29 23:59</small></div>
 <div class="pp-three" data-pp-r><div><b>64GB</b>아이팟 클래식 5세대</div><div><b>1950mAh</b>직접 KC 안전확인 받은 새 배터리</div><div><b>6칸</b>직접 점검하고 보냅니다</div></div>
 <p class="pp-proof" data-pp-r>와디즈 5억+ · 후기 1,200건+</p>
-<p style="margin-top:var(--pp-s5)"><a class="pp-btn" href="#pp-buy-area" data-pp-cta data-pp-r>구입하기</a></p>
+<p style="margin-top:var(--pp-s5)"><a class="pp-btn" href="#pp-buy-area" data-pp-cta data-pp-r>네이버에서 구입하기</a></p>
+<p class="pp-btnnote" data-pp-r>페퍼클럽 네이버 스마트스토어로 이동합니다</p>
 </div>
 <p class="pp-foot">페퍼클럽은 Apple의 공식 판매처가 아닙니다. Apple, iPod는 Apple Inc.의 상표입니다. 사진 속 제품에 새겨진 로고는 제품 자체의 표기입니다.</p></div></section>
-<div data-pp-buy="1" data-pp-buy-ui="top" data-pp-name="아이팟 클래식 64GB" data-pp-label-1="구입하기" data-pp-label-2="구입하기" data-pp-buy-mode="scroll" data-pp-dest="naver" data-pp-ev="{&quot;normal&quot;:288000,&quot;coupon&quot;:259200,&quot;badge&quot;:&quot;블프&quot;,&quot;label&quot;:&quot;쿠폰 적용&quot;,&quot;note&quot;:&quot;10%, 5만 원 이상·최대 10만, ~11/29 23:59&quot;,&quot;ends&quot;:&quot;2026-11-29T23:59:59+09:00&quot;,&quot;title&quot;:&quot;아이팟 클래식 5세대 64GB — 한 대씩 다시 만든 페퍼클럽&quot;,&quot;desc&quot;:&quot;메인보드와 프레임만 남기고 1950mAh 새 배터리로 다시 만든 아이팟 클래식 5세대 64GB. 평일 15시 전 주문 당일출고, 180일 무상 A/S.&quot;}" data-pp-naver-url="https://smartstore.naver.com/main/products/11564119644" data-pp-naver-tags="{&quot;nt_source&quot;:&quot;pepperclub_home&quot;,&quot;nt_medium&quot;:&quot;landing&quot;,&quot;nt_detail&quot;:&quot;ipod64&quot;}" data-pp-naver-kw="{&quot;top&quot;:&quot;top&quot;,&quot;bottom&quot;:&quot;bottom&quot;,&quot;link&quot;:&quot;cta_{scene}&quot;,&quot;end&quot;:&quot;cta_end&quot;}" data-pp-naver-price="288000" style="height:0;overflow:hidden"></div>
+<div data-pp-buy="1" data-pp-buy-ui="top" data-pp-name="아이팟 클래식 64GB" data-pp-label-1="네이버에서 구입하기" data-pp-label-2="네이버에서 구입하기" data-pp-buy-mode="scroll" data-pp-dest="naver" data-pp-ev="{&quot;normal&quot;:288000,&quot;coupon&quot;:259200,&quot;badge&quot;:&quot;블프&quot;,&quot;label&quot;:&quot;쿠폰 적용&quot;,&quot;note&quot;:&quot;10%, 5만 원 이상·최대 10만, ~11/29 23:59&quot;,&quot;ends&quot;:&quot;2026-11-29T23:59:59+09:00&quot;,&quot;title&quot;:&quot;아이팟 클래식 5세대 64GB — 한 대씩 다시 만든 페퍼클럽&quot;,&quot;desc&quot;:&quot;메인보드와 프레임만 남기고 1950mAh 새 배터리로 다시 만든 아이팟 클래식 5세대 64GB. 평일 15시 전 주문 당일출고, 180일 무상 A/S.&quot;,&quot;until&quot;:&quot;~11.29&quot;,&quot;prefix&quot;:&quot;네이버 판매가&quot;}" data-pp-naver-url="https://smartstore.naver.com/main/products/11564119644" data-pp-naver-tags="{&quot;nt_source&quot;:&quot;pepperclub_home&quot;,&quot;nt_medium&quot;:&quot;landing&quot;,&quot;nt_detail&quot;:&quot;ipod64&quot;}" data-pp-naver-kw="{&quot;top&quot;:&quot;top&quot;,&quot;bottom&quot;:&quot;bottom&quot;,&quot;link&quot;:&quot;cta_{scene}&quot;,&quot;end&quot;:&quot;cta_end&quot;}" data-pp-naver-price="288000" data-pp-price-prefix="네이버 판매가" style="height:0;overflow:hidden"></div>
 </div>
 
-<div id="pp-buy-area" class="xans-product-action" style="scroll-margin-top:60px;padding:80px 16px 180px;text-align:center;background:#f5f5f7;color:#6e6e73;font:500 14px/1.5 sans-serif">실제 페이지에서는 카페24 구매 영역이 여기에 이어집니다</div>
+<div id="pp-buy-area" class="xans-product-action" aria-hidden="true" style="height:0"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
@@ -378,14 +390,16 @@ function srvNow(cb){var done=0,ac=w.AbortController?new w.AbortController():null
 /* 행사 구간 표시 — 위 제품 줄(또는 하단 버튼)의 가격 칸: 라벨 + 취소선 평시가 → 라벨 문구 + 행사가. 작은 화면에서는 행사가만 보이고 전체 문구는 보조기기용으로 남긴다. 글자는 전부 마커의 data-pp-ev 값(코드에 문구 없음). */
 function mk(t,c,x){var e=d.createElement(t);if(c)e.className=c;if(x)e.appendChild(d.createTextNode(x));return e}
 function won(n){return '₩'+n.toLocaleString('ko-KR')}
+/* 평시 가격 칸: [앞 글자] + 가격. 앞 글자(예: 판매처 이름)는 좁은 화면에서 보조기기용으로만 남는다. */
+function plain(pr,n,pf){pr.className='pp-price';while(pr.firstChild)pr.removeChild(pr.firstChild);if(pf)pr.appendChild(mk('span','pp-pfx',pf));pr.appendChild(d.createTextNode(won(n)))}
 function evPrice(pr,ev){var f=mk('span','pp-evf'),sv=mk('s','',won(ev.normal)),sm=mk('span','pp-evs',won(ev.coupon));
  pr.className='pp-price pp-ev';while(pr.firstChild)pr.removeChild(pr.firstChild);
- f.appendChild(sv);f.appendChild(d.createTextNode(' → '+ev.label+' '+won(ev.coupon)));sm.setAttribute('aria-hidden','true');
+ f.appendChild(sv);f.appendChild(d.createTextNode(' → '+ev.label+' '+won(ev.coupon)+(ev.until?' ('+ev.until+')':'')));sm.setAttribute('aria-hidden','true');
  if(ev.badge)pr.appendChild(mk('span','pp-evb',ev.badge));pr.appendChild(f);pr.appendChild(sm);R.classList.add('pp-event')}
 /* 행사 끝: 행사 전용 노드 제거 + 가격 칸을 평시가로 + 제목·설명을 평시 값으로(값은 마커에 실려 있다). 한 번만. */
 function evOff(ev){if(evDone)return;evDone=1;R.classList.remove('pp-event');
  slice.call(d.querySelectorAll('[data-pp-evnode]')).forEach(function(n){if(n.parentNode)n.parentNode.removeChild(n)});
- if(PR){PR.className='pp-price';while(PR.firstChild)PR.removeChild(PR.firstChild);PR.appendChild(d.createTextNode(won(ev.normal)))}
+ if(PR)plain(PR,ev.normal,ev.prefix||'')
  if(ev.title)d.title=ev.title;var m=d.querySelector('meta[name=description]');if(m&&ev.desc)m.setAttribute('content',ev.desc);
  if(M)M.removeAttribute('data-pp-ev');ev2('pp:event',{on:false})}
 function evInit(){var ev=M&&EV;if(!ev)return;
@@ -397,7 +411,7 @@ function evInit(){var ev=M&&EV;if(!ev)return;
    위 제품 줄 버튼·하단 고정 버튼·[data-pp-cta] 링크 전부 같은 도착지를 쓴다. 가격: naver 면 마커의 data-pp-naver-price(없으면 칸 자체를 안 그림), cafe24 면 #ec-product-price-info 의 ec-data-price.
    위 얇은 제품 줄(기본, 알약 버튼) 또는 하단 고정 버튼 — 마커의 data-pp-buy-ui="top|bottom" 한 줄로 전환. */
 function buy(){if(!M)return;
- var top=(M.getAttribute('data-pp-buy-ui')||'top')=='top',nv=M.getAttribute('data-pp-dest')=='naver',W,P=d.getElementById('ec-product-price-info'),pr,nu='';
+ var top=(M.getAttribute('data-pp-buy-ui')||'top')=='top',nv=M.getAttribute('data-pp-dest')=='naver',W,P=d.getElementById('ec-product-price-info'),pr,pfx,nu='';
  var u0=M.getAttribute('data-pp-naver-url')||'',tg=pj(M,'data-pp-naver-tags'),kw=pj(M,'data-pp-naver-kw');
  function nuf(k){var t={},x;for(x in tg)t[x]=tg[x];t.nt_keyword=k;return tagUrl(u0,t)}
  if(nv){nv=!!u0;if(nv)nu=nuf(top?(kw.top||'top'):(kw.bottom||'bottom'))}
@@ -405,7 +419,7 @@ function buy(){if(!M)return;
  if(nv){B.target='_blank';B.rel='noopener noreferrer'}else B.setAttribute('role','button');
  L=d.createElement('span');L.appendChild(d.createTextNode(''));B.appendChild(L);
  P=nv?parseInt(M.getAttribute('data-pp-naver-price'),10):parseInt(P&&P.getAttribute('ec-data-price'),10);
- if(P>0){pr=d.createElement('span');pr.className='pp-price';pr.appendChild(d.createTextNode('₩'+P.toLocaleString('ko-KR')));PR=pr;
+ if(P>0){pr=d.createElement('span');pr.className='pp-price';pfx=nv?M.getAttribute('data-pp-price-prefix')||'':'';plain(pr,P,pfx);PR=pr;
   EV=nv?pj(M,'data-pp-ev'):null;if(EV&&!(EV.coupon>0&&EV.normal>0&&EV.ends))EV=null;if(EV)evPrice(pr,EV)}
  if(top){W=d.createElement('div');W.className='pp-nav';var nm=d.createElement('span');nm.className='pp-nm';nm.appendChild(d.createTextNode(M.getAttribute('data-pp-name')||''));
   W.appendChild(nm);if(pr)W.appendChild(pr);W.appendChild(B);R.classList.add('pp-ui-top');
@@ -416,7 +430,7 @@ function buy(){if(!M)return;
   e.preventDefault();try{emit('pp_buy_click',null,A);
   if(M.getAttribute('data-pp-buy-mode')=='submit'&&typeof w.product_submit=='function'){w.product_submit(1,'/exec/front/order/basket/',B);return}
   go(d.querySelector('.xans-product-action')||d.getElementById('fixedActionButton'))
- }catch(x){w.console&&console.warn('pp_v42',x&&x.message)}});
+ }catch(x){w.console&&console.warn('pp_v43',x&&x.message)}});
  R.appendChild(W);setAct(1);
  slice.call(d.querySelectorAll('[data-pp-cta]')).forEach(function(a){
   if(nv){var sc=a.closest&&a.closest('[data-pp-scene]'),id=sc?sc.getAttribute('data-pp-scene'):'';a.href=nuf(a.classList.contains('pp-btn')?(kw.end||'cta_end'):(kw.link||'cta_{scene}').replace('{scene}',id));a.target='_blank';a.rel='noopener noreferrer';a.addEventListener('click',function(){try{emit('pp_buy_click',null,A,'naver')}catch(x){}})}
@@ -452,15 +466,15 @@ function s1(el){
 var SL={};
 function pj(el,k){try{return JSON.parse(el.getAttribute(k)||'{}')||{}}catch(x){return{}}}
 function slot(el){
- var nm=el.getAttribute('data-pp-slot'),st=(el.getAttribute('data-pp-states')||'').split(','),cu=pj(el,'data-pp-cuts'),cl=pj(el,'data-pp-clips'),lb=pj(el,'data-pp-labels'),
-  wt=el.getAttribute('data-pp-wait')=='1',wl=el.querySelector('.pp-wait'),fi=el.querySelector('img'),sq=(el.getAttribute('data-pp-seq')||'').split(',').filter(Boolean),
+ var nm=el.getAttribute('data-pp-slot'),st=(el.getAttribute('data-pp-states')||'').split(','),cu=pj(el,'data-pp-cuts'),cl=pj(el,'data-pp-clips'),
+  fi=el.querySelector('img'),sq=(el.getAttribute('data-pp-seq')||'').split(',').filter(Boolean),
   rest=st.indexOf(el.getAttribute('data-pp-rest')||''),Ly=[],cur=-1,pvL=null,tk=0,vis=false,pre=false,go1=0,wn={},ct,k,im,own,c,L;
  function els(L){return L.vd?[L.im,L.vd]:[L.im]}
  function cls(L,n,on){els(L).forEach(function(e){e.classList[on?'add':'remove'](n)})}
- function warn(t){w.console&&console.warn('pp_v42 '+nm+'/'+t)}
+ function warn(t){w.console&&console.warn('pp_v43 '+nm+'/'+t)}
  for(k=0;k<st.length;k++)if(cu[st[k]]){
   own=k==0&&fi;im=own?fi:d.createElement('img');
-  if(!own){im.alt='';im.setAttribute('aria-hidden','true');im.decoding='async';el.insertBefore(im,wl||null)}
+  if(!own){im.alt='';im.setAttribute('aria-hidden','true');im.decoding='async';el.appendChild(im)}
   c=cl[st[k]]||{};L={im:im,src:cu[st[k]],clip:c,ok:null,cb:[],on:0,k:k,vd:null};Ly[k]=L;
   if(c.mp4&&!RM){
    L.vd=d.createElement('video');L.vd.muted=true;L.vd.defaultMuted=true;L.vd.setAttribute('muted','');L.vd.playsInline=true;L.vd.setAttribute('playsinline','');
@@ -488,7 +502,6 @@ function slot(el){
  function retire(L){cls(L,'pp-prev',0);if(L.vd)L.vd.classList.remove('pp-play')}
  function apply(k,j){var N=j>=0?Ly[j]:null,O=cur>=0?Ly[cur]:null,lack=j!==k;
   if(lack&&!wn[k]){wn[k]=1;warn(st[k]+': 컷 없음 - '+(j>=0?'이전 컷('+st[j]+') 유지':'비어 있음'))}
-  if(wl){wl.hidden=!(wt&&lack);if(lack)wl.textContent='디자인팀 컷 대기 · '+(lb[st[k]]||st[k])}
   el.setAttribute('data-pp-cur',st[k]);el.setAttribute('data-pp-shown',j>=0?st[j]:'');
   if(j===cur)return;
   if(pvL&&pvL!==O)retire(pvL);
@@ -506,6 +519,28 @@ function slot(el){
  if(w.IntersectionObserver){
   new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){preload();o.disconnect()}},{rootMargin:'400px 0px'}).observe(el);
   new w.IntersectionObserver(function(es){if(es[0].isIntersecting)enter();else leave()},{threshold:.3}).observe(el)
+ }else enter()}
+
+/* 영상 프레임 타일: 프레임 이미지(base+번호+확장자)를 캔버스에 시간 순서대로 한 번 그리고 마지막 프레임에서 멈춘다. 정지 이미지는 영상이 뜨기 전·JS 꺼짐·읽기 실패의 폴백.
+   화면에 30% 이상 들어오면 시작(프레임이 다 모이거나 2.5초 뒤 첫 프레임이 있으면). 못 읽은 프레임은 직전 프레임으로 이어 간다. 움직임 줄이기: 마지막 프레임만 읽어 정지로 보여 준다. */
+function seqclip(el){
+ var n=+el.getAttribute('data-pp-count')||0,base=el.getAttribute('data-pp-base')||'',ext=el.getAttribute('data-pp-ext')||'.webp',fps=+el.getAttribute('data-pp-fps')||12,
+  W=+el.getAttribute('data-pp-w')||720,H=+el.getAttribute('data-pp-h')||900,cv=el.querySelector('canvas'),cx=cv&&cv.getContext&&cv.getContext('2d'),
+  Fr=[],loaded=0,nx=1,act=0,vis=false,started=0,late=0,last=0,tw=0,t0=0;
+ if(!cx||!n||!base)return;cv.width=W;cv.height=H;
+ function nm(k){return base+('000'+k).slice(-3)+ext}
+ function load(k,cb){var im=new Image();im.decoding='async';im.onload=function(){Fr[k]=im;cb()};im.onerror=function(){Fr[k]=0;cb()};im.src=nm(k)}
+ function draw(k){var f;while(k>0&&!(Fr[k]&&Fr[k].naturalWidth))k--;if(k<1||k===last)return;f=Fr[k];last=k;cx.drawImage(f,0,0,W,H);el.classList.add('pp-run')}
+ function frame(now){var k=Math.min(n,1+Math.floor((now-t0)/1000*fps));draw(k);if(k<n)w.requestAnimationFrame(frame)}
+ function go(){if(started)return;started=1;clearTimeout(tw);t0=w.performance.now();w.requestAnimationFrame(frame)}
+ function check(){if(started||!vis)return;if(loaded>=n||(late&&Fr[1]))go()}
+ function pump(){while(act<6&&nx<=n){act++;load(nx++,function(){act--;loaded++;pump();check()})}}
+ if(RM){load(n,function(){draw(n)});return}
+ if(el.getAttribute('data-pp-eager')=='1')pump();
+ function enter(){vis=true;pump();if(!tw&&!started)tw=setTimeout(function(){late=1;check()},2500);check()}
+ if(w.IntersectionObserver){
+  new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){pump();o.disconnect()}},{rootMargin:'400px 0px'}).observe(el);
+  new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){enter();o.disconnect()}},{threshold:.3}).observe(el)
  }else enter()}
 
 /* S2: 클릭휠. 각도 누적 -> 메뉴 이동(+틱) -> 슬롯 상태 번호. 휠은 이미지에 그려진 휠 위의 보이지 않는 히트 영역뿐(그리지 않는다). 메뉴는 JS 없이도 <a href> 목록. */
@@ -571,7 +606,7 @@ function boot(){
  w.addEventListener('load',function(){rf();idle(function(){slice.call(R.querySelectorAll('img[loading=lazy]')).forEach(function(im){im.loading='eager';if(!im.complete)im.addEventListener('load',rf)})})})}
 
 try{
- buy();evInit();slice.call(d.querySelectorAll('[data-pp-slot]')).forEach(slot);wheel();sound();
+ buy();evInit();slice.call(d.querySelectorAll('[data-pp-slot]')).forEach(slot);slice.call(d.querySelectorAll('[data-pp-seqclip]')).forEach(seqclip);wheel();sound();
  if(G&&T&&G.matchMedia){
   var e1=d.querySelector('[data-pp-s1]');if(e1&&!RM)s1(e1);
   boot()
@@ -580,7 +615,7 @@ try{
   for(i=0;i<S.length;i++)O.observe(S[i])
  }else for(i=0;i<S.length;i++)S[i].className+=' pp-in'
 }catch(e){
- R.classList.remove('pp-js');w.console&&console.warn('pp_v42',e&&e.message);
+ R.classList.remove('pp-js');w.console&&console.warn('pp_v43',e&&e.message);
  try{if(T)T.getAll().forEach(function(t){t.kill()});if(SP&&SP.revert)slice.call(d.querySelectorAll('[data-pp-split]')).forEach(function(x){var s=SP.get&&SP.get(x);s&&s.revert&&s.revert()});if(G)G.set(R.querySelectorAll('[data-pp-r],.pp-ln'),{clearProps:'all'})}catch(x){}
 }
 })();
