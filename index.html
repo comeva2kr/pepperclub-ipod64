@@ -144,9 +144,7 @@
 .pp-landing [data-pp-kind="mood"]{padding:0;background:#000;color:#fff}
 .pp-landing .pp-photo{position:relative;margin:0;padding-top:56px;background:#000}
 .pp-landing .pp-photo>img{width:100%;height:min(150vw,980px);object-fit:cover;object-position:50% 62%}
-.pp-landing .pp-photo-txt{position:absolute;left:0;right:0;top:0;padding:clamp(48px,12vw,88px) var(--pp-gutter) var(--pp-s5);background:linear-gradient(rgba(0,0,0,.66),rgba(0,0,0,.4) 72%,rgba(0,0,0,0))}
 .pp-landing .pp-photo-txt p{font-size:clamp(34px,9.4vw,52px);font-weight:700;letter-spacing:var(--pp-track-head);line-height:1.18}
-.pp-landing .pp-photo-cta{position:absolute;left:0;right:0;bottom:0;padding:var(--pp-s4) 0 36px;text-align:center;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.5))}
 .pp-landing .pp-photo-cta .pp-link{color:#fff;font-size:21px;min-height:44px}
 
 /* 다리: 클릭휠 */
@@ -238,200 +236,179 @@
 /* full: 감는 중에는 즉시 보인다. lite: 장면 진입 때 끝 프레임이 천천히 페이드(장면 전환 연출은 길어도 된다) */
 .pp-landing.pp-static [data-pp-seq]>canvas,.pp-landing [data-pp-seq].pp-end>canvas{transition:opacity .9s ease-out}
 .pp-landing [data-pp-vscrub][hidden],.pp-landing [data-pp-vscrub]>video[hidden]{display:none}
-/* pp-landing v4.4 '화려한 판' 마일스톤 1(1막 11장면) — pp_v43.css + pp_v431_fix.css + pp_v44_engine.css 뒤에 붙는다(빌더가 이어 붙임). 모든 선택자는 .pp-landing 아래. 시각 값은 v4.3.1 토큰 그대로(흰 바탕·#1d1d1f/#6e6e73/#f5f5f7·파랑 하나), 새 색 없음.
-   장면 틀: 키 큰 구간([data-pp-sticky], 높이 = --pp-k × 화면 높이) 안에 화면 한 장 높이의 .pp-st 가 CSS sticky 로 붙는다(GSAP pin 안 씀 → 핀 순서 문제 없음). 효과가 꺼지면(JS 꺼짐·움직임 줄이기·lite 등급) 키 큰 구간이 접히고 포스터·문구가 위에서 아래로 그대로 읽힌다.
-   효과 켜짐 = .pp-js 있고 .pp-static 없음. JS 는 CSS 변수·클래스만 바꾸고, 변수는 효과 켜짐일 때만 CSS 가 쓴다(lite 로 내려가도 정지 상태가 안 깨진다). */
+
 
 /* ── 공통: 키 큰 구간 + sticky 한 장 ── */
+.pp-landing{--pw:calc((100svh - 44px)*var(--pp-w,.5625)/var(--pp-h,1));--ftt:#aaa8a9;--ftb:#c9c8cd}
 .pp-landing [data-pp-sticky]{position:relative;height:calc(var(--pp-k,3)*100vh)}
 @supports (height:100svh){.pp-landing [data-pp-sticky]{height:calc(var(--pp-k,3)*100svh)}}
 .pp-landing .pp-st{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--pp-bg)}
 @supports (height:100svh){.pp-landing .pp-st{height:100svh}}
 .pp-landing:not(.pp-js) [data-pp-sticky],.pp-landing.pp-static [data-pp-sticky]{height:auto}
 .pp-landing:not(.pp-js) .pp-st,.pp-landing.pp-static .pp-st{position:relative;height:auto;overflow:visible}
-.pp-landing [data-pp-kind="fs"],.pp-landing [data-pp-kind="stk"],.pp-landing [data-pp-kind="plug"],.pp-landing [data-pp-kind="hold"],.pp-landing [data-pp-kind="swipe"]{padding:0}
+.pp-landing [data-pp-kind="fs"],.pp-landing [data-pp-kind="stk"],.pp-landing [data-pp-kind="plug"],.pp-landing [data-pp-kind="hold"],.pp-landing [data-pp-kind="s1"]{padding:0}
 .pp-landing .pp-dk{background:#000;color:#fff}
 .pp-landing .pp-dk .pp-st{background:#000}
-.pp-landing .pp-dk .pp-h2,.pp-landing .pp-dk .pp-lede{color:#fff}
-.pp-landing .pp-dk .pp-lede{color:rgba(255,255,255,.8)}
 .pp-landing .pp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
-.pp-landing.pp-js:not(.pp-static) .pp-sronly{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
 .pp-landing .pp-note9{font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
-.pp-landing .pp-dk .pp-note9{color:rgba(255,255,255,.7)}
 
-/* ── 1-0 훅: 화면 가득 시퀀스 + 한 단어씩 ── */
-.pp-landing .pp-fs{position:relative;width:100%;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#dcdcde}
-.pp-landing.pp-js:not(.pp-static) .pp-st>.pp-fs{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
-.pp-landing .pp-fs::after{content:"";position:absolute;left:0;right:0;bottom:0;height:26%;background:linear-gradient(rgba(255,255,255,0),#fff);pointer-events:none;z-index:2}   /* 영상 밝은 회색 → 페이지 흰 바탕 이음새(제품이 아니라 영상 가장자리만 흰색으로 풀어 줌) */
+/* ── 세로 영상 배경(.pp-vb): 세로 화면 = 화면 가득(cover). 가로 화면 = 자르지 않고 높이에 맞춘 테두리 또렷한 세로 판(양옆은 페이지 바탕) ── */
+.pp-landing .pp-vbox{position:relative;width:100%;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#d6d6d8;container-type:inline-size}
+.pp-landing.pp-js:not(.pp-static) .pp-vb>.pp-vbox{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
+.pp-landing .pp-vbox>img,.pp-landing .pp-vbox>canvas{object-position:var(--op,50% 50%)}
 .pp-landing .pp-words{display:none}
-.pp-landing.pp-js:not(.pp-static) .pp-words{display:block;position:absolute;left:0;right:0;top:19%;height:1.3em;z-index:3;pointer-events:none;text-align:center;font-size:clamp(56px,17vw,132px);font-weight:800;line-height:1.1;letter-spacing:-.045em;color:var(--pp-ink)}
-.pp-landing .pp-wd{position:absolute;left:0;right:0;top:0;padding:0 var(--pp-gutter);opacity:0;transform:translateY(.28em);transition:opacity .16s ease-in,transform .3s ease-in}
-.pp-landing .pp-wd.pp-on{opacity:1;transform:none;transition:opacity .35s ease-out .22s,transform .5s var(--pp-ease) .22s}   /* 앞 단어가 빠지는 시간(.16s)보다 늦게 들어온다 — 같은 순간에 두 단어가 보이지 않게 */
+.pp-landing .pp-vtx{position:absolute;z-index:3;pointer-events:none}
+@media (min-aspect-ratio:11/10){
+ .pp-landing .pp-vb{--stg:#dddcdb}
+ .pp-landing.pp-js:not(.pp-static) .pp-vb{background:var(--stg)}
+ .pp-landing.pp-js:not(.pp-static) .pp-vb>.pp-vbox{left:calc(62% - var(--pw)/2);top:44px;width:var(--pw);height:calc(100svh - 44px);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+}
+
+/* ── 1-0 훅: 영상 가득 + 한 단어씩(아이팟과 안 겹치는 자리: 위 t / 아래 b) ── */
+.pp-landing.pp-js:not(.pp-static) .pp-words{display:block;position:absolute;left:0;right:0;top:0;bottom:0;z-index:3;pointer-events:none;text-align:center;font-size:clamp(44px,15.4vw,110px);font-weight:700;line-height:1.1;letter-spacing:-.04em;color:var(--pp-ink)}
+.pp-landing .pp-wd{position:absolute;left:0;right:0;top:10%;padding:0 var(--pp-gutter);opacity:0;transform:translateY(.28em);transition:opacity .16s ease-in,transform .3s ease-in}
+.pp-landing .pp-wd[data-s="b"]{top:68%}
+.pp-landing .pp-wd.pp-on{opacity:1;transform:none;transition:opacity .35s ease-out .22s,transform .5s var(--pp-ease) .22s}
 .pp-landing .pp-wd.pp-off{opacity:0;transform:translateY(-.2em);transition:opacity .16s ease-in,transform .3s ease-in}
+@media (min-aspect-ratio:11/10){
+ .pp-landing.pp-js:not(.pp-static) .pp-words{right:calc(38% + var(--pw)/2);left:0;font-size:min(16svh,9vw)}
+ .pp-landing .pp-wd,.pp-landing .pp-wd[data-s="b"]{top:calc(50% - .55em)}
+}
 .pp-landing .pp-hero-txt{padding:var(--pp-s5) var(--pp-gutter) 0;text-align:center}
 .pp-landing .pp-hero-txt .pp-h1x{font-size:clamp(40px,12vw,84px)}
 .pp-landing.pp-js:not(.pp-static) .pp-hero-txt{position:absolute;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));z-index:3;padding:0 var(--pp-gutter);pointer-events:none}
 .pp-landing.pp-js:not(.pp-static) .pp-hero-txt .pp-h1x{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .pp-landing .pp-hero-txt .pp-name{margin-top:12px}
-.pp-landing .pp-cue9{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;text-align:center;font-size:13px;letter-spacing:.08em;color:var(--pp-ink3);display:none}
+.pp-landing .pp-hero-txt,.pp-landing .pp-cue9{transition:opacity .3s ease-out}
+.pp-landing .pp-late .pp-hero-txt,.pp-landing .pp-late .pp-cue9{opacity:0}
+@media (min-aspect-ratio:11/10){.pp-landing.pp-js:not(.pp-static) .pp-hero-txt{right:calc(38% + var(--pw)/2)}}
+.pp-landing .pp-cue9{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;text-align:center;font-size:13px;letter-spacing:.08em;color:var(--pp-ink2);display:none}
 .pp-landing.pp-js:not(.pp-static) .pp-cue9{display:block}
 
-/* ── 1-0b 잭 끌어 꽂기: 화면 전체가 어두운 장면(viewport 꽉 채움). 영상은 cover — 자연 비율 유지, 넘치는 쪽만 잘림. 위(흰→어둠)·아래(어둠→흰)는 그라데이션으로 이어 단색 띠가 안 남는다 ── */
-.pp-landing [data-pp-kind="plug"]{padding:0}
-.pp-landing .pp-jack{position:relative;height:100vh;overflow:hidden;background:#000;text-align:center}
-@supports (height:100svh){.pp-landing .pp-jack{height:100svh}}
-.pp-landing .pp-jack::before,.pp-landing .pp-jack::after{content:"";position:absolute;left:0;right:0;height:26%;z-index:3;pointer-events:none}
-.pp-landing .pp-jack::before{top:0;background:linear-gradient(#fff 0,rgba(255,255,255,.88) 14%,rgba(255,255,255,0))}
-.pp-landing .pp-jack::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.88) 86%,#fff 100%)}
-.pp-landing .pp-plug{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:#000;touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:ew-resize;outline:none}
-.pp-landing .pp-plug:focus-visible{outline:3px solid var(--pp-accent);outline-offset:-3px}
-.pp-landing .pp-jk{position:absolute;left:50%;top:50%;width:max(100%,calc(100vh*var(--pp-w)/var(--pp-h)));aspect-ratio:var(--pp-w)/var(--pp-h);transform:translate(-50%,-50%)}
-@supports (height:100svh){.pp-landing .pp-jk{width:max(100%,calc(100svh*var(--pp-w)/var(--pp-h)))}}
-.pp-landing .pp-jk img,.pp-landing .pp-jk canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
-.pp-landing .pp-jk canvas{opacity:0}
-.pp-landing .pp-plug.pp-run canvas{opacity:1}
-.pp-landing.pp-js .pp-plug:not(.pp-run) img{opacity:0}   /* 효과 켜짐: 첫 프레임이 그려지기 전엔 꽂힌 포스터를 보이지 않게(깜빡임 방지). 꺼짐·움직임 줄이기는 꽂힌 포스터 그대로 */
-.pp-landing .pp-jack-txt{position:absolute;left:0;right:0;top:max(23svh,calc(52px + var(--pp-s5)));z-index:4;padding:var(--pp-s5) var(--pp-gutter) var(--pp-s6);pointer-events:none;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.52) 38%,rgba(0,0,0,.52) 62%,rgba(0,0,0,0))}   /* 흰→어둠 그라데이션(맨 위)을 가리지 않게 글자 상자는 그 아래에서 시작 */
-.pp-landing .pp-jack-txt .pp-h2{color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.5)}
-.pp-landing .pp-chip9{position:absolute;left:62%;top:63%;transform:translate(-50%,-50%);z-index:3;display:none;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--pp-r-pill);background:rgba(29,29,31,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;pointer-events:none;transition:opacity .3s ease}
-.pp-landing.pp-js .pp-chip9{display:inline-flex}
-.pp-landing .pp-chip9 i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#fff;animation:pp-nudge 1.4s ease-in-out infinite}
-@keyframes pp-nudge{0%,100%{transform:translateX(6px);opacity:.5}50%{transform:translateX(-6px);opacity:1}}
-.pp-landing [data-pp-kind="plug"].pp-plugged .pp-chip9,.pp-landing [data-pp-kind="plug"].pp-drag .pp-chip9{opacity:0}
-.pp-landing .pp-click9{position:absolute;left:50%;top:70%;z-index:3;transform:translateX(-50%) scale(.9);font-size:var(--pp-t-h3);font-weight:800;letter-spacing:-.03em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.6);opacity:0;transition:opacity .25s ease-out,transform .35s var(--pp-ease);pointer-events:none}
-.pp-landing [data-pp-kind="plug"].pp-plugged .pp-click9,.pp-landing:not(.pp-js) .pp-click9{opacity:1;transform:translateX(-50%)}
-.pp-landing .pp-ring9{position:absolute;left:31%;top:54%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:3px solid #fff;opacity:0;pointer-events:none;z-index:2}
-.pp-landing [data-pp-kind="plug"].pp-plugged .pp-ring9{animation:pp-ring .7s ease-out 1}
-@keyframes pp-ring{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(2.4)}}
+/* ── 1-0b 잭: 스크롤로 꽂힘 + '딸깍' 글자·충격선(글자·선만, 아이콘 없음). 글자는 영상 위(그림자만) ── */
+.pp-landing .pp-jackst{background:#000;--stg:#545454}
+.pp-landing .pp-jackst .pp-vbox{background:#000;color:#fff}
+.pp-landing.pp-js:not(.pp-static) .pp-jk:not(.pp-seq-on)>img{opacity:0}
+.pp-landing .pp-jt{position:absolute;left:43%;margin:0;color:#fff;font-weight:700;letter-spacing:-.03em;line-height:1.22;text-align:left;text-shadow:0 1px 10px rgba(0,0,0,.65);z-index:3;pointer-events:none;font-size:8.2cqw}
+.pp-landing .pp-jt1{top:14%}
+.pp-landing .pp-jt1s{top:76%;font-size:4.7cqw;font-weight:600;opacity:0;transition:opacity .3s ease-out}
+.pp-landing .pp-jt2{top:66%}
+.pp-landing .pp-jt2 span{display:block;opacity:0;transform:translateY(.4em);transition:opacity .35s ease-out,transform .5s var(--pp-ease)}
+.pp-landing .pp-jt2 span.pp-on{opacity:1;transform:none}
+.pp-landing .pp-jt1{transition:opacity .3s ease-out}
+.pp-landing .pp-jackst.pp-plugged .pp-jt1{opacity:0;transition-duration:.08s}
+.pp-landing .pp-jackst.pp-plugged:not(.pp-t2) .pp-jt1s{opacity:1}
+.pp-landing .pp-jackst.pp-t2 .pp-jt1s{opacity:0}
+.pp-landing .pp-jclick{position:absolute;left:43.6%;top:24.3%;margin:0;z-index:4;color:#fff;font-weight:800;font-size:19.5cqw;line-height:1;letter-spacing:-.06em;text-shadow:0 2px 14px rgba(0,0,0,.6);opacity:0;transform:rotate(-7deg) scale(.6);transform-origin:0 100%;pointer-events:none;white-space:nowrap}
+.pp-landing .pp-jackst.pp-plugged .pp-jclick{opacity:1;animation:pp-pop .12s ease-out 1 both}
+.pp-landing .pp-jackst.pp-t2 .pp-jclick{font-size:10.3cqw;opacity:.55;animation:none;transform:rotate(-7deg);transition:font-size .3s ease-out,opacity .3s ease-out}
+@keyframes pp-pop{0%{transform:rotate(-7deg) scale(.6)}60%{transform:rotate(-7deg) scale(1.08)}100%{transform:rotate(-7deg) scale(1)}}
+.pp-landing .pp-imp{position:absolute;left:48%;top:47%;width:0;height:0;z-index:4;pointer-events:none}
+.pp-landing .pp-imp i{position:absolute;left:0;top:0;width:11cqw;height:5px;margin-top:-2.5px;border-radius:5px;background:#fff;opacity:0;transform-origin:0 50%}
+.pp-landing .pp-imp i:nth-child(1){--a:-62deg}.pp-landing .pp-imp i:nth-child(2){--a:-38deg}.pp-landing .pp-imp i:nth-child(3){--a:-14deg}.pp-landing .pp-imp i:nth-child(4){--a:-86deg;width:8cqw}
+.pp-landing .pp-jackst.pp-pop .pp-imp i{animation:pp-imp .2s ease-out 1 both}
+@keyframes pp-imp{0%{opacity:1;transform:rotate(var(--a)) translateX(2cqw) scaleX(.3)}70%{opacity:1;transform:rotate(var(--a)) translateX(9cqw) scaleX(1)}100%{opacity:0;transform:rotate(var(--a)) translateX(12cqw) scaleX(.8)}}
+.pp-landing:not(.pp-js) .pp-jt1,.pp-landing.pp-static .pp-jt1,.pp-landing:not(.pp-js) .pp-jt1s,.pp-landing.pp-static .pp-jt1s{display:none}
+.pp-landing:not(.pp-js) .pp-jt2 span,.pp-landing.pp-static .pp-jt2 span{opacity:1;transform:none}
+.pp-landing:not(.pp-js) .pp-jclick,.pp-landing.pp-static .pp-jclick{opacity:.55;font-size:10.3cqw;transform:rotate(-7deg)}
+.pp-landing .pp-sndtog{position:absolute;right:10px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;font:600 12px/1 var(--pp-font);color:var(--pp-ink2);background:var(--pp-white);border:1px solid var(--pp-line);border-radius:var(--pp-r-pill);padding:7px 11px;min-height:30px;cursor:pointer;opacity:.9}
+.pp-landing .pp-sndtog[aria-pressed="true"]{color:var(--pp-white);background:var(--pp-ink);border-color:var(--pp-ink)}
+@media (prefers-reduced-motion:reduce){.pp-landing .pp-jackst.pp-plugged .pp-jclick{animation:none;transform:rotate(-7deg)}.pp-landing .pp-jackst.pp-pop .pp-imp i{animation:none}}
 
-/* ── 1-1 기억 / 1-2 등장 / 초점 ── */
-.pp-landing .pp-st.pp-ctr{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4)}
-.pp-landing:not(.pp-js) .pp-st.pp-ctr,.pp-landing.pp-static .pp-st.pp-ctr{padding:var(--pp-s7) 0}
-.pp-landing .pp-sq{position:relative;width:min(100%,720px);aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#cfd6d8}
-.pp-landing .pp-sq::before{content:"";position:absolute;left:0;right:0;top:0;height:14%;background:linear-gradient(#fff,rgba(255,255,255,0));pointer-events:none;z-index:2}
-.pp-landing .pp-sq::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14%;background:linear-gradient(rgba(255,255,255,0),#fff);pointer-events:none;z-index:2}
-@media (min-width:769px){.pp-landing .pp-sq{border-radius:var(--pp-r-tile)}.pp-landing .pp-sq::before,.pp-landing .pp-sq::after{display:none}}
+/* ── 1-1 기억 ── */
+.pp-landing .pp-cap9{position:absolute;left:0;right:0;top:96px;margin:0;padding:0 var(--pp-gutter);z-index:3;text-align:center;font-size:clamp(26px,7.7vw,46px);font-weight:700;letter-spacing:-.035em;line-height:1.2;color:var(--pp-ink);text-shadow:0 1px 8px rgba(255,255,255,.55)}
+.pp-landing .pp-cap9 .pp-cl{display:block;text-wrap:balance}
+.pp-landing:not(.pp-js) .pp-cap9,.pp-landing.pp-static .pp-cap9{position:static;padding:var(--pp-s5) var(--pp-gutter)}
+@media (min-aspect-ratio:11/10){.pp-landing.pp-js:not(.pp-static) .pp-cap9{top:50%;transform:translateY(-50%);right:calc(38% + var(--pw)/2);text-align:left;padding-left:56px;font-size:min(9.5svh,120px)}}
 .pp-landing .pp-ch{display:inline-block;white-space:pre}
 .pp-landing .pp-cw{display:inline-block;white-space:nowrap}
 .pp-landing.pp-js:not(.pp-static) .pp-ch{opacity:.0;transform:translateY(.4em);transition:opacity .3s ease-out,transform .45s var(--pp-ease)}
 .pp-landing.pp-js:not(.pp-static) .pp-ch.pp-on{opacity:1;transform:none}
-.pp-landing .pp-cap9{padding:0 var(--pp-gutter);text-align:center;font-size:var(--pp-t-h2);font-weight:700;letter-spacing:var(--pp-track-head);line-height:1.14;text-wrap:balance}
-.pp-landing .pp-ap-title{position:relative;z-index:3;padding:0 var(--pp-gutter);text-align:center}
-.pp-landing .pp-ap-title .pp-h2{font-size:clamp(40px,11.4vw,76px)}
-.pp-landing:not(.pp-js) .pp-ap-title,.pp-landing.pp-static .pp-ap-title{padding-bottom:var(--pp-s4)}
-.pp-landing .pp-focus-box{position:relative;width:100%;max-width:860px;aspect-ratio:4/3;overflow:hidden;background:#e9ecec}   /* 860x483 원본을 4:3 상자에 cover — 폭 390 기준 0.61 css px/원본 px(DPR2 에서 1.2배 확대, 거칠면 폭 100% 띠로 되돌림) */
-.pp-landing .pp-focus-box::before,.pp-landing .pp-focus-box::after{content:"";position:absolute;left:0;right:0;height:14%;z-index:2;pointer-events:none}
-.pp-landing .pp-focus-box::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
-.pp-landing .pp-focus-box::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
-.pp-landing [data-pp-kind="band"]{padding:var(--pp-s5) 0 var(--pp-s6)}
 
-/* ── 1-3 360: sticky 한 장 + 끌어 돌리기 ── */
-.pp-landing [data-pp-kind="s1"]{padding:0;background:#fff;min-height:0;display:block}
-.pp-landing.pp-js [data-pp-kind="s1"]{min-height:0;display:block}
-.pp-landing [data-pp-kind="s1"] .pp-st{display:flex;align-items:center;justify-content:center}
-.pp-landing [data-pp-kind="s1"] .pp-s1-wrap{padding-top:calc(52px + var(--pp-s3));touch-action:pan-y}
-.pp-landing [data-pp-s1]{touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
-.pp-landing [data-pp-s1].pp-grab{cursor:grabbing}
-.pp-landing .pp-hint9{display:none;margin:4px 0 0;font-size:14px;color:var(--pp-ink3);text-align:center}
+/* ── 정면 선명컷 장면(1-2·1-5·1-7·아이팟 안에서): 사진 전체가 한 장. 사진 위·아래가 모자라면 사진 맨 위·맨 아래 줄을 늘려 이어 채움(그라데이션·흐림 없음). 크기·자리는 JS(ftLayout)가 정한다 ── */
+.pp-landing .pp-ft{background:var(--ftt)}
+.pp-landing .pp-ft .ft-ph{position:absolute;left:0;top:0;width:100%;aspect-ratio:1/1}
+.pp-landing:not(.pp-js) .pp-ft .ft-ph,.pp-landing.pp-static .pp-ft .ft-ph{position:relative;max-width:560px;margin:0 auto}
+.pp-landing .ft-img,.pp-landing .ft-front{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;display:block;pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+.pp-landing .ft-ext{position:absolute;left:0;width:100%;height:30vh;max-width:none;display:block;pointer-events:none}
+.pp-landing .ft-ext.ft-et{bottom:100%}.pp-landing .ft-ext.ft-eb{top:100%}
+.pp-landing .pp-ft .ips-screen{--scr-l:32.0175%}
+.pp-landing .pp-ft .ft-scr{transition:opacity .25s ease-out}
+.pp-landing .pp-ft.ft-play .ft-scr{opacity:0}
+.pp-landing .pp-ft .ips-menu{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.pp-landing .pp-ft-title{position:absolute;left:0;right:0;margin:0;padding:0 var(--pp-gutter);z-index:3;text-align:center;font-size:clamp(26px,8vw,48px);line-height:1.18;color:var(--pp-ink);text-shadow:0 1px 8px rgba(255,255,255,.5)}
+.pp-landing:not(.pp-js) .pp-ft-title,.pp-landing.pp-static .pp-ft-title{position:static;padding:var(--pp-s4) var(--pp-gutter)}
+.pp-landing .pp-ft-hint{position:absolute;left:0;right:0;margin:0;z-index:3;text-align:center;font-size:14px;font-weight:600;color:#3a3a3c;pointer-events:none}
+.pp-landing:not(.pp-js) .pp-ft-hint,.pp-landing.pp-static .pp-ft-hint{display:none}
+@media (min-aspect-ratio:11/10){
+ .pp-landing .pp-ft{background:var(--pp-bg)}
+ .pp-landing.pp-js:not(.pp-static) .pp-ft .ft-ph{overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
+ .pp-landing.pp-js:not(.pp-static) .pp-ft .ft-ext{display:none}
+ .pp-landing.pp-js:not(.pp-static) .pp-ft-title{text-align:left;font-size:min(9.5svh,120px);padding:0}
+}
+/* 1-2 등장: 사진 전체 → 화면+휠이 가득(세로 폰만 확대, 확대는 가장 큰 크기로 깔아 두고 줄이는 방식이라 끝 상태가 또렷) */
+.pp-landing .ft-ph.ft-zoom{transform-origin:50% 50%}
+.pp-landing.pp-js:not(.pp-static) .pp-ft[data-ft-zoom] .ft-ph{will-change:transform}   /* 확대 장면의 큰 사진 층은 한 번만 래스터하고 합성기가 줄이기만(끝 상태는 transform 없음 — 사진이라 글자 흐림 문제 없음) */
+
+/* v4.3 의 s1 장면 flex 가운데 정렬 해제(sticky 구간이 폭 0 이 되던 것) */
+.pp-landing [data-pp-kind="s1"],.pp-landing.pp-js [data-pp-kind="s1"]{display:block;min-height:0;padding:0;background:#fff}
+/* ── 1-3 360(G2): 앞은 화면 / 옆은 두께 / 뒤는 거울 ── */
+.pp-landing .pp-g360{background:#f8f7fa}
+.pp-landing .pp-g360 .pp-vbox{background:#f8f7fa}
+.pp-landing .pp-g360lab{list-style:none;margin:0;padding:0;position:absolute;left:0;right:0;top:calc(44px + 6svh);z-index:3;text-align:center;font-size:clamp(30px,9vw,60px);font-weight:700;letter-spacing:-.04em;color:var(--pp-ink)}
+.pp-landing .pp-g360lab li{position:absolute;left:0;right:0;top:0;opacity:0;transform:translateY(.3em);transition:opacity .25s ease-out,transform .35s var(--pp-ease)}
+.pp-landing .pp-g360lab li.pp-on{opacity:1;transform:none}
+.pp-landing .pp-hint9{display:none;position:absolute;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom,0px));margin:0;z-index:3;font-size:14px;color:var(--pp-ink2);text-align:center}
 .pp-landing.pp-js:not(.pp-static) .pp-hint9{display:block}
-@media (min-width:769px){.pp-landing [data-pp-kind="s1"] [data-pp-sticky]{--pp-k:4}}
+.pp-landing:not(.pp-js) .pp-g360lab,.pp-landing.pp-static .pp-g360lab{position:static;padding:var(--pp-s4) var(--pp-gutter)}
+.pp-landing:not(.pp-js) .pp-g360lab li,.pp-landing.pp-static .pp-g360lab li{position:static;opacity:1;transform:none;font-size:clamp(26px,7vw,40px);padding:6px 0}
+.pp-landing [data-pp-rotate]{touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.pp-landing [data-pp-rotate].pp-grab{cursor:grabbing}
+@media (min-aspect-ratio:11/10){.pp-landing.pp-js:not(.pp-static) .pp-g360lab{right:calc(38% + var(--pw)/2);top:calc(50% - .6em);text-align:center;font-size:min(9.5svh,120px)}}
 
-/* lite(느린 기기)·효과 꺼짐: 360 은 정지 컷 3장 + 각도 문구 목록이 위에서 아래로 그대로 읽힌다(JS 켜짐이어도 접힌 구간에서 문구가 겹치지 않게) */
-.pp-landing.pp-static.pp-js .pp-cuts{display:flex}
-.pp-landing.pp-static.pp-js [data-pp-s1]{display:none}
-.pp-landing.pp-static.pp-js .pp-angles{position:static;min-height:0}
-.pp-landing.pp-static.pp-js .pp-angles li{position:static;opacity:1;transform:none;pointer-events:auto;padding:18px 0;border-top:1px solid var(--pp-line)}
-.pp-landing.pp-static.pp-js .pp-prog{display:none}
-.pp-landing.pp-static [data-pp-kind="s1"] .pp-s1-wrap{padding-top:var(--pp-s6)}
-
-/* ── 1-4 거울 뒷판: 스크롤 감기 + 폰 기울이기/끌기 시차 ── */
+/* ── 1-4 거울 뒷판 ── */
 .pp-landing [data-pp-kind="mir"]{padding:0}
 .pp-landing .pp-mir-st{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4);background:#000;touch-action:pan-y}
 .pp-landing:not(.pp-js) .pp-mir-st,.pp-landing.pp-static .pp-mir-st{padding:calc(52px + var(--pp-s6)) 0 var(--pp-s6)}
 .pp-landing .pp-mir-title{padding:0 var(--pp-gutter);text-align:center;color:#fff}
 .pp-landing .pp-mir-title .pp-h2{font-size:clamp(34px,9.6vw,64px);color:#fff}
-.pp-landing .pp-par{position:relative;width:min(100%,720px);aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#111}
+.pp-landing .pp-par{position:relative;width:min(100%,720px,calc((100svh - 220px)*var(--pp-w)/var(--pp-h)));aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#111}
 .pp-landing .pp-par>.pp-parin{position:absolute;left:0;top:0;width:100%;height:100%;transform:translate3d(var(--tx,0%),var(--ty,0%),0) scale(1.09);will-change:transform}
 .pp-landing:not(.pp-js) .pp-par>.pp-parin,.pp-landing.pp-static .pp-par>.pp-parin{transform:none}
 .pp-landing .pp-parin>[data-pp-seq]{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
 .pp-landing .pp-mir-hint{display:none;color:rgba(255,255,255,.7);font-size:14px;text-align:center}
 .pp-landing.pp-js:not(.pp-static) .pp-mir-hint{display:block}
-
-/* ── 1-6 줄 이어폰: 스크롤 감기 + 가로 넘기기 ── */
-.pp-landing .pp-bandst{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4);background:#fff}
-.pp-landing:not(.pp-js) .pp-bandst,.pp-landing.pp-static .pp-bandst{padding:var(--pp-s7) 0 var(--pp-s5)}
-.pp-landing .pp-band9{position:relative;width:100%;max-width:860px;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#e6e9e6}
-.pp-landing .pp-band9::before,.pp-landing .pp-band9::after{content:"";position:absolute;left:0;right:0;height:14%;z-index:2;pointer-events:none}
-.pp-landing .pp-band9::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
-.pp-landing .pp-band9::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
-.pp-landing .pp-swipe{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:0 var(--pp-gutter);margin:0;list-style:none;scrollbar-width:none;touch-action:pan-x pan-y}
-.pp-landing .pp-swipe::-webkit-scrollbar{display:none}
-.pp-landing .pp-swipe>li{flex:0 0 82%;max-width:520px;scroll-snap-align:center;border-radius:var(--pp-r-card);overflow:hidden;background:var(--pp-alt)}
-.pp-landing .pp-swipe img{width:100%;height:100%;object-fit:cover}
-.pp-landing .pp-swipe>li.pp-ph{aspect-ratio:16/9}
-.pp-landing .pp-swipe>li.pp-pt{aspect-ratio:4/5}
-.pp-landing .pp-swipe>li.pp-pt img{object-position:34% 58%}
-.pp-landing .pp-swipe>li.pp-ph img,.pp-landing .pp-swipe>li.pp-pt img{height:100%}
-.pp-landing .pp-swcap{margin-top:12px;text-align:center;font-size:var(--pp-t-cap);color:var(--pp-ink2)}
-.pp-landing .pp-dots{display:flex;gap:8px;justify-content:center;margin-top:14px}
-.pp-landing .pp-dots i{width:7px;height:7px;border-radius:50%;background:var(--pp-line)}
-.pp-landing .pp-dots i.pp-on{background:var(--pp-ink)}
-.pp-landing .pp-swipe-wrap{padding:var(--pp-s3) 0 var(--pp-s6)}
-
-/* ── 1-7 소리: 길게 누르기 ── */
-.pp-landing [data-pp-kind="hold"]{padding:var(--pp-s7) 0 var(--pp-s6);background:#fff}
-.pp-landing .pp-holdbox{position:relative;width:100%;max-width:860px;margin:var(--pp-s5) auto 0;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#dfe3e0;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
-.pp-landing .pp-holdbox:focus-visible{outline:3px solid var(--pp-accent);outline-offset:-3px}
-.pp-landing .pp-holdbox img,.pp-landing .pp-holdbox canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover;pointer-events:none}
-.pp-landing .pp-holdbox canvas{opacity:0}
-.pp-landing .pp-holdbox.pp-run canvas{opacity:1}
-.pp-landing .pp-holdbox::before,.pp-landing .pp-holdbox::after{content:"";position:absolute;left:0;right:0;height:12%;z-index:3;pointer-events:none}
-.pp-landing .pp-holdbox::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
-.pp-landing .pp-holdbox::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
-.pp-landing .pp-dim9{position:absolute;inset:0;z-index:2;background:#000;opacity:0;pointer-events:none;transition:opacity .28s ease-out}
-.pp-landing.pp-js .pp-holdbox:not(.pp-on) .pp-dim9{opacity:.55}
-.pp-landing .pp-press9{position:absolute;left:50%;bottom:16%;z-index:4;transform:translateX(-50%);display:none;padding:10px 16px;border-radius:var(--pp-r-pill);background:rgba(29,29,31,.72);color:#fff;font-size:15px;font-weight:600;white-space:nowrap;pointer-events:none;transition:opacity .25s ease}
-.pp-landing.pp-js .pp-press9{display:block}
-.pp-landing .pp-holdbox.pp-on .pp-press9{opacity:0}
-
-
-.pp-landing .pp-rom-st{gap:var(--pp-s3);padding-top:calc(52px + var(--pp-s3))}
-.pp-landing:not(.pp-js) .pp-rom-st,.pp-landing.pp-static .pp-rom-st{padding:var(--pp-s7) 0}
-.pp-landing .pp-rom-txt{padding:0 var(--pp-gutter);text-align:center}
-.pp-landing .pp-rom-txt p{font-size:clamp(30px,8.6vw,52px);font-weight:800;letter-spacing:-.035em;line-height:1.16}
-.pp-landing.pp-js:not(.pp-static) .pp-rl{opacity:0;transform:translateY(.4em);transition:opacity .4s ease-out,transform .55s var(--pp-ease)}
-.pp-landing.pp-js:not(.pp-static) .pp-rl.pp-on{opacity:1;transform:none}
-.pp-landing .pp-sq.pp-frontbox{width:min(100%,500px);aspect-ratio:1/1;background:#d9d9de}
-.pp-landing .pp-frontbox img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
-.pp-landing.pp-js:not(.pp-static) .pp-frontbox img{transform:scale(var(--zs,1));transform-origin:50% 55%;will-change:transform}
-.pp-landing .pp-songbox{padding:0 var(--pp-gutter);text-align:center;min-height:calc(clamp(52px,16vw,120px) + 36px)}
-.pp-landing .pp-songs{display:none;margin:0;font-size:clamp(52px,16vw,120px);font-weight:800;letter-spacing:-.05em;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--pp-ink)}
-.pp-landing .pp-songs.pp-show{display:block}
-.pp-landing .pp-songnote{margin-top:8px;font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
-
-/* ── 1-9 넘어가기: 글자 걷힘 + PEPPER CLUB ── */
-.pp-landing .pp-t9-st{background:#fff}
-.pp-landing .pp-t9-st>.pp-fs{background:#e4e4e6}
-.pp-landing .pp-t9-st>.pp-fs::after{display:none}
-.pp-landing .pp-t9-txt{padding:var(--pp-s6) var(--pp-gutter) var(--pp-s4);text-align:center;position:relative;z-index:3}
-.pp-landing.pp-js:not(.pp-static) .pp-t9-txt{position:absolute;left:0;right:0;top:12%;padding:0 var(--pp-gutter);pointer-events:none}
-.pp-landing .pp-t9-txt .pp-h2{font-size:clamp(40px,12.4vw,92px);line-height:1.12;text-shadow:0 0 28px rgba(255,255,255,.75)}
-.pp-landing .pp-ln{display:block;overflow:hidden;padding-bottom:.08em}
-.pp-landing .pp-ln>span{display:block;transition:transform .5s var(--pp-ease),opacity .4s ease-out}
-.pp-landing.pp-js:not(.pp-static) .pp-ln.pp-out>span{transform:translateY(-112%);opacity:0}
-.pp-landing .pp-pc{display:block;margin-top:var(--pp-s4);font-size:clamp(22px,6.4vw,38px);font-weight:800;letter-spacing:.14em;color:var(--pp-ink)}
-.pp-landing.pp-js:not(.pp-static) .pp-pc{position:absolute;left:0;right:0;top:46%;margin:0;text-align:center;opacity:0;transform:translateY(.5em);transition:opacity .6s ease-out,transform .7s var(--pp-ease)}
-.pp-landing.pp-js:not(.pp-static) .pp-pc.pp-on{opacity:1;transform:none}
-.pp-landing.pp-js:not(.pp-static) .pp-t9-st::after{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fade,0);pointer-events:none;z-index:2}
-.pp-landing.pp-js:not(.pp-static) .pp-t9-txt,.pp-landing.pp-js:not(.pp-static) .pp-pc{z-index:4}
-
-@media (prefers-reduced-motion:reduce){
- .pp-landing .pp-chip9 i{animation:none}
-}
-
 .pp-landing .pp-tilt-btn{font:600 16px/1 var(--pp-font);color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);border-radius:var(--pp-r-pill);padding:12px 20px;min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s var(--pp-ease)}
 .pp-landing .pp-tilt-btn:active{transform:scale(.97)}
 .pp-landing .pp-tilt-btn[hidden]{display:none}
+
+/* ── 1-8 낭만: 사진은 폭 가득(또렷한 가장자리), 글자·곡 수는 그 위·아래 ── */
+.pp-landing .pp-rom-st{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s3);padding-top:calc(52px + var(--pp-s3));background:#d3d1d4}
+.pp-landing:not(.pp-js) .pp-rom-st,.pp-landing.pp-static .pp-rom-st{padding:var(--pp-s7) 0}
+.pp-landing .pp-rom-txt{padding:0 var(--pp-gutter);text-align:center}
+.pp-landing .pp-rom-txt p{font-size:clamp(28px,8vw,52px);font-weight:700;letter-spacing:-.035em;line-height:1.16;margin:0;text-shadow:0 1px 8px rgba(255,255,255,.5)}
+.pp-landing.pp-js:not(.pp-static) .pp-rl{opacity:0;transform:translateY(.4em);transition:opacity .4s ease-out,transform .55s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-rl.pp-on{opacity:1;transform:none}
+.pp-landing .pp-frontbox{position:relative;width:min(100%,calc((100svh - 330px)*1),520px);aspect-ratio:1/1;overflow:hidden;background:#d3d1d4}
+.pp-landing .pp-frontbox img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing.pp-js:not(.pp-static) .pp-frontbox img{transform:scale(var(--zs,1));transform-origin:50% 55%;will-change:transform}
+.pp-landing .pp-songbox{padding:0 var(--pp-gutter);text-align:center;min-height:calc(clamp(44px,13vw,100px) + 30px)}
+.pp-landing .pp-songs{display:none;margin:0;font-size:clamp(44px,13vw,100px);font-weight:800;letter-spacing:-.05em;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--pp-ink)}
+.pp-landing .pp-songs.pp-show{display:block}
+.pp-landing .pp-songnote{margin-top:8px;font-size:var(--pp-t-cap);line-height:1.4;color:#3a3a3c}
+
+/* ── 1-9 넘어가기: 영상 가득(글자는 아래 어두운 면 흰색), 끝은 상자 PEPPER CLUB·뒷판 쪽으로 확대(판 안에서) ── */
+.pp-landing .pp-t9-st{background:#e4e4e6}
+.pp-landing .pp-t9-st .pp-vbox canvas,.pp-landing .pp-t9-st .pp-vbox>img{transform:scale(var(--z,1));transform-origin:var(--zo,45% 28%)}
+.pp-landing .pp-t9t{position:absolute;left:9.2%;top:70%;margin:0;z-index:3;color:#fff;text-align:left;font-size:9.7cqw;font-weight:700;letter-spacing:-.04em;line-height:1.14;text-shadow:0 1px 12px rgba(0,0,0,.55);pointer-events:none}
+.pp-landing .pp-t9t span{display:block;transition:opacity .4s ease-out,transform .5s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-t9t span.pp-out{opacity:0;transform:translateY(-.5em)}
+.pp-landing .pp-t9e{position:absolute;left:0;right:0;top:85%;margin:0;z-index:3;color:#fff;text-align:center;font-size:9.7cqw;font-weight:700;letter-spacing:-.04em;text-shadow:0 1px 12px rgba(0,0,0,.55);pointer-events:none}
+.pp-landing.pp-js:not(.pp-static) .pp-t9e{opacity:0;transform:translateY(.4em);transition:opacity .5s ease-out,transform .6s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-t9e.pp-on{opacity:1;transform:none}
+.pp-landing:not(.pp-js) .pp-t9t,.pp-landing.pp-static .pp-t9t,.pp-landing:not(.pp-js) .pp-t9e,.pp-landing.pp-static .pp-t9e{position:static;color:var(--pp-ink);text-shadow:none;text-align:center;padding:var(--pp-s4) var(--pp-gutter);font-size:clamp(30px,8vw,52px)}
+
+@media (prefers-reduced-motion:reduce){}
 /* pp-landing v4.4 마일스톤 2 — '아이팟 안에서 장점 보기'(시제품 ipod_screen_proto 통합) + 2막 장면(선언·구성품·독·패키지·비교·담기). 모든 선택자 .pp-landing 아래. 새 색 없음(시제품의 측정 색은 사진 속 화면 색이라 아래 변수 블록 한 곳).
    2층 구조: 뒤층 = HTML 화면(실제 글자), 앞층 = 화면 구멍이 반투명인 정면 컷(사진 위에 네모를 덮지 않음). 아래 첫 블록(변수)은 ipod_screen_proto/measure_vars.css(measure.json 에서 생성)를 그대로 옮긴 것 — 손으로 고치지 말고 make_overlay.py 로 다시 만든 뒤 빌더가 다시 옮긴다. */
 .pp-landing{
@@ -469,7 +446,6 @@
   --body-h:74.0032%;
   --menu-cx:50.1994%;
   --menu-cy:51.3955%;
-  --backdrop:linear-gradient(to bottom,rgb(166,164,165) 0.0%,rgb(176,175,176) 10.0%,rgb(187,185,188) 20.0%,rgb(195,192,195) 29.9%,rgb(205,202,205) 40.0%,rgb(209,207,209) 50.0%,rgb(211,209,212) 59.9%,rgb(212,209,213) 70.0%,rgb(213,211,215) 80.0%,rgb(211,209,213) 89.9%,rgb(201,200,205) 100.0%);
 }
 .pp-landing .ips{--ips-bg:#fff;position:relative;background:var(--ips-bg)}
 .pp-landing .ips-pin{position:relative}
@@ -486,8 +462,8 @@
 .pp-landing .ips-batt:after{content:"";position:absolute;right:-.9cqw;top:.6cqw;width:.6cqw;height:1cqw;background:#5b6a52;border-radius:0 .3cqw .3cqw 0}
 .pp-landing .ips-views{position:relative;height:calc(100cqh - var(--scr-hdr-h));overflow:hidden}
 .pp-landing .ips-menu{list-style:none;margin:0;padding:0;position:absolute;left:0;right:0;top:0;transform:translateY(calc(var(--ips-off,0)*-1px));transition:transform .22s cubic-bezier(.2,.8,.2,1)}
-.pp-landing .ips-menu li{position:relative;display:flex;align-items:center;min-height:calc(var(--u)*27);padding:calc(var(--u)*3) calc(var(--u)*26) calc(var(--u)*3) calc(var(--u)*10)}
-.pp-landing .ips-menu li a{color:inherit;text-decoration:none;font-size:max(12px,5.24cqw);line-height:1.22;letter-spacing:-.01em;word-break:keep-all}
+.pp-landing .ips-menu li{position:relative;display:flex;align-items:center;box-sizing:border-box;height:calc((100cqh - var(--scr-hdr-h))/var(--ips-rows,6));padding:0 calc(var(--u)*26) 0 calc(var(--u)*10);overflow:hidden}   /* 줄 높이 = 화면 안 목록 높이 ÷ 6 — 줄이 반쯤 잘려 보이지 않는다(보이는 범위는 항상 줄 단위로 넘어간다) */
+.pp-landing .ips-menu li a{color:inherit;text-decoration:none;font-size:max(12px,4.9cqw);line-height:1.12;letter-spacing:-.02em;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pp-landing .ips-menu li:after{content:"";position:absolute;right:calc(var(--u)*12);top:50%;width:calc(var(--u)*7);height:calc(var(--u)*7);margin-top:calc(var(--u)*-3.5);border-top:calc(var(--u)*2.4) solid currentColor;border-right:calc(var(--u)*2.4) solid currentColor;transform:rotate(45deg) scale(.8);opacity:.9}
 .pp-landing .ips-menu li.ips-sel{background:var(--scr-sel-bg);color:#fff;text-shadow:0 .2cqw .3cqw rgba(0,40,90,.35)}
 .pp-landing .is-detail .ips-menu{transform:translate(-30%,calc(var(--ips-off,0)*-1px))}
@@ -531,23 +507,32 @@
 .pp-landing .ips-details .ips-fig img{border-radius:12px}
 .pp-landing .ips-lite .ips-photo{width:min(92vw,420px)}
 
-/* 효과 켜짐: 키 큰 구간 안에서 한 장이 sticky 로 붙고, 진행도로 작은 둥근 카드가 화면 가득 커진다 */
+/* 효과 켜짐: 키 큰 구간 안에서 한 장이 sticky 로 붙고, 진행도로 작은 둥근 카드가 화면 가득 커진다(카드 가장자리는 또렷한 clip-path — 마스크·페이드 없음) */
 .pp-landing .ips-on .ips-pin{height:calc(var(--ips-k,12)*100vh)}
 @supports (height:100svh){.pp-landing .ips-on .ips-pin{height:calc(var(--ips-k,12)*100svh)}}
 .pp-landing .ips-on .ips-stage{position:sticky;top:0;height:100vh}
 @supports (height:100svh){.pp-landing .ips-on .ips-stage{height:100svh}}
-.pp-landing .ips-on .ips-card{position:absolute;inset:0;background:var(--backdrop);
- -webkit-mask-image:linear-gradient(to right,transparent var(--ml,0px),#000 calc(var(--ml,0px) + var(--mf,0px)),#000 calc(100% - var(--ml,0px) - var(--mf,0px)),transparent calc(100% - var(--ml,0px))),linear-gradient(to bottom,transparent var(--mt,0px),#000 calc(var(--mt,0px) + var(--mf,0px)),#000 calc(100% - var(--mt,0px) - var(--mf,0px)),transparent calc(100% - var(--mt,0px)));
- -webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent var(--ml,0px),#000 calc(var(--ml,0px) + var(--mf,0px)),#000 calc(100% - var(--ml,0px) - var(--mf,0px)),transparent calc(100% - var(--ml,0px))),linear-gradient(to bottom,transparent var(--mt,0px),#000 calc(var(--mt,0px) + var(--mf,0px)),#000 calc(100% - var(--mt,0px) - var(--mf,0px)),transparent calc(100% - var(--mt,0px)));mask-composite:intersect}   /* 타일↔화면 가득 전환: 회색 사진 바탕의 가장자리가 흰 페이지와 만나는 경계를 부드럽게(제품 영역은 건드리지 않음 — 타일 가장자리 바깥쪽 여백만 풀어 준다) */
+.pp-landing .ips-on .ips-card{position:absolute;inset:0;background:var(--ftt)}
 .pp-landing .ips-on .ips-photo{position:absolute;left:50%;top:50%;margin:0;aspect-ratio:auto;max-width:none;background:transparent}
 .pp-landing .ips-on .ips-details{display:block;height:0;padding:0;margin:0;overflow:visible}
 .pp-landing .ips-on .ips-details article{border:0;padding:0}
 .pp-landing .ips-on .ips-intro{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);padding:0}
-.pp-landing .ips-on .ips-hint{display:block;position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;padding:0 var(--pp-gutter);pointer-events:none;color:var(--pp-ink);font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}   /* 본체 아래 여백(본체는 위 제품 줄·이 안내 글 높이를 뺀 곳에 앉는다)에 또렷하게, 하단 도구 막대는 svh·safe-area 로 피한다 */
-.pp-landing .ips-kfull .ips-card{-webkit-mask-image:none;mask-image:none}
+.pp-landing .ips-on .ips-hint{display:block;position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;padding:0 var(--pp-gutter);pointer-events:none;color:var(--pp-ink);font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
 .pp-landing:not(.pp-js) .ips-hint{display:none}
+.pp-landing .ips-side{display:none}
 @media (min-width:700px){.pp-landing .pp-decl-nums{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (prefers-reduced-motion:reduce){.pp-landing .ips-menu,.pp-landing .ips-pane,.pp-landing .ips-pane.is-on{transition:none}}
+/* 가로 화면(폭 > 높이×1.1): 아이팟 통째·오른쪽 약 58%, 왼쪽 칸에 고른 항목을 큰 글자로(화면 크기 규칙). 카드는 확대하지 않고 또렷한 판으로 */
+@media (min-aspect-ratio:11/10){
+ .pp-landing .ips-on .ips-card{background:var(--pp-bg)}
+ .pp-landing .ips-on .ft-ext{display:none}
+ .pp-landing .ips-on .ips-hint{display:none}
+ .pp-landing .ips-on .ips-side{display:block;position:absolute;left:56px;top:50%;transform:translateY(-50%);width:calc(58% - var(--ips-bw,300px)/2 - 56px - 48px);z-index:3;text-align:left;pointer-events:none}
+ .pp-landing .ips-menu li a{font-size:4.9cqw}
+ .pp-landing .ips-t{font-size:6cqw}.pp-landing .ips-l{font-size:5cqw}.pp-landing .ips-n{font-size:4.6cqw}   /* 가로 화면: 아이팟 화면 폭이 작아도 글자 12px 바닥을 풀어 줄 안에 맞춘다 — 읽는 글은 왼쪽 칸 큰 글자(화면 크기 규칙) */
+ .pp-landing .ips-side b{display:block;font-size:clamp(26px,3.6vw,56px);line-height:1.18;letter-spacing:-.03em;color:var(--pp-ink)}
+ .pp-landing .ips-side span{display:block;margin-top:10px;font-size:clamp(14px,1.5vw,20px);color:var(--pp-ink2)}
+}
 
 /* ── 2-1 선언 ── */
 .pp-landing [data-pp-kind="decl"]{padding:var(--pp-s7) 0 var(--pp-s7);background:#fff}
@@ -555,142 +540,105 @@
 .pp-landing .pp-decl-nums>div{text-align:center}
 .pp-landing .pp-decl-nums b{display:block;white-space:nowrap;font-size:clamp(48px,15.4vw,120px);font-weight:800;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
 .pp-landing .pp-decl-nums span{display:block;margin-top:10px;font-size:15px;color:var(--pp-ink3);font-weight:600}
-.pp-landing .pp-g5{max-width:860px;margin:0 auto;aspect-ratio:var(--pp-w)/var(--pp-h);position:relative;overflow:hidden;background:#1a1a1a}
 
-/* ── 어두운 구역(2-7 구성품·2-8 독·2-9 패키지, 2-12 닫힌 상자): 구역 앞뒤 22% 만 흰↔어둠 그라데이션, 안쪽 장면끼리는 이어서 어둠 ── */
-.pp-landing .pp-dkzone{position:relative;background:#000;color:#fff;text-align:center;padding:min(22svh,180px) 0}
-.pp-landing .pp-dkzone::before,.pp-landing .pp-dkzone::after{content:"";position:absolute;left:0;right:0;height:min(22svh,180px);z-index:3;pointer-events:none}
-.pp-landing .pp-dkzone::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,.86) 16%,rgba(255,255,255,0))}
-.pp-landing .pp-dkzone::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.86) 84%,#fff)}
-.pp-landing .pp-dkzone [data-pp-scene]{background:transparent}
-.pp-landing .pp-dkzone .pp-h2{color:#fff}
-.pp-landing .pp-dkzone .pp-lede{color:rgba(255,255,255,.78)}
-.pp-landing .pp-dkzone [data-pp-scene]+[data-pp-scene]{padding-top:var(--pp-s7)}
-.pp-landing [data-pp-kind="set"]{padding:0}
-.pp-landing .pp-set{position:relative;width:100%;max-width:860px;margin:var(--pp-s5) auto 0;aspect-ratio:1800/1198;overflow:hidden;background:#000;touch-action:pan-y}
-.pp-landing .pp-set img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;transform-origin:0 0;transform:translate(var(--sx,0%),var(--sy,0%)) scale(var(--ss,1));transition:transform .55s var(--pp-ease)}
-.pp-landing:not(.pp-js) .pp-set img{transform:none}
-.pp-landing .pp-set-cap{min-height:2.6em;margin-top:var(--pp-s3);font-size:var(--pp-t-lede);font-weight:700;letter-spacing:-.02em;color:#fff}
-.pp-landing .pp-set-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:var(--pp-s3) auto 0;padding:0 var(--pp-gutter);max-width:560px;list-style:none}
-.pp-landing .pp-set-chips button{font:600 15px/1 var(--pp-font);letter-spacing:-.01em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:var(--pp-r-pill);padding:11px 14px;min-height:40px;cursor:pointer;transition:background-color .16s var(--pp-ease),transform .16s var(--pp-ease);-webkit-tap-highlight-color:transparent}
-.pp-landing .pp-set-chips button:active{transform:scale(.97)}
-.pp-landing .pp-set-chips button[aria-pressed="true"]{background:#fff;color:#000;border-color:#fff}
-.pp-landing .pp-set-note{margin-top:var(--pp-s3);padding:0 var(--pp-gutter);font-size:14px;color:rgba(255,255,255,.72)}
-.pp-landing:not(.pp-js) .pp-set-chips,.pp-landing:not(.pp-js) .pp-set-cap{display:none}
-.pp-landing .pp-set-static{display:none;padding:0 var(--pp-gutter);margin-top:var(--pp-s4);list-style:none;text-align:left;max-width:560px;margin-left:auto;margin-right:auto}
-.pp-landing:not(.pp-js) .pp-set-static{display:block}
-.pp-landing .pp-set-static li{padding:12px 0;border-top:1px solid rgba(255,255,255,.2);font-size:17px;font-weight:600}
+/* ── 2-7 기본 구성 · 2-9 패키지: 검정 바탕, 가로 영상은 자르지 않고 전체(폭 390 그대로). 제목은 영상 바로 위(15px), 목록·단계 점은 영상 바로 아래, 묶음이 화면 세로 가운데 ── */
+.pp-landing [data-pp-kind="set"],.pp-landing [data-pp-kind="pkg"]{padding:0;background:#000}
+.pp-landing .pp-blk{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:15px;background:#000;color:#fff;padding-top:44px;box-sizing:border-box}
+.pp-landing:not(.pp-js) .pp-blk,.pp-landing.pp-static .pp-blk{padding:var(--pp-s7) 0 var(--pp-s6)}
+.pp-landing .pp-blk .pp-h2{margin:0;color:#fff;font-size:clamp(26px,8.7vw,48px);line-height:1.18;text-shadow:none}
+.pp-landing .pp-lv{position:relative;width:min(100%,calc((100svh - 220px)*16/9),960px);aspect-ratio:16/9;overflow:hidden;background:#000}
+.pp-landing .pp-lv>img,.pp-landing .pp-lv>canvas{object-fit:contain}
+.pp-landing .pp-set-list{list-style:none;margin:0;padding:0 var(--pp-gutter);width:min(100%,520px);box-sizing:border-box;display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:6px 18px;text-align:left;font-size:max(14px,3.6vw);font-weight:600;color:#f5f5f7}
+.pp-landing .pp-set-list li{padding:2px 0}
+.pp-landing .pp-set-all{margin:0;font-size:max(14px,3.7vw);color:rgba(245,245,247,.8);text-align:center}
+.pp-landing .pp-dots4{list-style:none;margin:0;padding:0 var(--pp-gutter);display:flex;gap:0;justify-content:space-between;width:min(100%,520px);box-sizing:border-box}
+.pp-landing .pp-dots4 li{flex:1;text-align:center;font-size:12px;font-weight:600;color:#636366;transition:color .3s ease-out}
+.pp-landing .pp-dots4 li::before{content:"";display:block;width:8px;height:8px;margin:0 auto 6px;border-radius:50%;background:currentColor}
+.pp-landing .pp-dots4 li.pp-on{color:#fff}
+.pp-landing .pp-pkgbtn{display:inline-block;margin-top:2px;padding:14px 26px;border-radius:var(--pp-r-pill);background:#0071e3;color:#fff;font-size:16px;font-weight:600;text-decoration:none;opacity:0;transform:scale(.9);pointer-events:none;transition:opacity .26s ease-out,transform .26s var(--pp-ease)}
+.pp-landing .pp-pkgbtn.pp-on{opacity:1;transform:none;pointer-events:auto}
+.pp-landing:not(.pp-js) .pp-pkgbtn,.pp-landing.pp-static .pp-pkgbtn{opacity:1;transform:none;pointer-events:auto}
+.pp-landing .pp-tt{display:grid;width:100%;justify-items:center}
+.pp-landing .pp-tt h2{grid-area:1/1;margin:0;transition:opacity .3s ease-out}
+.pp-landing .pp-tt h2+h2{opacity:0}
+.pp-landing.pp-js:not(.pp-static) .pp-tt.pp-end h2:first-child{opacity:0}
+.pp-landing.pp-js:not(.pp-static) .pp-tt.pp-end h2+h2{opacity:1}
+.pp-landing:not(.pp-js) .pp-tt,.pp-landing.pp-static .pp-tt{display:block}
+.pp-landing:not(.pp-js) .pp-tt h2+h2,.pp-landing.pp-static .pp-tt h2+h2{opacity:1;margin-top:var(--pp-s4)}
 
-/* ── 2-8 독스탠드 · 2-9 패키지 (어두운 sticky 장면) ── */
-.pp-landing [data-pp-kind="dkst"]{padding:0}
-.pp-landing .pp-dkst-st{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4);background:#000;color:#fff}
-.pp-landing:not(.pp-js) .pp-dkst-st,.pp-landing.pp-static .pp-dkst-st{padding:var(--pp-s5) 0}
-.pp-landing .pp-dkband{position:relative;width:100%;max-width:860px;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#000}
-.pp-landing .pp-dkband.pp-sqv{max-width:min(100%,640px)}
-.pp-landing .pp-pkg0{max-width:860px;margin:var(--pp-s5) auto 0;aspect-ratio:var(--pp-w)/var(--pp-h);position:relative;overflow:hidden;background:#000}
-.pp-landing [data-pp-kind="pkg"]{padding:0}
-.pp-landing .pp-pkg-lede{padding:0 var(--pp-gutter);margin-top:var(--pp-s5)}
-.pp-landing [data-pp-kind="pkg"] .pp-dkst-st{margin-top:var(--pp-s5)}
-.pp-landing .pp-pkg-txt{padding:0 var(--pp-gutter)}
-
-/* ── 2-10 비교: 표 전체가 한눈에, 스크롤에 따라 페퍼클럽 칸이 한 줄씩 켜진다(해외직구 칸은 늘 흐림). 효과 꺼짐 = v4.3.1 표 그대로 ── */
+/* ── 2-10 비교: 표 6줄이 처음부터 한눈에, 스크롤에 따라 페퍼클럽 칸만 위에서부터 한 줄씩 켜진다(꺼짐 #f5f5f7·#8e8e93 → 켜짐 #0071e3·흰 굵은 글자). 효과 꺼짐 = v4.3.1 표 그대로 ── */
 .pp-landing [data-pp-kind="cmp"]{padding:0}
 .pp-landing .pp-cmp-st{justify-content:flex-start;padding-top:calc(52px + var(--pp-s3));overflow:hidden}
 .pp-landing:not(.pp-js) .pp-cmp-st,.pp-landing.pp-static .pp-cmp-st{padding:var(--pp-section) 0 var(--pp-s7);overflow:visible}
+.pp-landing .pp-cmp-st .pp-wrap{max-width:720px}
 .pp-landing .pp-cmp-st .pp-h2{font-size:clamp(26px,5.6svh,48px)}
 .pp-landing .pp-cmp-st .pp-lede{margin-top:10px;font-size:clamp(15px,2.4svh,22px)}
-.pp-landing .pp-cmp-tb .pp-tbl{margin-top:clamp(10px,2svh,24px)}
-.pp-landing .pp-cmp-tb .pp-tbl th,.pp-landing .pp-cmp-tb .pp-tbl td{padding:clamp(6px,1.3svh,14px) 8px;font-size:clamp(11.5px,1.95svh,15px);line-height:1.34}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb .pp-tbl{border-collapse:separate;border-spacing:0 6px;margin-top:clamp(6px,1.6svh,20px)}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb .pp-tbl tbody tr{height:clamp(40px,8.8svh,74px)}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb .pp-tbl th,.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb .pp-tbl td{padding:4px 8px;font-size:clamp(11.5px,1.95svh,15px);line-height:1.3;border-bottom:0;vertical-align:middle}
 .pp-landing .pp-cmp-tb .pp-tbl thead th{font-size:clamp(11.5px,1.8svh,14px)}
-.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb td.pp-ours{opacity:.26;transition:opacity .35s ease-out,background-color .35s ease-out}
-.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb tr.pp-lit td.pp-ours{opacity:1;background:var(--pp-alt)}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb td.pp-theirs{color:#8e8e93}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb th{color:#8e8e93}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb td.pp-ours{background:#f5f5f7;color:#8e8e93;font-weight:600;border-radius:12px;text-align:center;transition:background-color .2s ease-out,color .2s ease-out}
+.pp-landing.pp-js:not(.pp-static) .pp-cmp-tb tr.pp-lit td.pp-ours{background:#0071e3;color:#fff;font-weight:700}
 .pp-landing.pp-js:not(.pp-static) .pp-cmp-tb tr.pp-lit th{color:var(--pp-ink)}
-.pp-landing .pp-cmp-st .pp-lede.pp-cmp-end{margin-top:clamp(10px,2.4svh,28px);font-size:clamp(14px,2.2svh,21px)}
-
-/* ── 2-12 닫힌 상자 ── */
-.pp-landing [data-pp-kind="closing"]{padding:0}
-.pp-landing .pp-closebox{max-width:min(100%,520px);margin:var(--pp-s5) auto 0;aspect-ratio:810/814;position:relative;overflow:hidden;background:#000}
-.pp-landing .pp-closebox img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
-.pp-landing .pp-bandfade{position:absolute;left:0;right:0;height:12%;z-index:2;pointer-events:none}
-.pp-landing .pp-bandfade.pp-bt{top:0;background:linear-gradient(#000,rgba(0,0,0,0))}
-.pp-landing .pp-bandfade.pp-bb{bottom:0;background:linear-gradient(rgba(0,0,0,0),#000)}
-
-/* 2-1 앞 다리(gif_05)·초점 띠 공통: 흰 바탕으로 이어지게 위아래를 흰색으로 푼다 */
-.pp-landing .pp-g5::before,.pp-landing .pp-g5::after{content:"";position:absolute;left:0;right:0;height:14%;z-index:2;pointer-events:none}
-.pp-landing .pp-g5::before{top:0;background:linear-gradient(#fff,rgba(255,255,255,0))}
-.pp-landing .pp-g5::after{bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff)}
-.pp-landing [data-pp-kind="band"].pp-br5{padding:var(--pp-s5) 0 0}
+.pp-landing .pp-cmp-st .pp-lede.pp-cmp-end{margin-top:clamp(8px,2svh,24px);font-size:clamp(14px,2.2svh,21px)}
 </style></head>
 <body>
-<div class="pp-landing" data-pp-snd="0">
+<div class="pp-landing" data-pp-snd="0" data-pp-audio="assets/audio/">
 <section id="pp-h0" data-pp-scene="h0" data-pp-act="1" data-pp-kind="fs">
-<div data-pp-sticky style="--pp-k:5.5"><div class="pp-st">
-<div class="pp-fs" data-pp-seq data-pp-fx="hero" data-pp-base="assets/h0/f_" data-pp-count="54" data-pp-ext=".webp" data-pp-w="810" data-pp-h="1139" data-pp-map="0,0.62" data-pp-lite="1" style="--pp-w:810;--pp-h:1139"><img src="assets/h0/poster.webp" alt="흰 벽 앞에서 아이팟 클래식이 공중에 던져져 돌며 지나가는 영상" width="810" height="1139" fetchpriority="high" decoding="async"></div>
-<div class="pp-words" aria-hidden="true" data-pp-words="0.0,0.17;0.2,0.35;0.38,0.52;0.55,0.68;0.71,1.0"><span class="pp-wd pp-on">iPod</span><span class="pp-wd">그때는</span><span class="pp-wd">못 샀지만</span><span class="pp-wd">이제는</span><span class="pp-wd">살 수 있지</span></div>
+<div data-pp-sticky style="--pp-k:6"><div class="pp-st pp-vb" style="--pp-w:810;--pp-h:1139;--op:50% 0">
+<div class="pp-vbox pp-fs" data-pp-seq data-pp-fx="hero" data-pp-base="assets/h0/f_" data-pp-count="85" data-pp-ext=".webp" data-pp-w="810" data-pp-h="1139" data-pp-map="0,1" data-pp-lite="1" style="--pp-w:810;--pp-h:1139"><img src="assets/h0/poster.webp" alt="흰 벽 앞에서 아이팟 클래식이 공중에 던져져 떨어지는 영상" width="810" height="1139" fetchpriority="high" decoding="async"></div>
+<div class="pp-words" aria-hidden="true" data-pp-words="0.0,0.14;0.17,0.31;0.34,0.48;0.51,0.84;0.87,1.0"><span class="pp-wd pp-on" data-s="b">iPod</span><span class="pp-wd" data-s="b">그때는</span><span class="pp-wd" data-s="b">못 샀지만</span><span class="pp-wd" data-s="b">이제는</span><span class="pp-wd" data-s="t">살 수 있지</span></div>
 <div class="pp-hero-txt"><p class="pp-h1x">iPod<br>그때는 못 샀지만<br>이제는 살 수 있지</p><h1 class="pp-name">아이팟 클래식 5세대 64GB</h1></div>
 <p class="pp-cue9" aria-hidden="true">아래로</p>
 </div></div></section>
-<section id="pp-jack" class="pp-dk pp-jack" data-pp-scene="jack" data-pp-act="1" data-pp-kind="plug">
-<div class="pp-plug" data-pp-plug data-pp-grip tabindex="0" role="slider" aria-label="이어폰 잭을 끌어서 꽂기" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-pp-base="assets/c3/seq/p_" data-pp-count="22" data-pp-ext=".webp" data-pp-w="648" data-pp-h="1403" style="--pp-w:648;--pp-h:1403"><div class="pp-jk"><img src="assets/c3/seq/p_022.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="648" height="1403" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas><span class="pp-ring9" aria-hidden="true"></span><span class="pp-chip9" aria-hidden="true"><i></i>끌어서 꽂아 보세요</span><span class="pp-click9" aria-live="polite">딸깍.</span></div></div>
-<div class="pp-jack-txt"><h2 class="pp-h2" data-pp-r>불편합니다.<br>그래서 갖고 싶습니다.</h2></div>
-</section>
+<section id="pp-jack" class="pp-dk" data-pp-scene="jack" data-pp-act="1" data-pp-kind="plug">
+<div data-pp-sticky style="--pp-k:3.8"><div class="pp-st pp-vb pp-jackst" style="--pp-w:648;--pp-h:1403">
+<div class="pp-vbox pp-jk" data-pp-seq data-pp-fx="jack" data-pp-plugat="0.5" data-pp-base="assets/c3/seq/p_" data-pp-count="21" data-pp-ext=".webp" data-pp-w="648" data-pp-h="1403" data-pp-map="0,0.7" data-pp-lite="21" style="--pp-w:648;--pp-h:1403"><img src="assets/c3/seq/p_021.webp" alt="아이팟에 이어폰 잭을 꽂는 영상" width="648" height="1403" loading="lazy" decoding="async"><span class="pp-imp" aria-hidden="true"><i></i><i></i><i></i><i></i></span><p class="pp-jt pp-jt1">불편합니다.<br>그래서<br>갖고 싶습니다.</p><p class="pp-jt pp-jt1s" aria-hidden="true">불편합니다.<br>그래서 갖고 싶습니다.</p><p class="pp-jclick" aria-hidden="true">딸깍</p><p class="pp-jt pp-jt2"><span>선을 꽂아야</span><span>소리가 납니다.</span><span>그게 좋습니다.</span></p></div>
+</div></div></section>
 <section id="pp-mem" data-pp-scene="mem" data-pp-act="1" data-pp-kind="stk">
-<div data-pp-sticky style="--pp-k:3"><div class="pp-st pp-ctr">
-<div class="pp-sq" data-pp-seq data-pp-fx="mem" data-pp-base="assets/mem/f_" data-pp-count="24" data-pp-ext=".webp" data-pp-w="810" data-pp-h="810" data-pp-map="0.04,0.82" data-pp-lite="24" style="--pp-w:810;--pp-h:810"><img src="assets/mem/poster.webp" alt="아이팟 클래식 앞면 위로 흰 이어폰 줄이 놓여 있는 모습" width="810" height="810" decoding="async"></div>
-<p class="pp-cap9" data-pp-chars>지금 봐도 아이팟은 예뻐요</p>
+<div data-pp-sticky style="--pp-k:3"><div class="pp-st pp-vb" style="--pp-w:500;--pp-h:1080;--op:50% 60%">
+<div class="pp-vbox pp-fs" data-pp-seq data-pp-fx="mem" data-pp-base="assets/mem/f_" data-pp-count="24" data-pp-ext=".webp" data-pp-w="500" data-pp-h="1080" data-pp-map="0,1" data-pp-lite="24" style="--pp-w:500;--pp-h:1080"><img src="assets/mem/poster.webp" alt="아이팟 클래식 앞면 위로 흰 이어폰 줄이 놓여 있는 모습" width="500" height="1080" loading="lazy" decoding="async"></div>
+<p class="pp-cap9"><span class="pp-cl" data-pp-chars>가지고 싶어도 가질 수 없던 기억.</span><span class="pp-cl" data-pp-chars>어른이 된 지금은, 가질 수 있습니다.</span></p>
 </div></div></section>
 <section id="pp-app" data-pp-scene="app" data-pp-act="1" data-pp-kind="stk">
-<div data-pp-sticky style="--pp-k:3"><div class="pp-st pp-ctr pp-focus-st">
-<div class="pp-ap-title"><h2 class="pp-h2">아이팟 클래식.<br>다시.</h2></div>
-<div class="pp-focus-box" data-pp-seq data-pp-base="assets/g2/f_" data-pp-count="29" data-pp-ext=".webp" data-pp-w="860" data-pp-h="483" data-pp-map="0.1,0.68" data-pp-lite="29" style="--pp-w:860;--pp-h:483"><img src="assets/g2/poster.webp" alt="창가에 세워 둔 아이팟이 흐릿하다가 또렷해지는 영상" width="860" height="483" loading="lazy" decoding="async"></div>
+<div data-pp-sticky style="--pp-k:3"><div class="pp-st pp-ft" data-pp-ft="app" data-ft-title="b" data-ft-zoom="1.4" data-pp-scroll data-pp-fx="ft">
+<div class="ft-ph"><img class="ft-ext ft-et" src="assets/front/edge_t.webp" alt="" aria-hidden="true"><img class="ft-img" src="assets/front/front.webp" width="2508" height="2508" alt="흰색 아이팟 클래식 5세대 정면. 화면에 재생 화면이 켜져 있다" decoding="async"><img class="ft-front" src="assets/ips/ipod_front.webp" width="2508" height="2508" alt="" aria-hidden="true" decoding="async"><img class="ft-ext ft-eb" src="assets/front/edge_b.webp" alt="" aria-hidden="true"></div>
+<h2 class="pp-h2 pp-ft-title">지금 봐도<br>아이팟은 예뻐요.</h2>
 </div></div></section>
 <section id="pp-c2" data-pp-scene="c2" data-pp-act="1" data-pp-kind="s1">
-<div data-pp-sticky style="--pp-k:3"><div class="pp-st"><div class="pp-s1-wrap">
-<div data-pp-s1 data-pp-rotate data-pp-frames="98" data-pp-base="assets/s1/f_" data-pp-ext=".webp" data-pp-w="720" data-pp-h="720"><img src="assets/s1/f_001.webp" alt="독 위에 세워 둔 흰색 아이팟 클래식 5세대" width="720" height="720"></div>
+<div data-pp-sticky style="--pp-k:4.6"><div class="pp-st pp-vb pp-g360" style="--pp-w:716;--pp-h:1280">
+<div class="pp-vbox pp-g360box" data-pp-seq data-pp-fx="g360" data-pp-base="assets/g360/f_" data-pp-count="71" data-pp-ext=".webp" data-pp-w="716" data-pp-h="1280" data-pp-map="0,1" data-pp-lite="71" data-pp-rotate style="--pp-w:716;--pp-h:1280"><img src="assets/g360/poster.webp" alt="흰색 아이팟 클래식이 앞에서 옆을 지나 뒤 거울 면까지 반 바퀴 도는 모습" width="716" height="1280" loading="lazy" decoding="async"></div>
+<ol class="pp-g360lab" aria-label="앞은 화면. 옆은 두께. 뒤는 거울."><li data-r="0,0.3">앞은 화면.</li><li data-r="0.4,0.6">옆은 두께.</li><li data-r="0.9,1">뒤는 거울.</li></ol>
 <p class="pp-hint9">손가락으로 돌려 보세요</p>
-<ul class="pp-cuts"><li><img src="assets/s1/f_001.webp" alt="아이팟 클래식 5세대 0도" width="720" height="720" loading="lazy" decoding="async"><span>0°</span></li><li><img src="assets/s1/f_040.webp" alt="아이팟 클래식 5세대 144도" width="720" height="720" loading="lazy" decoding="async"><span>144°</span></li><li><img src="assets/s1/f_098.webp" alt="아이팟 클래식 5세대 360도" width="720" height="720" loading="lazy" decoding="async"><span>360°</span></li></ul>
-<ol class="pp-angles"><li data-pp-ang="0"><span class="pp-deg">0°</span>앞은 화면.</li><li data-pp-ang="72"><span class="pp-deg">72°</span>옆은 두께.</li><li data-pp-ang="144"><span class="pp-deg">144°</span>뒤는 거울.</li><li data-pp-ang="330"><span class="pp-deg">330°</span>한 바퀴 돌았습니다. 아직 안 질립니다</li></ol>
-<div class="pp-prog" aria-hidden="true"><i data-pp-line></i></div>
-</div></div></div></section>
+</div></div></section>
 <section id="pp-mir" class="pp-dk" data-pp-scene="mir" data-pp-act="1" data-pp-kind="mir">
 <div data-pp-sticky style="--pp-k:3.4"><div class="pp-st pp-mir-st">
 <div class="pp-mir-title"><h2 class="pp-h2" data-pp-r>얼굴이 비치는<br>뒷판, 그대로.</h2></div>
-<div class="pp-par" style="--pp-w:648;--pp-h:714"><div class="pp-parin"><div data-pp-seq data-pp-base="assets/mir/f_" data-pp-count="47" data-pp-ext=".webp" data-pp-w="648" data-pp-h="714" data-pp-map="0.04,0.96" data-pp-lite="24" style="--pp-w:648;--pp-h:714"><img src="assets/mir/poster.webp" alt="햇빛 아래 아이팟 뒷판의 거울 같은 면에 주변이 비치는 모습" width="648" height="714" loading="lazy" decoding="async"></div></div></div>
+<div class="pp-par" style="--pp-w:648;--pp-h:714"><div class="pp-parin"><div data-pp-seq data-pp-base="assets/mir/f_" data-pp-count="75" data-pp-ext=".webp" data-pp-w="648" data-pp-h="714" data-pp-map="0.04,0.96" data-pp-lite="24" style="--pp-w:648;--pp-h:714"><img src="assets/mir/poster.webp" alt="햇빛 아래 아이팟 뒷판의 거울 같은 면에 주변이 비치는 모습" width="648" height="714" loading="lazy" decoding="async"></div></div></div>
 <button type="button" class="pp-tilt-btn" hidden>기울여 보기</button><p class="pp-mir-hint" aria-hidden="true">폰을 기울이거나 손가락으로 밀어 보세요</p>
 </div></div></section>
-<section id="pp-bridge" data-pp-scene="bridge" data-pp-act="2" data-pp-kind="wheel"><div class="pp-wrap">
-<h2 class="pp-h2" data-pp-split="focus">엄지로 돌립니다.<br>딸깍.</h2>
-<p class="pp-lede" data-pp-r>휠을 돌려 보세요.</p>
-</div>
-<div class="pp-stagewrap" data-pp-r><div class="pp-stage" style="--wx:46.40;--wy:58.40;--wa:10.00;--wb:13.30"><div class="pp-slot" data-pp-slot="wheel" data-pp-states="battery,check,kit,as" data-pp-cuts="{&quot;battery&quot;:&quot;assets/bridge/wheel_battery.webp&quot;,&quot;check&quot;:&quot;assets/bridge/wheel_check.webp&quot;,&quot;kit&quot;:&quot;assets/bridge/wheel_kit.webp&quot;,&quot;as&quot;:&quot;assets/bridge/wheel_as.webp&quot;}" data-pp-clips="{}" data-pp-labels="{&quot;battery&quot;:&quot;배터리&quot;,&quot;check&quot;:&quot;두 번 검사&quot;,&quot;kit&quot;:&quot;기본 구성&quot;,&quot;as&quot;:&quot;A/S&quot;}" style="--pp-w:1400;--pp-h:1400"><img class="pp-cur" src="assets/bridge/wheel_battery.webp" alt="클릭휠로 고르는 메뉴: 배터리, 두 번 검사, 기본 구성, A/S" width="1400" height="1400" loading="lazy" decoding="async"></div>
-<div class="pp-wheel" data-pp-wheel tabindex="0" role="group" aria-label="클릭휠. 돌리면 메뉴가 넘어갑니다. 위아래 화살표로 선택, Enter로 이동"></div></div></div>
-</section>
-<section id="pp-ear" data-pp-scene="ear" data-pp-act="1" data-pp-kind="stk">
-<div data-pp-sticky style="--pp-k:3.2"><div class="pp-st pp-bandst">
-<div class="pp-wrap"><h2 class="pp-h2">선을 꽂아야<br>소리가 납니다.<br>그게 좋습니다.</h2></div>
-<div class="pp-band9" data-pp-seq data-pp-base="assets/ear7/f_" data-pp-count="66" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" data-pp-map="0.06,0.94" data-pp-lite="66" style="--pp-w:720;--pp-h:404"><img src="assets/ear7/poster.webp" alt="줄 이어폰에서 줄을 따라 재생 중인 아이팟으로 다가가는 영상" width="720" height="404" loading="lazy" decoding="async"></div>
-</div></div>
-<div class="pp-swipe-wrap"><ul class="pp-swipe" aria-label="이어폰 사진 넘겨 보기"><li class="pp-ph"><img src="assets/cards/palm.webp" alt="손바닥 위에 올린 줄 이어폰 헤드" width="720" height="405" loading="lazy" decoding="async"></li><li class="pp-ph"><img src="assets/cards/ear6.webp" alt="이어폰 줄 너머로 초점이 옮겨 간 아이팟" width="720" height="404" loading="lazy" decoding="async"></li><li class="pp-pt"><img src="assets/c3/seq/p_022.webp" alt="아이팟에 이어폰 잭이 꽂힌 모습" width="648" height="1403" loading="lazy" decoding="async"></li></ul><div class="pp-dots" aria-hidden="true"><i class="pp-on"></i><i></i><i></i></div></div>
-</section>
+<section id="pp-wheel" data-pp-scene="wheel" data-pp-act="1" data-pp-kind="stk">
+<div data-pp-sticky style="--pp-k:2.6"><div class="pp-st pp-ft" data-pp-ft="wheel" data-ft-title="b" data-pp-scroll data-pp-fx="ft">
+<div class="ft-ph"><img class="ft-ext ft-et" src="assets/front/edge_t.webp" alt="" aria-hidden="true"><img class="ft-img" src="assets/front/front.webp" width="2508" height="2508" alt="흰색 아이팟 클래식 5세대 정면. 화면 안에 메뉴가 보이고 클릭휠을 돌리면 선택이 넘어간다" decoding="async"><div class="ips-bleed ft-scr" aria-hidden="true"></div><div class="ips-screen ft-scr" aria-hidden="true"><div class="ips-hdr"><span class="ips-hdr-title">iPod</span><span class="ips-batt" aria-hidden="true"></span></div><div class="ips-views"><ol class="ips-menu"><li class="ips-sel"><a href="#" tabindex="-1">음악</a></li><li><a href="#" tabindex="-1">동영상</a></li><li><a href="#" tabindex="-1">사진</a></li><li><a href="#" tabindex="-1">추가 기능</a></li><li><a href="#" tabindex="-1">설정</a></li><li><a href="#" tabindex="-1">셔플 재생</a></li></ol></div></div><img class="ft-front" src="assets/ips/ipod_front.webp" width="2508" height="2508" alt="" aria-hidden="true" decoding="async"><div class="ips-wheel" role="group" tabindex="0" aria-label="클릭휠. 돌리면 메뉴가 넘어갑니다"><button type="button" class="ips-btn-center" aria-label="가운데 버튼"></button></div><img class="ft-ext ft-eb" src="assets/front/edge_b.webp" alt="" aria-hidden="true"></div>
+<h2 class="pp-h2 pp-ft-title">엄지로 돌립니다.<br>딸깍.</h2><p class="pp-ft-hint" aria-hidden="true">휠을 돌려 보세요</p>
+</div></div></section>
 <section id="pp-snd" data-pp-scene="snd" data-pp-act="1" data-pp-kind="hold">
-<div class="pp-wrap"><h2 class="pp-h2" data-pp-r>시간이 지나도<br>탁월한 음질.</h2></div>
-<div class="pp-holdbox" data-pp-hold tabindex="0" role="button" aria-label="누르고 있는 동안 재생 화면이 켜집니다" data-pp-base="assets/snd4/f_" data-pp-count="29" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" style="--pp-w:720;--pp-h:404"><img src="assets/snd4/poster.webp" alt="창가에 세워 둔 아이팟이 음악을 재생하는 화면" width="720" height="404" loading="lazy" decoding="async"><canvas aria-hidden="true"></canvas><div class="pp-dim9" aria-hidden="true"></div><span class="pp-press9" aria-hidden="true">길게 눌러 보세요</span></div>
-</section>
+<div data-pp-sticky style="--pp-k:2.4"><div class="pp-st pp-ft" data-pp-ft="snd" data-ft-title="t" data-pp-scroll data-pp-fx="ft">
+<div class="ft-ph" tabindex="0" role="button" aria-pressed="false" aria-label="길게 누르면 재생 화면으로 바뀝니다"><img class="ft-ext ft-et" src="assets/front/edge_t.webp" alt="" aria-hidden="true"><img class="ft-img" src="assets/front/front.webp" width="2508" height="2508" alt="흰색 아이팟 클래식 5세대 정면. 길게 누르면 화면이 메뉴에서 재생 화면으로 바뀐다" decoding="async"><div class="ips-bleed ft-scr" aria-hidden="true"></div><div class="ips-screen ft-scr" aria-hidden="true"><div class="ips-hdr"><span class="ips-hdr-title">iPod</span><span class="ips-batt" aria-hidden="true"></span></div><div class="ips-views"><ol class="ips-menu"><li class="ips-sel"><a href="#" tabindex="-1">음악</a></li><li><a href="#" tabindex="-1">동영상</a></li><li><a href="#" tabindex="-1">사진</a></li><li><a href="#" tabindex="-1">추가 기능</a></li><li><a href="#" tabindex="-1">설정</a></li><li><a href="#" tabindex="-1">셔플 재생</a></li></ol></div></div><img class="ft-front" src="assets/ips/ipod_front.webp" width="2508" height="2508" alt="" aria-hidden="true" decoding="async"><img class="ft-ext ft-eb" src="assets/front/edge_b.webp" alt="" aria-hidden="true"></div>
+<h2 class="pp-h2 pp-ft-title">시간이 지나도<br>탁월한 음질.</h2><p class="pp-ft-hint" aria-hidden="true">길게 눌러 보세요</p>
+</div></div></section>
 <section id="pp-wc" data-pp-scene="wc" data-pp-act="1" data-pp-kind="stk">
-<div data-pp-sticky style="--pp-k:3.2"><div class="pp-st pp-ctr pp-rom-st">
-<div class="pp-rom-txt" data-pp-fx-host><p class="pp-rl">스트리밍 없음.</p><p class="pp-rl">알림 없음.</p><p class="pp-rl">곡은 직접 담습니다.</p></div>
-<div class="pp-sq pp-frontbox" data-pp-scroll data-pp-fx="rom"><img src="assets/front/front.webp" alt="흰색 아이팟 클래식 5세대의 지금 재생 중 화면" width="2508" height="2508" loading="lazy" decoding="async"></div>
+<div data-pp-sticky style="--pp-k:3.2"><div class="pp-st pp-rom-st">
+<div class="pp-rom-txt"><p class="pp-rl">스트리밍 없음.</p><p class="pp-rl">알림 없음.</p><p class="pp-rl">곡은 직접 담습니다.</p></div>
+<div class="pp-frontbox" data-pp-scroll data-pp-fx="rom"><img src="assets/front/front_s.webp" alt="흰색 아이팟 클래식 5세대의 지금 재생 중 화면" width="1560" height="1560" loading="lazy" decoding="async"></div>
 <div class="pp-songbox"><p class="pp-songs pp-show" data-pp-songs="10000" data-pp-unit="곡">약 10,000곡</p><p class="pp-songnote">64GB = 약 1만 곡 (MP3 한 곡 약 6MB 기준)</p></div>
 </div></div></section>
 <section id="pp-t9" data-pp-scene="t9" data-pp-act="1" data-pp-kind="stk">
-<div data-pp-sticky style="--pp-k:4"><div class="pp-st pp-t9-st">
-<div class="pp-fs" data-pp-seq data-pp-fx="t9" data-pp-base="assets/t9/f_" data-pp-count="58" data-pp-ext=".webp" data-pp-w="648" data-pp-h="1152" data-pp-map="0,0.92" data-pp-lite="1" style="--pp-w:648;--pp-h:1152"><img src="assets/t9/poster.webp" alt="PEPPER CLUB 흰 상자 위에 놓인 거울 뒷판 아이팟을 카메라가 훑고 지나가는 영상" width="648" height="1152" loading="lazy" decoding="async"></div>
-<div class="pp-t9-txt"><h2 class="pp-h2" aria-label="이 낭만, 어디서 사야 할까요."><span class="pp-ln" aria-hidden="true"><span>이 낭만,</span></span><span class="pp-ln" aria-hidden="true"><span>어디서 사야</span></span><span class="pp-ln" aria-hidden="true"><span>할까요.</span></span></h2></div>
-<p class="pp-pc">PEPPER CLUB</p>
+<div data-pp-sticky style="--pp-k:3.4"><div class="pp-st pp-vb pp-t9-st" style="--pp-w:720;--pp-h:1280">
+<div class="pp-vbox pp-fs" data-pp-seq data-pp-fx="t9" data-pp-base="assets/t9/f_" data-pp-count="52" data-pp-ext=".webp" data-pp-w="720" data-pp-h="1280" data-pp-map="0,1" data-pp-lite="1" style="--pp-w:720;--pp-h:1280"><img src="assets/t9/poster.webp" alt="PEPPER CLUB 흰 상자 위에 놓인 거울 뒷판 아이팟을 카메라가 훑고 지나가는 영상" width="720" height="1280" loading="lazy" decoding="async"><p class="pp-t9t" aria-label="이 낭만, 어디서 사야 할까요."><span>이 낭만,</span><span>어디서 사야</span><span>할까요.</span></p><p class="pp-t9e">페퍼클럽에서.</p></div>
 </div></div></section>
-<section id="pp-br5" class="pp-br5" data-pp-scene="br5" data-pp-act="2" data-pp-kind="band">
-<div class="pp-g5" data-pp-seq data-pp-base="assets/br5/f_" data-pp-count="40" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" data-pp-map="0.1,0.7" data-pp-lite="40" style="--pp-w:720;--pp-h:404"><img src="assets/br5/poster.webp" alt="PEPPER CLUB 상자 옆에서 재생 중인 아이팟으로 미끄러져 들어가는 영상" width="720" height="404" loading="lazy" decoding="async"></div>
-</section>
 <section id="pp-decl" data-pp-scene="decl" data-pp-act="2" data-pp-kind="decl"><div class="pp-wrap">
 <h2 class="pp-h2" data-pp-split="rev">살 거면,<br>왜 페퍼클럽인지<br>알려 드립니다.</h2>
 <div class="pp-decl-nums" data-pp-r><div><b data-pp-countup="5" data-pp-suffix="억+">5억+</b><span>와디즈</span></div><div><b data-pp-countup="1200" data-pp-suffix="건+">1,200건+</b><span>후기</span></div></div>
@@ -699,33 +647,30 @@
 <div class="ips" data-ips>
 <div class="ips-intro"><p class="pp-lede">휠을 돌려 보세요.</p></div>
 <div class="ips-pin"><div class="ips-stage" data-ips-stage><div class="ips-card"><div class="ips-photo">
+<img class="ft-ext ft-et" src="assets/front/edge_t.webp" alt="" aria-hidden="true">
 <div class="ips-bleed" aria-hidden="true"></div>
 <div class="ips-screen"><div class="ips-hdr"><span class="ips-hdr-title" data-menu="페퍼클럽">페퍼클럽</span><span class="ips-batt" aria-hidden="true"></span></div><div class="ips-views"><ol class="ips-menu"><li class="ips-sel"><a href="#ips-d-rebuilt">다시 만든 한 대</a></li><li><a href="#ips-d-battery">새 배터리 1950mAh</a></li><li><a href="#ips-d-kc">배터리 KC 안전확인·본체 전파인증</a></li><li><a href="#ips-d-check">두 번 검사</a></li><li><a href="#ips-d-ssd">SSD 표기 용량 그대로</a></li><li><a href="#ips-d-kit">기본 구성</a></li><li><a href="#ips-d-as">7일 교환·환불 / 180일 무상</a></li><li><a href="#ips-d-ship">국내 당일 발송</a></li></ol></div></div>
 <img class="ips-front" src="assets/ips/ipod_front.webp" width="2508" height="2508" alt="흰색 5세대 아이팟 정면. 화면 안에 페퍼클럽 장점 메뉴가 보입니다." decoding="async">
 <div class="ips-wheel" role="group" tabindex="0" aria-label="클릭휠. 돌리면 메뉴가 넘어갑니다. 위아래 화살표로 선택, Enter로 들어가기, Esc로 뒤로"><button type="button" class="ips-btn-center" aria-label="들어가기"></button><button type="button" class="ips-btn-menu" aria-label="뒤로(MENU)" tabindex="-1"></button></div>
-</div></div><p class="ips-hint" aria-hidden="true">휠을 돌려 보세요. 가운데를 누르면 들어갑니다</p><p class="ips-live ips-sr" aria-live="polite"></p></div></div>
+<img class="ft-ext ft-eb" src="assets/front/edge_b.webp" alt="" aria-hidden="true">
+</div></div><div class="ips-side" aria-hidden="true"></div><p class="ips-hint" aria-hidden="true">휠을 돌려 보세요. 가운데를 누르면 들어갑니다</p><p class="ips-live ips-sr" aria-live="polite"></p></div></div>
 <div class="ips-details" data-ips-details><article id="ips-d-rebuilt" data-hdr="다시 만든 한 대" class="has-th"><h3>다시 만든 한 대</h3><figure class="ips-fig"><img src="assets/ips/th_rebuilt.webp" alt="분해해 작업 중인 아이팟 메인보드와 프레임을 손에 든 실제 작업 사진" width="288" height="287" loading="lazy" decoding="async"></figure><div class="ips-txt"><p class="ips-t">남기는 건 메인보드와 프레임뿐.</p><p class="ips-l">버튼 붙은 메인보드와 프레임만 남기고, 나머지는 전부 새것으로 다시 만듭니다</p><p class="ips-n">실제 작업 사진 · 리퍼 제품</p></div></article><article id="ips-d-battery" data-hdr="새 배터리" class="has-th"><h3>새 배터리 1950mAh</h3><figure class="ips-fig"><img src="assets/ips/th_battery.webp" alt="새 배터리 실물" width="288" height="288" loading="lazy" decoding="async"></figure><div class="ips-txt"><p class="ips-big">1950<small>mAh</small></p><p class="ips-t">새것입니다</p><p class="ips-l">원래는 약 <s>400~580mAh</s></p><p class="ips-l">사양 기준 음악 재생 최대 약 32시간</p></div></article><article id="ips-d-kc" data-hdr="안전확인·전파인증"><h3>배터리 KC 안전확인·본체 전파인증</h3><div class="ips-txt"><p class="ips-t">배터리 KC 안전확인은 저희 비용으로 받았습니다</p><p class="ips-l">KC 안전확인 신고 ZU10670-22001</p><p class="ips-l">KTL 2022.08</p><p class="ips-l">본체 전파인증(KC)도 받았습니다</p></div></article><article id="ips-d-check" data-hdr="두 번 검사" class="has-th"><h3>두 번 검사</h3><figure class="ips-fig"><img src="assets/ips/th_check.webp" alt="켜서 확인 중인 아이팟 화면" width="288" height="240" loading="lazy" decoding="async"></figure><div class="ips-txt"><p class="ips-big">2<small>번 검사</small></p><p class="ips-t">두 번 켜 보고 보냅니다</p><p class="ips-l">만든 직후 한 번, 출고 때 한 번 더</p><p class="ips-l">6칸 직접 점검하고 보냅니다</p></div></article><article id="ips-d-ssd" data-hdr="저장"><h3>SSD 표기 용량 그대로</h3><div class="ips-txt"><p class="ips-big">SSD<small></small></p><p class="ips-t">저장장치는 SSD</p><p class="ips-l">표기 용량 그대로 읽고 씁니다</p></div></article><article id="ips-d-kit" data-hdr="기본 구성" class="has-th"><h3>기본 구성</h3><figure class="ips-fig"><img src="assets/ips/th_set.webp" alt="검은 책상 위에 펼쳐 둔 본체, 박스, 설명서, 필름, 케이블, 이어폰, 독스탠드, 크리스탈 케이스" width="288" height="171" loading="lazy" decoding="async"></figure><div class="ips-txt"><p class="ips-big">8<small>개 구성</small></p><p class="ips-t">이게 전부 기본 구성입니다</p><p class="ips-l">따로 사실 것 없이 다 갑니다</p><p class="ips-l">충전 겸용 독스탠드와 크리스탈 케이스까지 기본</p></div></article><article id="ips-d-as" data-hdr="교환·환불"><h3>7일 교환·환불 / 180일 무상</h3><div class="ips-txt"><p class="ips-big">180<small>일 무상</small></p><p class="ips-t">7일 교환·환불, 180일 무상</p><p class="ips-l">그 뒤 평생 실비(부품값·공임만)</p><p class="ips-n">7일이 지난 뒤 왕복 택배비 7,000원은 고객 부담입니다</p></div></article><article id="ips-d-ship" data-hdr="당일 발송"><h3>국내 당일 발송</h3><div class="ips-txt"><p class="ips-big">15<small>시 전 주문</small></p><p class="ips-t">평일 15시 전 주문하면 당일출고</p><p class="ips-l">국내에서 바로 발송</p></div></article></div>
 </div>
 </section>
-<div class="pp-dkzone">
-<section id="pp-set" data-pp-scene="set" data-pp-act="2" data-pp-kind="set"><div class="pp-wrap">
-<h2 class="pp-h2" data-pp-r>이게 전부<br>기본 구성입니다.</h2>
-<p class="pp-lede" data-pp-r>눌러서 하나씩 크게 보세요</p></div>
-<div class="pp-set" data-pp-boxes="[{&quot;n&quot;:&quot;본체&quot;,&quot;b&quot;:[0.779,0.1943,0.9677,0.5861]},{&quot;n&quot;:&quot;박스&quot;,&quot;b&quot;:[0.0352,0.0336,0.3127,0.5801]},{&quot;n&quot;:&quot;설명서&quot;,&quot;b&quot;:[0.3423,0.1348,0.5451,0.5801]},{&quot;n&quot;:&quot;필름&quot;,&quot;b&quot;:[0.5677,0.1348,0.7635,0.5742]},{&quot;n&quot;:&quot;30핀 케이블&quot;,&quot;b&quot;:[0.6099,0.7183,0.7635,0.9612]},{&quot;n&quot;:&quot;이어폰&quot;,&quot;b&quot;:[0.7719,0.7123,0.9607,0.9671]},{&quot;n&quot;:&quot;충전 독스탠드 · 별도 포장&quot;,&quot;b&quot;:[0.3775,0.6528,0.6085,0.9671]},{&quot;n&quot;:&quot;크리스탈 케이스 · 별도 포장&quot;,&quot;b&quot;:[0.0254,0.6409,0.355,0.9671]}]"><img src="assets/set/c8set.webp" alt="검은 책상 위에 한 줄로 펼쳐 둔 박스, 설명서, 필름, 본체, 크리스탈 케이스, 독스탠드, 30핀 케이블, 이어폰" width="1800" height="1198" loading="lazy" decoding="async"></div>
-<p class="pp-set-cap" data-all="이게 전부 기본 구성입니다" aria-live="polite">이게 전부 기본 구성입니다</p>
-<ul class="pp-set-chips"><li><button type="button" aria-pressed="false">본체</button></li><li><button type="button" aria-pressed="false">박스</button></li><li><button type="button" aria-pressed="false">설명서</button></li><li><button type="button" aria-pressed="false">필름</button></li><li><button type="button" aria-pressed="false">30핀 케이블</button></li><li><button type="button" aria-pressed="false">이어폰</button></li><li><button type="button" aria-pressed="false">충전 독스탠드</button></li><li><button type="button" aria-pressed="false">크리스탈 케이스</button></li></ul>
-<ul class="pp-set-static"><li>본체</li><li>박스</li><li>설명서</li><li>필름</li><li>30핀 케이블</li><li>이어폰</li><li>충전 독스탠드 · 별도 포장</li><li>크리스탈 케이스 · 별도 포장</li></ul>
-</section>
-<section id="pp-dock" data-pp-scene="dock" data-pp-act="2" data-pp-kind="dkst">
-<div class="pp-wrap"><h2 class="pp-h2" data-pp-r>세워 두면,<br>그 자체로 그림.</h2></div>
-<div data-pp-sticky style="--pp-k:2.6"><div class="pp-st pp-dkst-st"><div class="pp-dkband" data-pp-seq data-pp-base="assets/dock/f_" data-pp-count="45" data-pp-ext=".webp" data-pp-w="960" data-pp-h="621" data-pp-map="0.04,0.96" data-pp-lite="45" style="--pp-w:960;--pp-h:621"><img src="assets/dock/poster.webp" alt="흰색 충전 독스탠드를 검은 책상 위에서 비추는 영상" width="960" height="621" loading="lazy" decoding="async"><i class="pp-bandfade pp-bt"></i><i class="pp-bandfade pp-bb"></i></div></div></div>
-</section>
+<section id="pp-set" data-pp-scene="set" data-pp-act="2" data-pp-kind="set">
+<div data-pp-sticky style="--pp-k:2.6"><div class="pp-st pp-blk">
+<h2 class="pp-h2">이게 전부<br>기본 구성입니다</h2>
+<div class="pp-lv" data-pp-seq data-pp-fx="set0" data-pp-base="assets/set0/f_" data-pp-count="97" data-pp-ext=".webp" data-pp-w="720" data-pp-h="405" data-pp-map="0.05,0.9" data-pp-lite="97" style="--pp-w:720;--pp-h:405"><img src="assets/set0/poster.webp" alt="검은 책상 위에 본체, 박스, 설명서, 필름, 30핀 케이블, 이어폰, 독스탠드, 크리스탈 케이스가 차례로 놓이는 영상" width="720" height="405" loading="lazy" decoding="async"></div>
+<ul class="pp-set-list" aria-label="기본 구성 8가지"><li>1. 본체</li><li>2. 박스</li><li>3. 설명서</li><li>4. 필름</li><li>5. 30핀 케이블</li><li>6. 이어폰</li><li>7. 충전 독스탠드</li><li>8. 크리스탈 케이스</li></ul>
+<p class="pp-set-all">따로 사실 것 없이 다 갑니다</p>
+</div></div></section>
 <section id="pp-pkg" data-pp-scene="pkg" data-pp-act="2" data-pp-kind="pkg">
-<div class="pp-wrap pp-pkg-txt"><h2 class="pp-h2" data-pp-r>격에 맞는<br>패키지.</h2></div>
-<div class="pp-pkg0" data-pp-seq data-pp-base="assets/pkg0/f_" data-pp-count="70" data-pp-ext=".webp" data-pp-w="720" data-pp-h="404" data-pp-map="0.1,0.7" data-pp-lite="1" style="--pp-w:720;--pp-h:404"><img src="assets/pkg0/poster.webp" alt="PEPPER CLUB 흰 상자를 열면 이어폰·케이블·본체·보호필름이 차례로 나오는 영상" width="720" height="404" loading="lazy" decoding="async"><i class="pp-bandfade pp-bt"></i><i class="pp-bandfade pp-bb"></i></div>
-<div data-pp-sticky style="--pp-k:3.2"><div class="pp-st pp-dkst-st"><div class="pp-dkband pp-sqv" data-pp-seq data-pp-base="assets/pkg/f_" data-pp-count="90" data-pp-ext=".webp" data-pp-w="720" data-pp-h="723" data-pp-map="0.04,0.96" data-pp-lite="90" style="--pp-w:720;--pp-h:723"><img src="assets/pkg/poster.webp" alt="택배 상자에 구성품을 담고 닫아 PEPPER CLUB 스티커 상자가 되는 영상" width="720" height="723" loading="lazy" decoding="async"></div></div></div>
-</section>
-</div>
+<div data-pp-sticky style="--pp-k:4.4"><div class="pp-st pp-blk">
+<div class="pp-tt"><h2 class="pp-h2">격에 맞는<br>패키지.</h2><h2 class="pp-h2" aria-hidden="true">상자가 닫히면,<br>출발합니다.</h2></div>
+<div class="pp-lv" data-pp-seq data-pp-fx="pkg" data-pp-base="assets/pkg/f_" data-pp-count="284" data-pp-ext=".webp" data-pp-w="720" data-pp-h="405" data-pp-map="0.02,0.94" data-pp-lite="284" style="--pp-w:720;--pp-h:405"><img src="assets/pkg/poster.webp" alt="구성품을 상자에 담고 택배 상자를 닫아 PEPPER CLUB 스티커 상자가 되는 영상" width="720" height="405" loading="lazy" decoding="async"></div>
+<ol class="pp-dots4" aria-label="포장 단계"><li class="pp-on">흰 상자에</li><li>뽁뽁이</li><li>박스</li><li>닫기</li></ol>
+<a class="pp-pkgbtn" href="#pp-buy-area" data-pp-cta>네이버에서 구입하기</a>
+</div></div></section>
 <section id="pp-cmp" data-pp-scene="cmp" data-pp-act="2" data-pp-kind="cmp">
 <div data-pp-sticky style="--pp-k:2.6"><div class="pp-st pp-ctr pp-cmp-st"><div class="pp-wrap">
 <h2 class="pp-h2">싼 건<br>싼 값을 합니다.</h2>
@@ -733,18 +678,12 @@
 <div class="pp-cmp-tb" data-pp-scroll data-pp-fx="cmp"><table class="pp-tbl"><thead><tr><th></th><th scope="col">해외직구 (일반적인 조건)</th><th scope="col">페퍼클럽</th></tr></thead><tbody><tr><th scope="row">배터리</th><td class="pp-theirs">원래 약 400~580mAh</td><td class="pp-ours">직접 KC 안전확인 받은 1950mAh, 새것</td></tr><tr><th scope="row">저장</th><td class="pp-theirs">판매처마다 다름</td><td class="pp-ours">SSD 표기 용량 그대로</td></tr><tr><th scope="row">받는 날</th><td class="pp-theirs">10일~3주</td><td class="pp-ours">국내에서 바로 발송</td></tr><tr><th scope="row">구성</th><td class="pp-theirs">판매처마다 다름</td><td class="pp-ours">본체·박스·설명서·필름·30핀 케이블·이어폰·충전 독·크리스탈 케이스</td></tr><tr><th scope="row">받은 뒤</th><td class="pp-theirs">해외 반송·소통 어려움</td><td class="pp-ours">7일 교환·환불, 180일 무상 A/S</td></tr><tr><th scope="row">검수</th><td class="pp-theirs">확인 어려움</td><td class="pp-ours">6칸 직접 점검</td></tr></tbody></table></div>
 <p class="pp-lede pp-cmp-end">기다릴 수 있으면 직구,<br>국내에서 바로 받으려면 <span style="color:var(--pp-ink)">페퍼클럽</span>입니다</p>
 </div></div></div></section>
-<div class="pp-dkzone">
-<section id="pp-close" data-pp-scene="close" data-pp-act="2" data-pp-kind="closing"><div class="pp-wrap">
-<h2 class="pp-h2" data-pp-r>상자가 닫히면,<br>출발합니다.</h2></div>
-<div class="pp-closebox" data-pp-r><img src="assets/pkg/closed.webp" alt="PEPPER CLUB 스티커가 붙은 닫힌 택배 상자" width="810" height="814" loading="lazy" decoding="async"></div>
-</section>
-</div>
 <section id="pp-faq" data-pp-scene="faq" data-pp-act="2" data-pp-kind="faq"><div class="pp-wrap">
 <h2 class="pp-h2">자주 묻는 질문</h2>
 <details><summary>이어폰·독이 들어 있나요?</summary><p>본체·박스·설명서·필름·30핀 케이블, 이어폰·독스탠드·크리스탈 케이스까지 기본으로 들어 있습니다. 따로 사실 것 없이 다 갑니다.</p></details>
-<details><summary>배터리는 얼마나 가나요?</summary><p>사양 기준 음악 재생 최대 약 32시간입니다. 1950mAh 새 배터리를 넣어 보냅니다.</p></details>
-<details><summary>A/S는 어떻게 하나요?</summary><p>7일 교환·환불, 180일 무상 A/S, 그 뒤 평생 실비 수리(부품값·공임만)입니다. 남긴 메인보드·프레임까지 포함해 180일 무상입니다. 문의는 톡톡 QR로 받습니다.</p></details>
-<details><summary>교환·환불이 되나요?</summary><p>7일 교환·환불이 됩니다. 7일이 지난 뒤 왕복 택배비 7,000원은 고객 부담입니다.</p></details>
+<details><summary>배터리는 얼마나 가나요?</summary><p>사양 기준 음악 재생 최대 약 32시간입니다.</p></details>
+<details><summary>A/S는 어떻게 하나요?</summary><p>문의는 톡톡 QR로 받습니다.</p></details>
+<details><summary>교환·환불이 되나요?</summary><p>7일이 지난 뒤 왕복 택배비 7,000원은 고객 부담입니다.</p></details>
 </div></section>
 <section id="pp-c8" data-pp-scene="c8" data-pp-act="2" data-pp-kind="end"><div class="pp-wrap"><div class="pp-cta">
 <h2 class="pp-h2" data-pp-split="rev">마음에 드셨다면,<br>지금 담으세요.</h2>
@@ -1258,111 +1197,142 @@ function boot(){
 function clamp(v,a,b){return v<a?a:v>b?b:v}
 function smooth(a,b,v){var t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t)}
 function qa(s,r){return slice.call((r||d).querySelectorAll(s))}
-var SND=R.getAttribute('data-pp-snd')==='1',AU=null,armed=0;
-/* 소리: 기본 무음(data-pp-snd 한 줄). iOS 는 사용자 터치 안에서 AudioContext 를 만들고 resume 해야 소리가 난다 — 첫 터치(touchend·pointerdown·click·keydown 중 먼저 오는 것)에서 한 번 열고 무음 버퍼를 재생해 잠금을 푼다. 오디오 파일 없음(합성 클릭음).
-   햅틱 navigator.vibrate 는 iOS 사파리에서 지원되지 않는다 — 있으면 쓰고 없어도 화면 반응(딸깍 글자·링)으로 충분하게 만들었다(의존 금지). */
-function unlockAudio(){armed=1;if(!SND||AU)return;try{var C=w.AudioContext||w.webkitAudioContext;if(!C)return;AU=new C();if(AU.state==='suspended')AU.resume();var b=AU.createBuffer(1,1,22050),sr=AU.createBufferSource();sr.buffer=b;sr.connect(AU.destination);sr.start(0)}catch(x){AU=null}}
-function tick(){ev2('pp:tick',{});
- if(typeof w.navigator.vibrate==='function')try{w.navigator.vibrate(10)}catch(x){}
- if(!SND||!armed||!AU)return;
- try{var o=AU.createOscillator(),g=AU.createGain(),t=AU.currentTime;
-  o.type='square';o.frequency.setValueAtTime(1900,t);o.frequency.exponentialRampToValueAtTime(700,t+.03);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.04);
-  o.connect(g);g.connect(AU.destination);o.start(t);o.stop(t+.05)}catch(x){}}
-w.PPTick=tick;
-['touchend','pointerdown','click','keydown'].forEach(function(e){d.addEventListener(e,unlockAudio,{once:true,capture:true,passive:true})});
+function isStatic(){return R.classList.contains('pp-static')||!R.classList.contains('pp-js')}
 
-/* 프레임 묶음(끌어 꽂기·길게 누르기용): 근처에 오면 전부 받고, p(0~1) → 가장 가까운 받은 프레임을 canvas 에 그린다. */
-function Strip(box,cfg){var s=this;s.box=box;s.cv=box.querySelector('canvas');s.cx=s.cv&&s.cv.getContext&&s.cv.getContext('2d');s.n=cfg.n;s.base=cfg.base;s.ext=cfg.ext;s.W=cfg.W;s.H=cfg.H;s.Fr=[];s.shown=-1;s.want=0;s.started=0;s.onready=null;
- if(s.cv){s.cv.width=s.W;s.cv.height=s.H}}
-Strip.prototype.url=function(k){return this.base+('00'+k).slice(-3)+this.ext};
-Strip.prototype.load=function(){var s=this,k=1,act=0;if(s.started||!s.cx)return;s.started=1;
- function nx(){while(act<4&&k<=s.n){(function(i){act++;var im=new Image();im.decoding='async';im.onload=function(){s.Fr[i]=im;act--;if(i===1&&s.onready)s.onready();s.draw(s.want,1);nx()};im.onerror=function(){act--;nx()};im.src=s.url(i)})(k++)}}
- nx()};
-Strip.prototype.draw=function(i,force){var s=this,j=clamp(i,0,s.n-1),a,b;if(!s.cx)return;s.want=j;
- for(a=j;a>=0&&!(s.Fr[a+1]&&s.Fr[a+1].naturalWidth);a--);for(b=j;b<s.n&&!(s.Fr[b+1]&&s.Fr[b+1].naturalWidth);b++);
- var pick=a<0?b:b>=s.n?a:(j-a<=b-j?a:b);if(pick<0||pick>=s.n||!(s.Fr[pick+1]&&s.Fr[pick+1].naturalWidth))return;
- if(pick===s.shown&&!force)return;s.shown=pick;s.cx.drawImage(s.Fr[pick+1],0,0,s.W,s.H);s.box.classList.add('pp-run')};
-Strip.prototype.show=function(p){this.draw(Math.round(clamp(p,0,1)*(this.n-1)))};
-function stripOf(box){return new Strip(box,{n:num9(box,'data-pp-count'),base:box.getAttribute('data-pp-base'),ext:box.getAttribute('data-pp-ext')||'.webp',W:num9(box,'data-pp-w')||720,H:num9(box,'data-pp-h')||720})}
-function num9(el,k){var v=el.getAttribute(k);return v===null||v===''?0:+v}
+/* ── 소리: 영상팀 릴 오디오에서 자른 딸깍·휠 틱 한 개씩(assets/audio, 각 1.5KB). 기본 꺼짐(작은 토글 한 줄) · 켜져 있어도 첫 터치 뒤에만 재생(iOS 잠금 해제는 사용자 터치 안에서) · 딸깍은 페이지당 한 번.
+   진동 navigator.vibrate 는 iOS 사파리에서 지원되지 않는다 — 있을 때만 쓰고 화면 반응(글자·선)만으로 충분하게 만들었다. 재생 기록은 w.PPSound.log(테스트용). ── */
+var SNDON=R.getAttribute('data-pp-snd')==='1',AU=null,armed=0,BUF={},SLOG=[],jackDone=0,lastTick=0,ABASE=R.getAttribute('data-pp-audio')||'';
+function sLog(e){SLOG.push([Math.round(w.performance.now()),e])}
+function loadBuf(n){if(BUF[n]!==undefined||!AU||!ABASE||!w.fetch)return;BUF[n]=null;
+ var a=d.createElement('audio'),ext=(a.canPlayType&&a.canPlayType('audio/mpeg'))?'mp3':'m4a';
+ w.fetch(ABASE+n+'.'+ext,{credentials:'omit'}).then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,no){AU.decodeAudioData(b,ok,no)})}).then(function(x){BUF[n]=x;sLog('decoded:'+n+'.'+ext)},function(){BUF[n]=false;sLog('decode-fail:'+n)})}
+function unlockAudio(){if(armed)return;armed=1;sLog('first-touch');if(!SNDON||AU)return;openAudio()}
+function openAudio(){try{var C=w.AudioContext||w.webkitAudioContext;if(!C)return;AU=AU||new C();if(AU.state==='suspended')AU.resume();var b=AU.createBuffer(1,1,22050),sr=AU.createBufferSource();sr.buffer=b;sr.connect(AU.destination);sr.start(0);loadBuf('jack_click');loadBuf('wheel_tick');sLog('ctx:'+AU.state)}catch(x){AU=null}}
+function play(n){if(!SNDON||!armed||!AU)return false;var b=BUF[n];
+ if(!b){loadBuf(n);sLog('skip(not-ready):'+n);return false}
+ try{var s=AU.createBufferSource(),g=AU.createGain();s.buffer=b;g.gain.value=n==='jack_click'?.9:.6;s.connect(g);g.connect(AU.destination);s.start(0);sLog('play:'+n);return true}catch(x){return false}}
+function vib(ms){if(typeof w.navigator.vibrate==='function')try{w.navigator.vibrate(ms)}catch(x){}}
+function tick(){var t=w.performance.now();ev2('pp:tick',{});if(t-lastTick<55)return;lastTick=t;vib(10);play('wheel_tick')}
+function clickOnce(){ev2('pp:plug',{});vib(10);if(!jackDone&&SNDON&&armed){if(play('jack_click'))jackDone=1}}
+w.PPTick=tick;
+w.PPSound={log:SLOG,state:function(){return{on:SNDON,armed:armed,ctx:AU?AU.state:'none',bufs:Object.keys(BUF).filter(function(k){return BUF[k]}),jackDone:jackDone}}};
+['touchend','pointerdown','click','keydown'].forEach(function(e){d.addEventListener(e,unlockAudio,{once:true,capture:true,passive:true})});
+function sndToggle(){if(!ABASE)return;var b=d.createElement('button');b.type='button';b.className='pp-sndtog';b.setAttribute('aria-pressed',SNDON?'true':'false');b.textContent=SNDON?'소리 끄기':'소리 켜기';
+ b.addEventListener('click',function(){SNDON=!SNDON;b.setAttribute('aria-pressed',SNDON?'true':'false');b.textContent=SNDON?'소리 끄기':'소리 켜기';armed=1;if(SNDON){openAudio();ev2('pp:sound',{on:true})}else ev2('pp:sound',{on:false})});(d.querySelector('#pp-jack .pp-st')||R).appendChild(b)}
+
 function near(el,f){if(!w.IntersectionObserver){f();return}
  new w.IntersectionObserver(function(es,o){if(es[0].isIntersecting){o.disconnect();f()}},{rootMargin:'700px 0px'}).observe(el)}
 
+/* ── 정면 선명컷 장면(ft): 본체 통째(세로 폰: 폭 94% 한도·글자 자리 120, 가로 화면: 높이 80%·최대 760, 오른쪽 58%) — 화면 크기 규칙. 확대는 가장 큰 크기로 깔고 transform 으로 줄이는 방식이라 끝 상태는 transform 없이 또렷하다. ── */
+var BODY=function(){var M=w.IPS_MEASURE;return M?{bw:M.body.w/M.photo.w,bh:M.body.h/M.photo.h,cx:M.body.cx/M.photo.w,cy:M.body.cy/M.photo.h}:{bw:.4466,bh:.74,cx:.5,cy:.4809}};
+function ftGeom(st,o){var vw=st.clientWidth,vh=st.clientHeight,B=BODY(),land=vw/vh>1.1,ts=o.ts||120,t=o.title==='t',bwp,bh,cx,cy,P,y0,y1;
+ if(land){bh=Math.min((vh-44)*.8,760);bwp=bh*B.bw/B.bh;cx=vw*(o.long?.58:.5);cy=44+(vh-44)/2}
+ else if(vw>500){bh=Math.min((vh-44)*.62,760);bwp=bh*B.bw/B.bh;cx=vw/2;y0=44+(t?ts:0);y1=vh-(t?0:ts);cy=(y0+y1)/2}   /* 태블릿 세로: 높이 = (화면 높이−44)의 62%·최대 760(화면 크기 규칙) */
+ else{bwp=Math.min(vw*.94,(vh-44-ts-24)*B.bw/B.bh);bh=bwp*B.bh/B.bw;cx=vw/2;y0=44+(t?ts:0);y1=vh-(t?0:ts);cy=(y0+y1)/2}
+ P=bwp/B.bw;return{vw:vw,vh:vh,land:land,B:B,P:P,bw:bwp,bh:bh,cx:cx,cy:cy,ts:ts}}
+function FtScene(st){var s=this;s.st=st;s.ph=st.querySelector('.ft-ph');s.ti=st.querySelector('.pp-ft-title');s.hint=st.querySelector('.pp-ft-hint');s.o={title:st.getAttribute('data-ft-title')||'b',ts:+st.getAttribute('data-ft-ts')||120,zoom:+st.getAttribute('data-ft-zoom')||1,long:st.getAttribute('data-ft-long')==='1',fit:st.getAttribute('data-ft-fit')||''};s.p=0;s.g=null;s.sel=-1;s.menu=null;s.rows=[];
+ s.menu=st.querySelector('.ips-menu');if(s.menu)s.rows=qa('li',s.menu)}
+FtScene.prototype.layout=function(){var s=this,st=s.st;if(isStatic()){[s.ph,s.ti,s.hint].forEach(function(e){if(e){e.style.cssText=''}});return}
+ var g=ftGeom(st,s.o),z=(g.land||g.vw>500)?1:s.o.zoom,P=g.P;s.g=g;s.z=z;
+ s.ph.style.width=s.ph.style.height=P+'px';s.ph.style.left=(g.cx-P*g.B.cx)+'px';s.ph.style.top=(g.cy-P*g.B.cy)+'px';
+ s.ph.style.transformOrigin=(P*g.B.cx)+'px '+(P*g.B.cy)+'px';
+ if(s.ti){if(g.land){s.ti.style.left='56px';s.ti.style.right='auto';s.ti.style.width=Math.max(160,g.cx-g.bw/2-64-56)+'px';s.ti.style.top='50%';s.ti.style.transform='translateY(-50%)'}
+  else{s.ti.style.width='';s.ti.style.right='';s.ti.style.left='0';s.ti.style.transform='';s.ti.style.top=(s.o.title==='t'?(44+14):(g.cy+g.bh/2+14))+'px'}}
+ if(s.hint){s.hint.style.top=(g.land?'auto':(s.o.title==='t'?(g.cy+g.bh/2+4):(g.cy+g.bh/2+14+(s.ti?s.ti.offsetHeight:0)+6))+'px');if(g.land){s.hint.style.bottom='14px';s.hint.style.left='auto';s.hint.style.right=(g.vw-g.cx-g.bw/2)+'px';s.hint.style.width=g.bw+'px'}else{s.hint.style.bottom='';s.hint.style.right='';s.hint.style.left='0';s.hint.style.width=''}}
+ s.progress(s.p,1)};
+FtScene.prototype.progress=function(p,force){var s=this;s.p=p;if(!s.g||isStatic())return;
+ if(s.z>1){var k=smooth(.05,.6,p),sc=1+(s.z-1)*k;s.ph.style.transform=(k<=.0005)?'none':'scale('+sc.toFixed(4)+')';
+  if(s.ti)s.ti.style.opacity=(1-smooth(.18,.4,p)).toFixed(3)}
+ var f=s.fx;if(f)f(s,p,force)};
+var FTS=[];
+function ftInit(){qa('.pp-ft[data-pp-ft]').forEach(function(st){var s=new FtScene(st),kind=st.getAttribute('data-pp-ft');st._ft=s;FTS.push(s);
+  if(kind==='wheel')ftWheel(s);if(kind==='snd')ftHold(s);
+  s.layout();if(w.ResizeObserver)new w.ResizeObserver(function(){s.layout()}).observe(st)});
+ var rt;w.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){FTS.forEach(function(s){s.layout()})},80)});
+ d.addEventListener('pp:tier',function(){FTS.forEach(function(s){s.layout()})})}
+/* 메뉴: 6줄이 정확히 한 화면(줄 높이 = 화면 안 목록 ÷ 6), 반 줄 잘림 없음 */
+function ftSelect(s,k,quiet){k=clamp(k,0,s.rows.length-1);if(k===s.sel)return;s.sel=k;s.rows.forEach(function(li,i){li.classList.toggle('ips-sel',i===k);li.setAttribute('aria-current',i===k?'true':'false')});if(!quiet&&s.ready)tick()}
+function ftWheel(s){var wh=s.st.querySelector('.ips-wheel'),btn=s.st.querySelector('.ips-btn-center'),acc=0,last=0,pid=null,N=s.rows.length;
+ s.fx=function(s2,p){var k=Math.floor(clamp((p-.1)/.8,0,.999)*N);s2.ready=1;if(!s2.drag)ftSelect(s2,k)};
+ ftSelect(s,0,1);
+ if(!wh)return;
+ function ang(e){var r=wh.getBoundingClientRect();return Math.atan2(e.clientY-r.top-r.height/2,e.clientX-r.left-r.width/2)}
+ wh.addEventListener('pointerdown',function(e){if(pid!==null)return;if(e.target.closest&&e.target.closest('.ips-btn-center'))return;pid=e.pointerId;last=ang(e);acc=0;s.drag=1;s.ready=1;try{wh.setPointerCapture(pid)}catch(x){}e.preventDefault()});
+ wh.addEventListener('pointermove',function(e){if(e.pointerId!==pid)return;var a=ang(e),da=a-last;if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;last=a;acc+=da;
+  while(acc>Math.PI/6){ftSelect(s,s.sel+1);acc-=Math.PI/6}while(acc<-Math.PI/6){ftSelect(s,s.sel-1);acc+=Math.PI/6}});
+ function up(e){if(e.pointerId!==pid)return;pid=null;acc=0;setTimeout(function(){s.drag=0},600)}
+ wh.addEventListener('pointerup',up);wh.addEventListener('pointercancel',up);
+ wh.addEventListener('keydown',function(e){if(e.key==='ArrowDown'||e.key==='ArrowRight'){e.preventDefault();s.drag=1;ftSelect(s,s.sel+1)}else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();s.drag=1;ftSelect(s,s.sel-1)}});
+ if(btn)btn.addEventListener('click',function(){tick()})}
+/* 1-7: 길게 누르면 메뉴 → 재생 화면(화면 안 내용 교체), 다시 길게 누르면 메뉴 */
+function ftHold(s){var ph=s.ph,t=0,fired=0,hint=s.hint;ftSelect(s,0,1);s.fx=function(){};
+ function set(on){s.st.classList.toggle('ft-play',on);ph.setAttribute('aria-pressed',on?'true':'false');if(hint)hint.textContent=on?'다시 길게 누르면 메뉴':'길게 눌러 보세요';tick()}
+ ph.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;fired=0;clearTimeout(t);t=setTimeout(function(){fired=1;set(!s.st.classList.contains('ft-play'))},380)});
+ ['pointerup','pointercancel','pointerleave'].forEach(function(n){ph.addEventListener(n,function(){clearTimeout(t)})});
+ ph.addEventListener('keydown',function(e){if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();set(!s.st.classList.contains('ft-play'))}});
+ ph.addEventListener('contextmenu',function(e){e.preventDefault()})}
+
 /* ── 진행도 → 장면 효과(엔진이 스크롤 감기를 하고, 진행도를 el._ppp 로 알려 준다) ── */
+function popJack(sc){sc.classList.remove('pp-pop');void sc.offsetWidth;sc.classList.add('pp-pop');clearTimeout(sc._pt);sc._pt=setTimeout(function(){sc.classList.remove('pp-pop')},320);clickOnce()}
 var FX={
  /* 1-0 훅: 한 단어씩(그 단어의 구간이 오면 이전 단어는 위로 사라지고 새 단어가 올라온다) */
  hero:function(el,p){var sc=el.closest('[data-pp-sticky]'),ws=sc&&sc.querySelector('[data-pp-words]');if(!ws)return;
   var sp=ws._sp||(ws._sp=ws.getAttribute('data-pp-words').split(';').map(function(x){var a=x.split(',');return[+a[0],+a[1]]})),c=ws.children,i,st,key='',last=c.length-1;
   for(i=0;i<c.length;i++){st=p<sp[i][0]?0:(p<sp[i][1]||i===last)?1:2;key+=st}
+  var st0=sc.querySelector('.pp-st');if(st0)st0.classList.toggle('pp-late',p>.55);
   if(ws._k===key)return;ws._k=key;for(i=0;i<c.length;i++){st=+key.charAt(i);c[i].className='pp-wd'+(st===1?' pp-on':st===2?' pp-off':'')}},
+ /* 1-0b 잭: 스크롤로 꽂힘 → 딸깍(글자 + 충격선 + 소리 한 번) → 제목이 작게 내려가고, 0.75~1 에서 '선을 꽂아야…' 줄 단위 */
+ jack:function(el,p){var sc=el.closest('.pp-jackst');if(!sc)return;var PJ=+el.getAttribute('data-pp-plugat')||.58,pl=p>=PJ,t2=p>=.75,ls=sc._ls||(sc._ls=qa('.pp-jt2 span',sc)),i;
+  if(sc._pl===undefined){sc._pl=false;sc._t2=false}
+  if(pl!==sc._pl){sc._pl=pl;sc.classList.toggle('pp-plugged',pl);if(pl)popJack(sc);else sc.classList.remove('pp-pop')}
+  if(t2!==sc._t2){sc._t2=t2;sc.classList.toggle('pp-t2',t2)}
+  for(i=0;i<ls.length;i++){var on=p>=.76+.085*i;if(ls[i]._on!==on){ls[i]._on=on;ls[i].classList.toggle('pp-on',on)}}},
  /* 1-1 기억: 글자 한 자씩 */
  mem:function(el,p){var sc=el.closest('[data-pp-sticky]'),cs=sc&&(sc._ch||(sc._ch=qa('.pp-ch',sc)));if(!cs||!cs.length)return;
-  var n=cs.length,i,on;for(i=0;i<n;i++){on=p>=.1+.62*i/n;if(cs[i]._on!==on){cs[i]._on=on;cs[i].classList[on?'add':'remove']('pp-on')}}},
- /* 1-2 등장: 작은 둥근 타일 → 화면 가득 확대(영상 프레임 자체를 키울 뿐) */
- zoom:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;sc.style.setProperty('--z',(.58+.42*smooth(0,.6,p)).toFixed(4));sc.style.setProperty('--to',(1-smooth(.34,.62,p)).toFixed(3))},
+  var n=cs.length,i,on;for(i=0;i<n;i++){on=p>=.06+.5*i/n;if(cs[i]._on!==on){cs[i]._on=on;cs[i].classList.toggle('pp-on',on)}}},
+ /* 1-2 등장·1-5 휠·1-7 소리: ft 장면 진행도 */
+ ft:function(el,p){var s=(el.closest('.pp-ft')||el)._ft;if(s)s.progress(p)},
+ /* 1-3 360: 앞은 화면(0~.3) · 옆은 두께(.4~.6) · 뒤는 거울(.9~1) */
+ g360:function(el,p){var sc=el.closest('[data-pp-sticky]'),ls=sc&&(sc._gl||(sc._gl=qa('.pp-g360lab li',sc))),i,r,on;if(!ls)return;
+  for(i=0;i<ls.length;i++){r=ls[i].getAttribute('data-r').split(',');on=p>=+r[0]&&p<=+r[1];if(ls[i]._on!==on){ls[i]._on=on;ls[i].classList.toggle('pp-on',on)}}},
  /* 1-8 낭만: 줄이 하나씩, 정면 컷 약한 확대, 곡 수 0 → 약 N(올라간 뒤에만 '약') */
  rom:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var ls=sc._rl||(sc._rl=qa('.pp-rl',sc)),th=[.06,.2,.34],i,on;
-  for(i=0;i<ls.length;i++){on=p>=th[i];if(ls[i]._on!==on){ls[i]._on=on;ls[i].classList[on?'add':'remove']('pp-on')}}
+  for(i=0;i<ls.length;i++){on=p>=th[i];if(ls[i]._on!==on){ls[i]._on=on;ls[i].classList.toggle('pp-on',on)}}
   sc.style.setProperty('--zs',(1+.07*smooth(0,1,p)).toFixed(4));
   var sg=sc._sg===undefined?(sc._sg=sc.querySelector('[data-pp-songs]')):sc._sg;
   if(sg){var v=+sg.getAttribute('data-pp-songs')||0,t=smooth(.38,.82,p);sg.textContent=(t>=1?'약 ':'')+Math.round(v*t).toLocaleString('ko-KR')+(sg.getAttribute('data-pp-unit')||'')}},
- /* 2-10 비교: 페퍼클럽 칸이 위에서 아래로 한 줄씩 켜지고, 끝나면 전부 켜진 채 유지 */
+ /* 2-10 비교: 페퍼클럽 칸이 위에서부터 한 줄씩(진행도 .15~.85, 6단계) 켜지고 끝나면 유지 */
  cmp:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var rs=sc._cr||(sc._cr=qa('tbody tr',sc)),i,on;
-  for(i=0;i<rs.length;i++){on=p>=.1+.13*i;if(rs[i]._on!==on){rs[i]._on=on;rs[i].classList[on?'add':'remove']('pp-lit')}}},
- /* 1-9 넘어가기: 큰 글자가 줄 단위로 걷히고 PEPPER CLUB, 끝에서 흰 화면으로 */
- t9:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var ls=sc._ln||(sc._ln=qa('.pp-ln',sc)),pc=sc.querySelector('.pp-pc'),i,out;
-  for(i=0;i<ls.length;i++){out=p>=.4+.07*i;if(ls[i]._o!==out){ls[i]._o=out;ls[i].classList[out?'add':'remove']('pp-out')}}
-  if(pc){var on=p>=.64;if(pc._on!==on){pc._on=on;pc.classList[on?'add':'remove']('pp-on')}}
-  sc.style.setProperty('--fade',smooth(.8,1,p).toFixed(3))}
+  for(i=0;i<rs.length;i++){on=p>=.15+.14*i;if(rs[i]._on!==on){rs[i]._on=on;rs[i].classList.toggle('pp-lit',on)}}},
+ /* 2-9 패키지: 단계 점 4개가 차례로, 끝에서 제목이 바뀌고 구매 버튼이 나온다 */
+ pkg:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var ds=sc._dt||(sc._dt=qa('.pp-dots4 li',sc)),i,on,end=p>=.9,tt=sc.querySelector('.pp-tt'),bt=sc.querySelector('.pp-pkgbtn');
+  for(i=0;i<ds.length;i++){on=p>=.04+.24*i;if(ds[i]._on!==on){ds[i]._on=on;ds[i].classList.toggle('pp-on',on)}}
+  if(tt&&tt._e!==end){tt._e=end;tt.classList.toggle('pp-end',end)}if(bt&&bt._e!==end){bt._e=end;bt.classList.toggle('pp-on',end)}},
+ /* 1-9 넘어가기: 큰 글자가 줄 단위로 걷히고, 끝은 상자 PEPPER CLUB·뒷판 쪽으로 확대 + '페퍼클럽에서.' */
+ t9:function(el,p){var sc=el.closest('[data-pp-sticky]');if(!sc)return;var ls=sc._ln||(sc._ln=qa('.pp-t9t span',sc)),en=sc.querySelector('.pp-t9e'),i,out;
+  for(i=0;i<ls.length;i++){out=p>=.5+.07*i;if(ls[i]._o!==out){ls[i]._o=out;ls[i].classList.toggle('pp-out',out)}}
+  if(en){var on=p>=.78;if(en._on!==on){en._on=on;en.classList.toggle('pp-on',on)}}
+  sc.style.setProperty('--z',(1+.5*smooth(.5,.95,p)).toFixed(4))}
 };
 function fxInit(){qa('[data-pp-seq][data-pp-fx]').forEach(function(el){var f=FX[el.getAttribute('data-pp-fx')];if(!f)return;el._ppp=function(p){f(el,p)};f(el,0)});
  /* 영상이 없는 장면([data-pp-scroll])은 엔진이 진행도를 안 주므로 같은 sticky 구간의 진행도를 직접 받는다(효과 꺼짐·GSAP 없음이면 정지 상태 그대로) */
  qa('[data-pp-scroll][data-pp-fx]').forEach(function(el){var f=FX[el.getAttribute('data-pp-fx')],sk=el.closest('[data-pp-sticky]');
-  if(!f||!sk||RM||!G||!T||R.classList.contains('pp-static'))return;
+  if(!f||!sk||RM||!G||!T)return;
   try{G.registerPlugin(T);f(el,0);T.create({trigger:sk,start:'top top',end:'bottom bottom',scrub:true,onUpdate:function(t){if(!R.classList.contains('pp-static'))f(el,t.progress)}})}catch(x){}})}
 
-/* ── 1-0b 끌어 꽂기: 드래그 진행도 = 프레임. 끝까지 끌면 딸깍(햅틱·소리·링). 안 끌어도 3초 뒤 자동. 세로 스크롤은 그대로(touch-action:pan-y). ── */
-function plug(box){var sc=box.closest('[data-pp-scene]'),st=stripOf(box),p=0,pl=false,drag=0,x0=0,p0=0,idle=0,auto=0,raf=0,W=1;
- var sl=box.hasAttribute('data-pp-grip')?box:null;
- function set(v){p=clamp(v,0,1);st.show(p);var on=p>=.985;if(sl)sl.setAttribute('aria-valuenow',Math.round(p*100));
-  if(on!==pl){pl=on;sc.classList[on?'add':'remove']('pp-plugged');if(on){tick();ev2('pp:plug',{})}}}
- if(RM){box.classList.remove('pp-run');sc.classList.add('pp-plugged');return}
- near(box,function(){st.onready=function(){set(p)};st.load()});
- function stop(){auto=0;cancelAnimationFrame(raf);clearTimeout(idle)}
- function play(from,ms){stop();auto=1;var t0=w.performance.now();(function f(now){if(!auto)return;var t=clamp((now-t0)/ms,0,1),e=1-Math.pow(1-t,3);set(from+(1-from)*e);if(t<1)raf=requestAnimationFrame(f);else auto=0})(t0);}
- function arm(){clearTimeout(idle);if(pl||drag)return;idle=setTimeout(function(){if(!pl&&!drag)play(p,1500)},3000)}
- if(w.IntersectionObserver)new w.IntersectionObserver(function(es){if(es[0].isIntersecting)arm();else{clearTimeout(idle)}},{threshold:.6}).observe(box);
- box.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;stop();drag=1;x0=e.clientX;p0=p;W=Math.max(200,box.clientWidth*.62);sc.classList.add('pp-drag');try{box.setPointerCapture(e.pointerId)}catch(x){}});
- box.addEventListener('pointermove',function(e){if(!drag)return;set(p0+(x0-e.clientX)/W)});
- function up(){if(!drag)return;drag=0;sc.classList.remove('pp-drag');arm()}
- box.addEventListener('pointerup',up);box.addEventListener('pointercancel',up);
- box.addEventListener('keydown',function(e){var k=e.key;if(k==='ArrowLeft'||k==='ArrowDown'){e.preventDefault();stop();set(p+.12)}else if(k==='ArrowRight'||k==='ArrowUp'){e.preventDefault();stop();set(p-.12)}else if(k==='Enter'||k===' '){e.preventDefault();play(p,900)}});
- box.addEventListener('contextmenu',function(e){e.preventDefault()})}
-
-/* ── 1-7 길게 누르기: 누르는 동안 재생(프레임이 앞으로, 화면이 밝아짐), 떼면 처음으로 되감기. Space/Enter 도 같은 동작. ── */
-function hold(box){var st=stripOf(box),t=0,on=false,last=0,raf=0,FPS=12.5,n=st.n;
- near(box,function(){st.load()});
- function loop(now){var dt=Math.min(.1,(now-(last||now))/1000);last=now;
-  t=on?Math.min(n-1,t+dt*FPS):Math.max(0,t-dt*46);st.draw(Math.round(t));
-  if((on&&t<n-1)||(!on&&t>0))raf=requestAnimationFrame(loop);else{raf=0;last=0}}
- function set(v){if(v===on)return;on=v;box.classList[v?'add':'remove']('pp-on');if(v)tick();if(!raf){last=0;raf=requestAnimationFrame(loop)}}
- box.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;set(true);try{box.setPointerCapture(e.pointerId)}catch(x){}});
- ['pointerup','pointercancel','lostpointercapture'].forEach(function(n2){box.addEventListener(n2,function(){set(false)})});
- box.addEventListener('keydown',function(e){if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();set(true)}});
- box.addEventListener('keyup',function(e){if(e.key===' '||e.key==='Enter')set(false)});
- box.addEventListener('blur',function(){set(false)});
- box.addEventListener('contextmenu',function(e){e.preventDefault()})}
-
-/* ── 1-3 끌어 돌리기: 가로 드래그 = 스크롤 위치(= 360 프레임 진행도)를 옮긴다. 놓으면 관성. 세로 제스처는 그대로 스크롤. ── */
-function rotate(el){var sk=el.closest('[data-pp-sticky]');if(!sk)return;var drag=0,x0=0,y0=0,vx=0,lx=0,lt=0,raf=0;
+/* ── 1-3 끌어 돌리기: 가로 드래그 = 스크롤 위치(= 360 프레임 진행도)를 옮긴다(스크롤과 같은 매핑). 놓으면 관성 → 앞·옆·뒤 멈춤 자리 근처면 그 자리로. 세로 제스처는 그대로 스크롤. ── */
+function rotate(el){var sk=el.closest('[data-pp-sticky]');if(!sk)return;var drag=0,x0=0,vx=0,lx=0,lt=0,raf=0,STOPS=[0,.5,1];
  function inRange(){var r=sk.getBoundingClientRect();return r.top<=2&&r.bottom>=w.innerHeight-2}
  function travel(){return Math.max(1,sk.offsetHeight-w.innerHeight)}
+ function prog(){return clamp(-sk.getBoundingClientRect().top/travel(),0,1)}
  function K(){return travel()/Math.max(260,Math.min(w.innerWidth,720)*1.7)}
- function glide(){var v=clamp(vx*K(),-34,34);(function f(){if(Math.abs(v)<.15||!inRange())return;w.scrollBy(0,v);v*=.93;raf=requestAnimationFrame(f)})()}
- el.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;cancelAnimationFrame(raf);drag=1;x0=lx=e.clientX;y0=e.clientY;vx=0;lt=w.performance.now();el.classList.add('pp-grab');try{el.setPointerCapture(e.pointerId)}catch(x){}});
+ function snap(){if(!inRange())return;var p=prog(),b=-1,bd=.05,i;for(i=0;i<STOPS.length;i++)if(Math.abs(STOPS[i]-p)<bd){bd=Math.abs(STOPS[i]-p);b=i}
+  if(b>=0&&bd>.004)w.scrollBy({top:(STOPS[b]-p)*travel(),behavior:RM?'auto':'smooth'})}
+ function glide(){var v=clamp(vx*K(),-34,34);(function f(){if(Math.abs(v)<.15||!inRange()){snap();return}w.scrollBy(0,v);v*=.93;raf=requestAnimationFrame(f)})()}
+ el.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;cancelAnimationFrame(raf);drag=1;x0=lx=e.clientX;vx=0;lt=w.performance.now();el.classList.add('pp-grab');try{el.setPointerCapture(e.pointerId)}catch(x){}});
  el.addEventListener('pointermove',function(e){if(!drag||!inRange())return;var dx=e.clientX-lx,t=w.performance.now(),dt=Math.max(8,t-lt);
   vx=.8*vx+.2*(-dx/dt*16);lx=e.clientX;lt=t;w.scrollBy(0,-dx*K())});
- function up(){if(!drag)return;drag=0;el.classList.remove('pp-grab');if(Math.abs(vx)>.5)glide()}
+ function up(){if(!drag)return;drag=0;el.classList.remove('pp-grab');if(Math.abs(vx)>.5)glide();else snap()}
  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)}
 
 /* ── 1-4 폰 기울이기: 보이는 '기울여 보기' 버튼을 눌렀을 때만 권한을 요청한다(iOS 의 DeviceOrientationEvent.requestPermission 은 사용자 터치 안에서만 열린다 — 첫 터치 자동 요청 안 함).
@@ -1382,17 +1352,6 @@ function tilt(st){var par=st.querySelector('.pp-parin'),hint=st.querySelector('.
  st.addEventListener('pointermove',function(e){if(!drag||mode==='tilt')return;apply(bx+(e.clientX-x0)/Math.max(160,st.clientWidth*.5),by)});
  function up(){drag=0}st.addEventListener('pointerup',up);st.addEventListener('pointercancel',up)}
 
-/* ── 1-6 가로 넘기기: 점 표시만(스크롤·스냅은 브라우저 기본). 마우스는 끌어서도 넘긴다. ── */
-function swipe(sw){var li=qa('li',sw),dots=sw.parentNode.querySelectorAll('.pp-dots i'),x0=0,s0=0,dn=0,moved=0;
- function upd(){var c=sw.scrollLeft+sw.clientWidth/2,best=0,bd=1e9,i,m;for(i=0;i<li.length;i++){m=Math.abs(li[i].offsetLeft+li[i].offsetWidth/2-c);if(m<bd){bd=m;best=i}}
-  for(i=0;i<dots.length;i++)dots[i].classList[i===best?'add':'remove']('pp-on')}
- sw.addEventListener('scroll',function(){upd()},{passive:true});upd();
- sw.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;dn=1;moved=0;x0=e.clientX;s0=sw.scrollLeft;sw.style.scrollSnapType='none'});
- sw.addEventListener('pointermove',function(e){if(!dn)return;moved=1;sw.scrollLeft=s0-(e.clientX-x0)});
- function end(){if(!dn)return;dn=0;sw.style.scrollSnapType='';var c=sw.scrollLeft+sw.clientWidth/2,best=0,bd=1e9,i,m;for(i=0;i<li.length;i++){m=Math.abs(li[i].offsetLeft+li[i].offsetWidth/2-c);if(m<bd){bd=m;best=i}}
-  sw.scrollTo({left:li[best].offsetLeft-(sw.clientWidth-li[best].offsetWidth)/2,behavior:'smooth'})}
- sw.addEventListener('pointerup',end);sw.addEventListener('pointerleave',end)}
-
 /* 글자 한 자씩(1-1): 단어는 안 끊기게 단어 span 안에 글자 span. 원문은 aria-label 로 한 번에 읽힌다. */
 function charify(el){var t=el.textContent,out=d.createDocumentFragment(),ws=t.split(' '),i,j,w1,s;el.setAttribute('aria-label',t);el.textContent='';
  for(i=0;i<ws.length;i++){w1=d.createElement('span');w1.className='pp-cw';w1.setAttribute('aria-hidden','true');
@@ -1402,18 +1361,16 @@ function charify(el){var t=el.textContent,out=d.createDocumentFragment(),ws=t.sp
 
 function v44init(){
  qa('[data-pp-chars]').forEach(charify);
+ ftInit();
  fxInit();
- qa('[data-pp-plug]').forEach(plug);
- qa('[data-pp-hold]').forEach(hold);
  qa('[data-pp-rotate]').forEach(rotate);
  qa('.pp-mir-st').forEach(tilt);
- qa('.pp-swipe').forEach(swipe)}
+ sndToggle()}
 
 try{
- buy();evInit();slice.call(d.querySelectorAll('[data-pp-slot]')).forEach(slot);slice.call(d.querySelectorAll('[data-pp-seqclip]')).forEach(seqclip);wheel();sound();v44init();
+ buy();evInit();slice.call(d.querySelectorAll('[data-pp-slot]')).forEach(slot);wheel();sound();v44init();
  if(G&&T&&G.matchMedia){
-  var e1=d.querySelector('[data-pp-s1]');if(e1&&!RM)s1(e1);
-  boot()
+  boot();FTS.forEach(function(f){f.layout()})
  }else if(w.IntersectionObserver){
   var O=new w.IntersectionObserver(function(es){for(var j=0;j<es.length;j++)if(es[j].isIntersecting)hit(es[j].target)},{threshold:.2});
   for(i=0;i<S.length;i++)O.observe(S[i])
@@ -1433,7 +1390,7 @@ window.IPS_MEASURE={"photo": {"w": 1254, "h": 1254}, "body": {"x0": 347, "x1": 9
 var d=document,w=window,nav=w.navigator;
 
 /*ips-pure:start*/
-var IPK={STEP_DEG:30,TAP_DEG:8,TAP_PX:10,TAP_MS:500,N:8,MENU_HALF_DEG:40,
+var IPK={ROWS:6,STEP_DEG:30,TAP_DEG:8,TAP_PX:10,TAP_MS:500,N:8,MENU_HALF_DEG:40,
  P_ZOOM:.1,P_MENU:.24,P_OUT:.94,STEPS:16,CARD_W:.84,CARD_ASPECT:1.2,CARD_R:22,S0_RATIO:.5,FIT:.88,VFIT:.98,CHROME:112,FEATHER:64,PIN_BASE:2.4,PIN_PER_ITEM:1.15};
 function clamp01(x){return x<0?0:x>1?1:x}
 function ease(t){return t*t*(3-2*t)}
@@ -1458,6 +1415,8 @@ function isTap(travelPx,travelDeg,ms){return travelPx<=IPK.TAP_PX&&Math.abs(trav
 function keyAction(k){return k==='ArrowDown'?'next':k==='ArrowUp'?'prev':k==='Enter'?'enter':(k==='Escape'||k==='Backspace')?'back':''}
 /* 선택 줄이 보이게 메뉴를 올릴 양(px): 줄 아래끝이 보이는 높이를 넘으면 그만큼 */
 function menuOffset(rowTop,rowH,viewH,pad){var o=rowTop+rowH-viewH+(pad||0);return o<0?0:o}
+/* 줄 단위 넘김: 선택 줄 sel(0부터)이 한 화면 rows 줄 안에 오도록 올릴 줄 수 */
+function rowOffset(sel,rows){var o=sel-(rows-1);return o<0?0:o}
 /* 구성품 눌러 크게 보기: 사진(0~1 좌표) 안 상자 [x0,y0,x1,y1] 를 화면 폭·높이의 fill 비율로 채우는 확대·이동(퍼센트, 상자 중심이 가운데로) */
 function zoomTo(box,fill){var bw=box[2]-box[0],bh=box[3]-box[1],s=Math.min(fill/bw,fill/bh,5),cx=(box[0]+box[2])/2,cy=(box[1]+box[3])/2;return{s:s,x:(.5-cx*s)*100,y:(.5-cy*s)*100}}
 /* 숫자 올라가기: t(0~1) -> 값 */
@@ -1496,13 +1455,14 @@ function ips(ROOT){
  var PIN=ROOT.querySelector('.ips-pin'),STAGE=ROOT.querySelector('[data-ips-stage]'),CARD=ROOT.querySelector('.ips-card'),PHOTO=ROOT.querySelector('.ips-photo'),
   VIEWS=ROOT.querySelector('.ips-views'),MENU=ROOT.querySelector('.ips-menu'),HDRT=ROOT.querySelector('.ips-hdr-title'),
   WHEEL=ROOT.querySelector('.ips-wheel'),BTNC=ROOT.querySelector('.ips-btn-center'),BTNM=ROOT.querySelector('.ips-btn-menu'),
-  LIVE=ROOT.querySelector('.ips-live'),DETAILS=ROOT.querySelector('[data-ips-details]'),
+  LIVE=ROOT.querySelector('.ips-live'),SIDE=ROOT.querySelector('.ips-side'),DETAILS=ROOT.querySelector('[data-ips-details]'),
   ARTS=slice.call(ROOT.querySelectorAll('[data-ips-details] article')),ROWS=slice.call(ROOT.querySelectorAll('.ips-menu li'));
- var N=ARTS.length||IPK.N,PANES=[],state={mode:'menu',sel:0},tier='lite',st=null,stEnter=null,lastStep=-1,S0=0,S1=0,tickCount=0,scrollMode=false;
+ var N=ARTS.length||IPK.N,PANES=[],state={mode:'menu',sel:0},tier='lite',st=null,stEnter=null,lastStep=-1,S0=0,S1=0,tickCount=0,scrollMode=false,land=false;
  var HDR_MENU=(HDRT&&HDRT.getAttribute('data-menu'))||'';
  IPK.N=N;IPK.STEPS=N*2;
 
- function placeMenu(){if(!MENU||!VIEWS)return;var li=ROWS[state.sel];if(!li)return;MENU.style.setProperty('--ips-off',menuOffset(li.offsetTop,li.offsetHeight,VIEWS.clientHeight,6))}
+ /* 화면 안 목록은 항상 '줄 단위'로 넘어간다: 한 화면 6줄(줄 높이 = 목록 높이 ÷ 6), 선택 줄이 6번째 줄을 넘으면 정확히 한 줄 높이씩 올라간다 — 반 줄 잘림 없음 */
+ function placeMenu(){if(!MENU||!VIEWS)return;var rowH=VIEWS.clientHeight/IPK.ROWS;MENU.style.setProperty('--ips-off',(rowOffset(state.sel,IPK.ROWS)*rowH).toFixed(3))}
  function render(){
   var it=ARTS[state.sel];
   ROOT.setAttribute('data-ips-mode',state.mode);ROOT.setAttribute('data-ips-sel',state.sel);
@@ -1510,6 +1470,7 @@ function ips(ROOT){
   ROWS.forEach(function(li,i){li.classList.toggle('ips-sel',i===state.sel);li.setAttribute('aria-current',i===state.sel?'true':'false')});
   VIEWS.classList.toggle('is-detail',state.mode==='detail');placeMenu();
   PANES.forEach(function(p,i){var on=state.mode==='detail'&&i===state.sel;p.classList.toggle('is-on',on);p.setAttribute('aria-hidden',on?'false':'true');if(on)p.scrollTop=0});
+  if(SIDE){SIDE.innerHTML='';var b=d.createElement('b'),sp=d.createElement('span'),n=ARTS.length;b.textContent=state.mode==='detail'?((it&&it.querySelector('.ips-t')&&it.querySelector('.ips-t').textContent)||''):(ROWS[state.sel]?ROWS[state.sel].textContent:'');sp.textContent=(state.sel+1)+' / '+n;SIDE.appendChild(b);SIDE.appendChild(sp)}
   if(LIVE)LIVE.textContent=state.mode==='detail'&&it?(it.getAttribute('data-hdr')||''):(ROWS[state.sel]?ROWS[state.sel].textContent:'')}
  function setState(s){if(s.mode===state.mode&&s.sel===state.sel)return false;state.mode=s.mode;state.sel=s.sel;render();return true}
 
@@ -1558,21 +1519,22 @@ function ips(ROOT){
 
  function viewport(){return{w:w.innerWidth||d.documentElement.clientWidth,h:w.innerHeight||d.documentElement.clientHeight}}
  function layout(){
-  var v=viewport(),b=M.body,ph=M.photo;
-  S1=Math.min(v.w*IPK.FIT/b.w,(v.h-IPK.CHROME)/b.h);S0=startScale(v.w,b.w);   /* 본체 폭 = 화면 폭의 88%, 본체 높이는 위 제품 줄(52px)·아래 안내 글(60px)을 뺀 높이 안 — 본체 전체가 보인다 */
+  var v=viewport(),b=M.body,ph=M.photo;land=v.w/v.h>1.1;
+  if(land){S1=Math.min((v.h-44)*.8,760)/b.h;S0=S1}
+  else if(v.w>500){S1=Math.min((v.h-44)*.62,760)/b.h;S0=S1}   /* 태블릿 세로: 아이팟 통째 — 높이 = (화면 높이−44)의 62%·최대 760 */
+  else{S1=Math.min(v.w*IPK.FIT/b.w,(v.h-IPK.CHROME)/b.h);S0=startScale(v.w,b.w)}   /* 본체 폭 = 화면 폭의 88%, 본체 높이는 위 제품 줄(52px)·아래 안내 글(60px)을 뺀 높이 안 — 본체 전체가 보인다 */
   var P=ph.w*S1,ox=b.cx*S1,oy=b.cy*S1;
   PHOTO.style.width=PHOTO.style.height=P+'px';
-  PHOTO.style.marginLeft=(-ox)+'px';PHOTO.style.marginTop=(-oy)+'px';PHOTO.style.transformOrigin=ox+'px '+oy+'px';
+  PHOTO.style.marginLeft=(-ox+(land?v.w*.08:0))+'px';ROOT.style.setProperty('--ips-bw',(b.w*S1).toFixed(1)+'px');PHOTO.style.marginTop=(-oy)+'px';PHOTO.style.transformOrigin=ox+'px '+oy+'px';
   ROOT.style.setProperty('--ips-k',(pinScreens(N)+1).toFixed(2));
   STAGE.setAttribute('data-ips-s1',S1.toFixed(4))}
  function cardInit(){var v=viewport(),P0=M.photo.w*S0*.98,cw=Math.min(IPK.CARD_W*v.w,P0),ch=Math.min(cw*IPK.CARD_ASPECT,P0,v.h*.8);return{cw:cw,ch:ch}}
  function apply(p){
-  var ph=phaseAt(p),v=viewport(),c=cardInit(),k=ph.k,s=scaleAt(k,S0*(.9+.1*ph.settle),S1),cr=cardRect(k,v.w,v.h,c.cw,c.ch);
+  var ph=phaseAt(p),v=viewport(),c=cardInit(),k=(land||v.w>500)?(ph.out>0?1-ph.out:1):ph.k,s=scaleAt(k,S0*(.9+.1*ph.settle),S1),cr=cardRect(k,v.w,v.h,c.cw,c.ch);
   /* 확대는 transform(사진 층)만. 끝(k=1)에서는 transform 을 아예 없애 화면 안 글자가 최종 크기로 또렷하게 그려진다(iOS 가 scale 레이어를 저해상 비트맵으로 굳히는 것 방지) */
   if(k>=.999){PHOTO.style.transform='none';CARD.style.clipPath='none';ROOT.classList.add('ips-kfull')}
   else{ROOT.classList.remove('ips-kfull');PHOTO.style.transform='translateY('+((1-ph.settle)*18*(1-k))+'px) scale('+(s/S1)+')';
    CARD.style.clipPath='inset('+cr.t+'px '+cr.l+'px '+cr.t+'px '+cr.l+'px round '+cr.r+'px)'}
-  CARD.style.setProperty('--ml',cr.l.toFixed(1)+'px');CARD.style.setProperty('--mt',cr.t.toFixed(1)+'px');CARD.style.setProperty('--mf',feather(k).toFixed(1)+'px');
   ROOT.setAttribute('data-ips-k',k.toFixed(3));ROOT.setAttribute('data-ips-step',ph.step);
   if(ph.step!==lastStep){lastStep=ph.step;scrollMode=true;setState(stepState(ph.step))}
   else if(ph.menuQ>0&&ph.menuQ<1)scrollMode=true}
@@ -1604,7 +1566,7 @@ function init(){
  countups();
  qa('.pp-set').forEach(setzoom);
  qa('[data-ips]').forEach(ips)}
-w.PPIPS={pure:{IPK:IPK,phaseAt:phaseAt,stepState:stepState,pinScreens:pinScreens,fitScale:fitScale,startScale:startScale,scaleAt:scaleAt,cardRect:cardRect,feather:feather,angleDelta:angleDelta,wheelAdvance:wheelAdvance,applyTicks:applyTicks,ringZone:ringZone,angleOf:angleOf,inMenuSector:inMenuSector,isTap:isTap,keyAction:keyAction,menuOffset:menuOffset,zoomTo:zoomTo,countAt:countAt}};
+w.PPIPS={pure:{IPK:IPK,phaseAt:phaseAt,stepState:stepState,pinScreens:pinScreens,fitScale:fitScale,startScale:startScale,scaleAt:scaleAt,cardRect:cardRect,feather:feather,angleDelta:angleDelta,wheelAdvance:wheelAdvance,applyTicks:applyTicks,ringZone:ringZone,angleOf:angleOf,inMenuSector:inMenuSector,isTap:isTap,keyAction:keyAction,menuOffset:menuOffset,rowOffset:rowOffset,zoomTo:zoomTo,countAt:countAt}};
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
