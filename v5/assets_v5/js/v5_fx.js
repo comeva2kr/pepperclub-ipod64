@@ -50,29 +50,90 @@
     tr.addEventListener('scroll', upd, { passive: true }); w.addEventListener('resize', upd); upd();
     tr.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { tr.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * cards[0].offsetWidth, behavior: RM ? 'auto' : 'smooth' }); e.preventDefault(); } });
   });
-  /* ── 설명 쪽 공통 틀(.fr): 그림 움직임 3종(flow 좌→우 · zoomout 확대에서 멀어지기 · rise 아래→위, 이동 폭 8%) + 네 박자 등장 + 본문 둘째 박자 ── */
-  var STILL = RM || (w.V5 && w.V5.tier === 'lite'); if (STILL) H.classList.add('pp-still');
-  d.addEventListener('pp:tier', function (e) { if (e.detail && e.detail.tier === 'lite') H.classList.add('pp-still'); });
-  w.addEventListener('pp:lite-runtime', function () { H.classList.add('pp-still'); });
+  /* ── 설명 쪽 공통 틀(.fr, v8) ──
+     움직임판(html.pp-stk): 쪽이 박자 수만큼 길어지고 화면은 고정(sticky). 보이는 박자 = 고정 구간에서 스크롤한 거리 / (화면 높이 × STEP). 이전 박자는 바로 사라지고 새 박자만 들어온다(같은 시점에 한 박자).
+     그림 움직임 3종(flow 좌→우 12~18% · zoomout 약 1.3배→제자리 · rise 아래→위 8~10%)은 쪽 진행도 t 의 순수 함수(되감아도 같은 상태). 영상은 소리 없이 반복(보일 때만 받고 재생), 정지판(움직임 줄이기·저사양)은 포스터. */
+  var STEP = 0.6;            // pages_v5.FR_STEP 과 같은 값
+  function setStk(on) { H.classList[on ? 'add' : 'remove']('pp-stk'); }
+  function goStill() { H.classList.add('pp-still'); setStk(false); try { w.dispatchEvent(new w.Event('resize')); } catch (e) { } }
+  var STILL = RM || (w.V5 && w.V5.tier === 'lite'); if (STILL) goStill();
+  d.addEventListener('pp:tier', function (e) { if (e.detail && e.detail.tier === 'lite') goStill(); });
+  w.addEventListener('pp:lite-runtime', goStill);
   var frames = qa('.cpage.fr');
+  function easeOut(x) { return 1 - (1 - x) * (1 - x); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
   frames.forEach(function (pg) {
-    var vid = pg.querySelector('video.fr-img');
-    if (vid && w.IntersectionObserver && !RM) new w.IntersectionObserver(function (es) {   // 영상: 보일 때만 받아 소리 없이 반복
-      es.forEach(function (x) { if (x.isIntersecting) { if (!vid.getAttribute('src')) vid.setAttribute('src', vid.getAttribute('data-src')); var pr = vid.play(); if (pr && pr.catch) pr.catch(function () { }); } else { try { vid.pause(); } catch (z) { } } });
-    }, { threshold: .25 }).observe(pg);
+    var mv = pg.querySelector('.fr-mv'), m = pg.getAttribute('data-motion'), a = +pg.getAttribute('data-amt') || 0;
+    if (mv && !mv.classList.contains('fr-pinbox') && !mv.classList.contains('fr-cert')) {   // 흐름·올라옴: 그림 상자를 그만큼 키워 움직여도 가장자리가 안 비게
+      if (m === 'flow') { mv.style.left = (-a / 2) + '%'; mv.style.right = 'auto'; mv.style.width = (100 + a) + '%'; }
+      if (m === 'rise') { mv.style.top = (-a / 2) + '%'; mv.style.bottom = 'auto'; mv.style.height = (100 + a) + '%'; }
+      mv.style.transformOrigin = pg.getAttribute('data-origin') || '50% 50%';
+    }
   });
-  function frameTick() {
-    var vh = w.innerHeight, still = H.classList.contains('pp-still');
+  function layoutFrames() {   // 사진 위 이름표 핀(B6)·사진 상자: 사진 좌표 → 화면 좌표
     frames.forEach(function (pg) {
-      var r = pg.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
-      var p = clamp((vh - r.top) / (vh + r.height), 0, 1), q = p * 2 - 1, m = pg.getAttribute('data-motion'), im = pg.querySelector('.fr-img');
-      if (im && !still) {   // q: -1(아래에서 들어옴) → 0(맞춰짐) → +1(위로 나감). 이동 폭 8%
-        var t = m === 'flow' ? 'translate3d(' + (q * 8).toFixed(2) + '%,0,0)' : m === 'rise' ? 'translate3d(0,' + (-q * 8).toFixed(2) + '%,0)' : 'scale(' + (1 + (1 - Math.min(1, p * 1.5)) * 0.08).toFixed(3) + ')';
-        im.style.transform = t;
+      var pbx = pg.querySelector('.fr-pinbox'), media = pg.querySelector('.fr-media'); if (!pbx || !media) return;
+      var q = pbx.getAttribute('data-pb').split(',').map(Number), mw = media.clientWidth, mh = media.clientHeight, pw = mw * q[0] / 100, ph = pw * q[4] / q[3];
+      var top = Math.max(8, (mh - 316 - ph) / 2 + 22), left = mw * q[1] / 100;
+      pbx.style.left = left + 'px'; pbx.style.top = top + 'px'; pbx.style.width = pw + 'px'; pbx.style.height = ph + 'px'; pbx.style.right = 'auto'; pbx.style.bottom = 'auto';
+      var sc = clamp(mw / 430, .8, 1);
+      qa('.fr-pin', pg).forEach(function (p) { p.style.left = (left + pw * (+p.getAttribute('data-x')) / 100) + 'px'; p.style.top = (top + ph * (+p.getAttribute('data-y')) / 100) + 'px'; p.style.fontSize = (13 * sc).toFixed(1) + 'px'; p.style.padding = (5 * sc).toFixed(1) + 'px ' + (11 * sc).toFixed(1) + 'px'; });
+    });
+  }
+  w.addEventListener('resize', layoutFrames); layoutFrames(); w.addEventListener('load', layoutFrames);
+  function setBeat(pg, idx, on) {
+    qa('.fr-lb', pg).forEach(function (lb, i) { lb.classList.toggle('on', on && i === idx); });
+    qa('.fr-shade', pg).forEach(function (sh, i) { sh.classList.toggle('on', i === idx); });
+    var cur = qa('.fr-lb', pg)[idx]; if (!cur) return;
+    pg.style.setProperty('--fr-fh', cur.getAttribute('data-frame')); pg.style.setProperty('--fr-sh', cur.getAttribute('data-sh') + 'px');
+    var cb = pg.querySelector('.fr-cert');
+    if (cb) {   // 증명서: 박자 3 은 전파인증 필증, 누르면 그 증명서 전체 보기
+      var im = qa('.fr-cimg', cb), k = idx >= 2 ? 1 : 0; im.forEach(function (x, i) { x.classList.toggle('on', i === k); }); cb.setAttribute('data-zoom', cb.getAttribute('data-zoom' + k));
+    }
+  }
+  function frameTick() {
+    var vh = w.innerHeight, stk = H.classList.contains('pp-stk');
+    frames.forEach(function (pg) {
+      var r = pg.getBoundingClientRect(), nb = +pg.getAttribute('data-nb') || 1;
+      var near = r.bottom > -vh * 0.6 && r.top < vh * 1.6;
+      var vid = pg.querySelector('video.fr-img');
+      if (vid) {   // 영상: 가까워지면 받고, 화면에 보이는 동안만 소리 없이 반복 재생. 정지판은 포스터만.
+        if (!stk) { if (!vid.paused) vid.pause(); }
+        else {
+          if (near && !vid.getAttribute('src')) { vid.muted = true; vid.defaultMuted = true; vid.setAttribute('src', vid.getAttribute('data-src')); }
+          var vis = r.bottom > 0 && r.top < vh;
+          if (vis && vid.paused && vid.getAttribute('src')) { var pr = vid.play(); if (pr && pr.catch) pr.catch(function () { }); } else if (!vis && !vid.paused) vid.pause();
+        }
       }
-      var inView = still || (r.top < vh * .72 && r.bottom > vh * .35);
+      if (!near) return;
+      var inView = !stk || (r.top < vh * .72 && r.bottom > vh * .35);
       pg.classList.toggle('in', inView);
-      pg.classList.toggle('beat2', !still && p > .64 && !!pg.querySelector('.fr-body2'));
+      if (!stk) return;
+      var pin = clamp(-r.top, 0, Math.max(0, r.height - vh)), f = nb > 1 ? clamp(pin / (STEP * vh), 0, nb - 1) : 0, idx = nb > 1 ? clamp(Math.floor(f + 0.35), 0, nb - 1) : 0;
+      if (pg._bi !== idx || pg._bo !== inView) { pg._bi = idx; pg._bo = inView; setBeat(pg, idx, inView); }
+      pg.setAttribute('data-beat', idx);
+      var t = clamp((vh - r.top) / Math.max(r.height, 1), 0, 1), m = pg.getAttribute('data-motion'), a = +pg.getAttribute('data-amt') || 0, mv = pg.querySelector('.fr-mv'), media = pg.querySelector('.fr-media');
+      if (mv && media && !mv.classList.contains('fr-cert')) {
+        var tr = '';
+        if (m === 'flow') tr = 'translate3d(' + ((0.5 - t) * a / 100 * media.clientWidth).toFixed(1) + 'px,0,0)';
+        else if (m === 'rise') tr = 'translate3d(0,' + ((0.5 - t) * a / 100 * media.clientHeight).toFixed(1) + 'px,0)';
+        else if (m === 'zoomout') { var zm = +pg.getAttribute('data-zoom') || 1.3; tr = 'scale(' + (zm - (zm - 1) * easeOut(Math.min(1, t * 1.2))).toFixed(4) + ')'; }
+        mv.style.transform = tr;
+      }
+      var cb = pg.querySelector('.fr-cert');
+      if (cb && media) {   // 증명서 흐름: 프레임 가운데가 놓이는 증명서 높이 비율(c) 을 쪽 진행도 P(0=들어오는 순간 … 박자 수)로 보간. 제조업자명 칸 아래로는 안 내려온다(maxb)
+        var P = clamp((vh - r.top) / vh, 0, 1) + f, trk = cb.getAttribute('data-track').split(';').map(function (x) { return x.split(',').map(Number); }), k = idx >= 2 ? 1 : 0, ps = trk.filter(function (x) { return x[1] === k; }), c = ps[0][2];
+        for (var i = 0; i < ps.length - 1; i++) if (P >= ps[i][0] && P <= ps[i + 1][0]) c = lerp(ps[i][2], ps[i + 1][2], (P - ps[i][0]) / (ps[i + 1][0] - ps[i][0]));
+        if (P > ps[ps.length - 1][0]) c = ps[ps.length - 1][2]; if (P < ps[0][0]) c = ps[0][2];
+        var cw = media.clientWidth, mh = media.clientHeight, W1 = cw * (+cb.getAttribute('data-w') / 100);
+        qa('.fr-cimg', cb).forEach(function (im, i) {
+          var ih = W1 * (+im.getAttribute('data-ah')) / (+im.getAttribute('data-aw')), top = c * ih - mh / 2;
+          if (i === 0) top = Math.min(top, +cb.getAttribute('data-maxb') * ih - mh);
+          top = clamp(top, 0, Math.max(0, ih - mh));
+          im.style.width = W1 + 'px'; im.style.left = (cw * (+im.getAttribute('data-left')) / 100) + 'px'; im.style.transform = 'translate3d(0,' + (-top).toFixed(1) + 'px,0)';
+        });
+      }
+      pg.classList.toggle('pins-on', inView && t >= 0.9);
     });
   }
   /* ── 스크롤 계산 ── */
@@ -94,11 +155,8 @@
   function prog(el, a, b) { var r = el.getBoundingClientRect(), vh = w.innerHeight; return clamp((vh * a - r.top) / (vh * (a - b)), 0, 1); }
   var bars = qa('[data-fx=bar]');
   var raf = 0, stageCmp = [];
-  function cmpTick() {   // 3D 무대판 비교표: PEPPER CLUB 칸이 줄마다 켜지는 것(core)에 이어, 해외직구 열 → 국내 열이 차례로 채워진다
-    stageCmp.forEach(function (b) {
-      var pcs = qa('.pc', b), n = pcs.length, on = pcs.filter(function (x) { return x.classList.contains('on'); }).length, f = n ? on / n : 0, t = b.querySelector('table.c3');
-      if (t) { t.classList.toggle('cf2', f >= 0.6); t.classList.toggle('cf3', f >= 1); }
-    });
+  function cmpTick() {   // 3D 무대판 비교표: 줄마다 우리 칸(core 가 .pc.on 을 켬)이 먼저 → 다른 두 칸이 뒤따른다(tr.go)
+    stageCmp.forEach(function (b) { qa('tr', b).forEach(function (tr) { var pc = tr.querySelector('.pc'); if (pc) tr.classList.toggle('go', pc.classList.contains('on')); }); });
   }
   function tick() {
     raf = 0; var vh = w.innerHeight;
@@ -107,7 +165,7 @@
     wipes.forEach(function (el, i) { var p = RM ? 1 : prog(el, 0.95, 0.6); el.style.clipPath = p >= 1 ? 'none' : 'inset(0 0 ' + ((1 - p) * 100).toFixed(1) + '% 0)'; el.style.transform = p >= 1 ? '' : 'translateY(' + ((1 - p) * 14).toFixed(1) + 'px)'; });
     rises.forEach(function (el) { var p = RM ? 1 : ease(prog(el, 0.97, 0.7)); el.style.transform = p >= 1 ? '' : 'translateY(' + ((1 - p) * 22).toFixed(1) + 'px)'; el.style.clipPath = p >= 1 ? 'none' : 'inset(0 0 ' + ((1 - p) * 100).toFixed(1) + '% 0)'; });
     zfigs.forEach(function (f) { var p = RM ? 1 : prog(f, 1.0, 0.3), s = 0.9 + 0.1 * ease(p); f.style.transform = RM || p >= 1 ? '' : 'scale(' + s.toFixed(3) + ') translateY(' + ((1 - p) * 30).toFixed(1) + 'px)'; });
-    cols.forEach(function (t) { var p = RM ? 1 : prog(t, 0.85, 0.3); t.classList.toggle('cf1', p > 0.2); t.classList.toggle('cf2', p > 0.5); t.classList.toggle('cf3', p > 0.8); });
+    cols.forEach(function (t) { qa('tr', t).forEach(function (tr) { tr.classList.toggle('go', RM || tr.getBoundingClientRect().top < vh * 0.78); }); });   // 흐름판 비교표: 줄이 화면에 올라오면 우리 칸 → 다른 칸
     zimgs.forEach(function (im) { var pg = im.parentNode, r = pg.getBoundingClientRect(), q = clamp((vh - r.top) / (vh + r.height), 0, 1); im.style.transform = RM ? '' : 'scale(' + (1.04 + 0.1 * q).toFixed(3) + ') translateY(' + ((0.5 - q) * 30).toFixed(1) + 'px)'; });
     if (noCore() && !RM) qa('.cpage .bgimg:not(.zoomimg)').forEach(function (pg) { var r = pg.parentNode.getBoundingClientRect(), q = (r.top + r.height / 2 - vh / 2) / vh, k = clamp(1 - Math.abs(q), 0, 1); pg.style.transform = 'translateY(' + (q * -26).toFixed(1) + 'px) scale(' + (1.04 + 0.1 * k).toFixed(3) + ')'; });
     bars.forEach(function (b) { var p = RM ? 1 : ease(prog(b, 1.0, 0.7)), w1 = +getComputedStyle(b).getPropertyValue('--w') || 1; b.style.transform = 'scaleX(' + (w1 * p).toFixed(3) + ')'; });
