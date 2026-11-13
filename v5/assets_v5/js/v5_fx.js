@@ -72,6 +72,7 @@
   });
   function layoutFrames() {   // 사진 위 이름표 핀(B6)·사진 상자: 사진 좌표 → 화면 좌표
     frames.forEach(function (pg) {
+      var bar0 = d.querySelector('.bar'); if (bar0 && pg.hasAttribute('data-below-bar')) pg.style.setProperty('--fr-top', Math.ceil(bar0.getBoundingClientRect().bottom) + 'px');
       var pbx = pg.querySelector('.fr-pinbox'), media = pg.querySelector('.fr-media'); if (!pbx || !media) return;
       var q = pbx.getAttribute('data-pb').split(',').map(Number), mw = media.clientWidth, mh = media.clientHeight, pw = mw * q[0] / 100, ph = pw * q[4] / q[3];
       var top = Math.max(8, (mh - 316 - ph) / 2 + 22), left = mw * q[1] / 100;
@@ -92,9 +93,11 @@
     }
   }
   function frameTick() {
-    var vh = w.innerHeight, stk = H.classList.contains('pp-stk');
+    var vh = w.innerHeight, stk = H.classList.contains('pp-stk'), bar = d.querySelector('.bar'), barY = 22, theme = '';
+    if (bar) { var br = bar.getBoundingClientRect(); barY = br.top + br.height / 2; }
     frames.forEach(function (pg) {
       var r = pg.getBoundingClientRect(), nb = +pg.getAttribute('data-nb') || 1;
+      if (r.top <= barY && r.bottom > barY) theme = pg.classList.contains('fr-light') ? 'lt' : 'dk';   // 바 뒤에 놓인 틀 쪽의 어두움/밝음
       var near = r.bottom > -vh * 0.6 && r.top < vh * 1.6;
       var vid = pg.querySelector('video.fr-img');
       if (vid) {   // 영상: 가까워지면 받고, 화면에 보이는 동안만 소리 없이 반복 재생. 정지판은 포스터만.
@@ -135,6 +138,7 @@
       }
       pg.classList.toggle('pins-on', inView && t >= 0.9);
     });
+    if (bar) { if (theme) bar.classList.add('fr-tr'); bar.classList.toggle('fr-dk', theme === 'dk'); bar.classList.toggle('fr-lt', theme === 'lt'); }
   }
   /* ── 스크롤 계산 ── */
   var counts = qa('[data-fx=count]'), cells = qa('[data-fx=cells]'), wipes = qa('[data-fx=wipe]'), rises = qa('[data-fx=rise]'), zfigs = qa('[data-fx=zoomfig]'), cols = qa('[data-fx=cols]'),
