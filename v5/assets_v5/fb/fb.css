@@ -1,0 +1,404 @@
+
+.pp-landing{
+ --pp-bg:#ffffff;--pp-alt:#f5f5f7;--pp-ink:#1d1d1f;--pp-ink2:#6e6e73;--pp-ink3:#6e6e73;--pp-line:#d2d2d7;--pp-line2:#e8e8ed;--pp-white:#ffffff;
+ --pp-bar:rgba(255,255,255,.82);--pp-scrim:rgba(29,29,31,.72);--pp-accent:#0071e3;--pp-accent-hover:#0077ed;--pp-link:#0066cc;--pp-on-accent:#ffffff;--pp-dark:#111111;--pp-on-dark:#f5f5f7;
+ --pp-font:"SF Pro Display","SF Pro Text",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",Pretendard,"Noto Sans KR",sans-serif;
+ --pp-t-hero:clamp(44px,12.4vw,96px);--pp-t-h2:clamp(34px,9.4vw,64px);--pp-t-h3:clamp(26px,7vw,40px);--pp-t-lede:clamp(21px,5.6vw,28px);--pp-t-body:17px;--pp-t-cap:14px;--pp-t-num:clamp(96px,32vw,220px);
+ --pp-lh-tight:1.08;--pp-lh-head:1.14;--pp-lh-body:1.5;--pp-track-hero:-.035em;--pp-track-head:-.03em;--pp-track-body:-.01em;
+ --pp-s2:12px;--pp-s3:16px;--pp-s4:24px;--pp-s5:32px;--pp-s6:48px;--pp-s7:80px;--pp-section:96px;--pp-gutter:22px;--pp-measure:980px;
+ --pp-r-tile:28px;--pp-r-card:20px;--pp-r-img:18px;--pp-r-pill:980px;--pp-btn-h:44px;--pp-btn-px:22px;--pp-btn-h-sm:30px;--pp-btn-px-sm:14px;
+ --pp-ease:cubic-bezier(.23,1,.32,1);--pp-d-press:.16s;
+ background:var(--pp-bg);color:var(--pp-ink);font-family:var(--pp-font);font-size:var(--pp-t-body);line-height:var(--pp-lh-body);letter-spacing:var(--pp-track-body);font-weight:400;
+ word-break:keep-all;overflow-wrap:break-word;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;overflow-x:clip}
+.pp-landing img{display:block;max-width:100%;height:auto}
+.pp-landing p{margin:0}
+.pp-landing h1,.pp-landing h2,.pp-landing h3{margin:0;font-weight:700;letter-spacing:var(--pp-track-head);line-height:var(--pp-lh-head);text-wrap:balance}
+.pp-landing a,.pp-landing summary,.pp-landing button{touch-action:manipulation}
+.pp-landing [data-pp-scene]{position:relative;padding:var(--pp-section) 0 0;text-align:center;background:var(--pp-bg)}
+.pp-landing [data-pp-scene].pp-alt{background:var(--pp-alt);padding-bottom:var(--pp-section)}
+.pp-landing .pp-wrap{max-width:var(--pp-measure);margin:0 auto;padding:0 var(--pp-gutter);box-sizing:border-box}
+.pp-landing .pp-h1x{font-size:var(--pp-t-hero);line-height:var(--pp-lh-tight);letter-spacing:var(--pp-track-hero);font-weight:700;text-wrap:balance}
+.pp-landing .pp-h2{font-size:var(--pp-t-h2)}
+.pp-landing .pp-h3{font-size:var(--pp-t-h3)}
+.pp-landing .pp-g{color:var(--pp-ink3)}
+.pp-landing .pp-lede{margin-top:20px;font-size:var(--pp-t-lede);line-height:1.3;font-weight:600;letter-spacing:-.02em;color:var(--pp-ink2);text-wrap:balance}
+.pp-landing .pp-name{margin-top:14px;font-size:15px;font-weight:600;color:var(--pp-ink3);letter-spacing:0}
+.pp-landing .pp-cap{margin-top:12px;font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
+.pp-landing .pp-link{display:inline-flex;align-items:center;min-height:48px;font-size:var(--pp-t-lede);font-weight:500;letter-spacing:-.02em;color:var(--pp-link);text-decoration:none}
+.pp-landing .pp-link::after{content:"\203A";margin-left:.3em}
+.pp-landing :focus-visible{outline:3px solid var(--pp-accent);outline-offset:3px}
+.pp-landing [id]{scroll-margin-top:60px}
+.pp-landing .pp-link:active{opacity:.7}
+.pp-landing .pp-btn{display:inline-flex;align-items:center;justify-content:center;min-height:var(--pp-btn-h);padding:0 var(--pp-btn-px);border-radius:var(--pp-r-pill);background:var(--pp-accent);color:var(--pp-on-accent);font:600 17px/1 var(--pp-font);letter-spacing:-.01em;text-decoration:none;border:0;transition:background-color var(--pp-d-press) var(--pp-ease),transform var(--pp-d-press) var(--pp-ease)}
+.pp-landing .pp-btn:active,.pp-landing .pp-pill:active,.pp-landing .pp-buy:active,.pp-landing .pp-snd:active{transform:scale(.97)}
+
+/* 위 얇은 제품 줄(기본) · 하단 고정 버튼(대체). 가격은 #ec-product-price-info 의 ec-data-price 를 읽는다 */
+.pp-landing .pp-bar{position:fixed;left:0;top:0;width:100%;height:2px;z-index:10001;background:var(--pp-accent);transform-origin:left center;transform:scaleX(0);opacity:0;pointer-events:none}
+.pp-landing.pp-ui-top .pp-bar{top:52px}
+.pp-landing .pp-nav{position:fixed;left:0;right:0;top:0;z-index:10000;display:flex;align-items:center;justify-content:flex-end;gap:12px;box-sizing:border-box;height:52px;padding:0 max(var(--pp-gutter),calc((100% - var(--pp-measure))/2 + var(--pp-gutter)));background:transparent;border-bottom:1px solid transparent;transition:background-color .3s ease,border-color .3s ease}
+.pp-landing .pp-nav.pp-solid{background:var(--pp-bar);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom-color:var(--pp-line2)}
+.pp-landing .pp-nav .pp-nm{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:17px;font-weight:600;letter-spacing:-.02em;text-align:left}
+.pp-landing .pp-nav .pp-price{font-size:14px;color:var(--pp-ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pp-landing .pp-pill{position:relative;display:inline-flex;align-items:center;min-height:var(--pp-btn-h-sm);padding:0 var(--pp-btn-px-sm);border-radius:var(--pp-r-pill);background:var(--pp-accent);color:var(--pp-on-accent);font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap;transition:background-color var(--pp-d-press) var(--pp-ease),transform var(--pp-d-press) var(--pp-ease);-webkit-tap-highlight-color:transparent}
+.pp-landing .pp-pill::after{content:"";position:absolute;inset:-8px}
+.pp-landing .pp-buy{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;z-index:9999;display:flex;justify-content:space-between;align-items:center;min-height:56px;padding:0 24px;box-sizing:border-box;border-radius:var(--pp-r-pill);background:var(--pp-accent);color:var(--pp-on-accent);font:600 17px/1 var(--pp-font);text-decoration:none;opacity:.6;transition:opacity .3s ease,transform var(--pp-d-press) var(--pp-ease);-webkit-tap-highlight-color:transparent;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.pp-landing .pp-buy.pp-on{opacity:1}
+.pp-landing .pp-buy .pp-price{font-weight:500;opacity:.9}
+.pp-landing .pp-buy.pp-flash{animation:pp-flash .6s ease-out 1}
+@keyframes pp-flash{0%{box-shadow:0 0 0 0 rgba(0,113,227,.5)}100%{box-shadow:0 0 0 16px rgba(0,113,227,0)}}
+
+
+.pp-landing .pp-stagewrap{position:relative;margin:var(--pp-s5) auto 0;max-width:760px}
+.pp-landing .pp-stage{position:relative;background:#ececec;overflow:hidden}
+.pp-landing .pp-slot{position:relative;display:block;width:100%;aspect-ratio:var(--pp-w)/var(--pp-h);background:#ececec;overflow:hidden}
+.pp-landing .pp-slot>img,.pp-landing .pp-slot>video{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover;opacity:0;z-index:0;transition:opacity .22s ease-out}
+.pp-landing .pp-slot>img.pp-prev,.pp-landing .pp-slot>video.pp-prev{z-index:1}
+.pp-landing .pp-slot>img.pp-prev{opacity:1}
+.pp-landing .pp-slot>img.pp-cur{opacity:1;z-index:2}
+.pp-landing .pp-slot>video.pp-cur{z-index:2}
+.pp-landing .pp-slot>video.pp-play{opacity:1}
+.pp-landing .pp-snd{position:absolute;left:var(--pp-gutter);bottom:16px;width:44px;height:44px;border-radius:50%;border:0;background:var(--pp-scrim);display:grid;place-items:center;color:var(--pp-white);cursor:pointer;transition:background-color var(--pp-d-press) var(--pp-ease),transform var(--pp-d-press) var(--pp-ease)}
+.pp-landing .pp-snd[aria-pressed="true"]{background:var(--pp-accent)}
+.pp-landing .pp-snd svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+
+.pp-landing .pp-evb{display:inline-block;margin-right:6px;padding:2px 7px;border-radius:var(--pp-r-pill);background:var(--pp-ink);color:var(--pp-on-dark);font-size:11px;font-weight:700;line-height:1.4;letter-spacing:.02em;vertical-align:1px}
+.pp-landing .pp-nav .pp-price.pp-ev{display:inline-flex;align-items:center;font-size:13px;color:var(--pp-ink);font-weight:600}
+.pp-landing .pp-nav .pp-price.pp-ev s{color:var(--pp-ink2);font-weight:500}
+.pp-landing .pp-ev .pp-evs{display:inline}
+.pp-landing .pp-ev .pp-evf{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (min-width:641px){.pp-landing .pp-ev .pp-evs{display:none}.pp-landing .pp-ev .pp-evf{position:static;width:auto;height:auto;overflow:visible;clip:auto}}
+.pp-landing .pp-evp{margin-top:var(--pp-s3);font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--pp-ink);font-variant-numeric:tabular-nums}
+.pp-landing .pp-evp s{color:var(--pp-ink2);font-weight:500}
+.pp-landing .pp-evp small{display:block;margin-top:4px;font-size:14px;font-weight:500;color:var(--pp-ink2);letter-spacing:0}
+
+/* 글꼴 자체 호스팅 자리: assets.json 의 fonts.enabled 가 켜지면 빌더가 글꼴 규칙을 이 파일 앞에 만든다(지금은 꺼짐 = 위 --pp-font 시스템 스택 그대로). 파일은 assets/fonts/ 에 둔다. */
+
+/* 영상 프레임 타일(첫 화면·c3): 둥근 타일, 정지 이미지 위에 캔버스가 페이드로 올라온다. 전면 풀블리드 아님 */
+.pp-landing .pp-vwrap{position:relative;margin:var(--pp-s4) auto 0;max-width:calc(520px + 2*var(--pp-gutter));padding:0 var(--pp-gutter);box-sizing:border-box}
+.pp-landing .pp-vtile{position:relative;overflow:hidden;isolation:isolate;aspect-ratio:var(--pp-w)/var(--pp-h);background:#d9d9de}
+.pp-landing .pp-vwrap .pp-vtile{border-radius:var(--pp-r-tile)}
+.pp-landing .pp-vtile img,.pp-landing .pp-vtile canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing .pp-vtile canvas{opacity:0;transition:opacity .22s ease-out}
+.pp-landing .pp-vtile.pp-run canvas{opacity:1}
+.pp-landing .pp-vwrap .pp-snd{left:calc(var(--pp-gutter) + 14px);bottom:14px}
+.pp-landing .pp-photo .pp-vtile{width:min(100%,560px);margin:0 auto}
+/* c3: 영상 위 흰 글자가 밝은 부분에서도 읽히도록 위·아래에 어두운 그라데이션(영상 위에 얹는 장식이 아니라 가독성 보조) */
+/* 가격 칸 앞 글자(판매처 이름): 좁은 화면에서는 보조기기용으로만 */
+.pp-landing .pp-pfx{margin-right:6px;color:var(--pp-ink2);font-weight:500}
+@media (max-width:640px){.pp-landing .pp-pfx{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}}
+/* 좁은 화면: 위 줄의 상품명은 보조기기용으로만 남기고 가격·구매 버튼에 폭을 준다(버튼 글자가 길다) */
+@media (max-width:480px){.pp-landing .pp-nav .pp-nm{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+/* 버튼 아래 작은 한 줄 */
+.pp-landing .pp-btnnote{margin-top:12px;font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
+.pp-landing .pp-cta>.pp-btnnote{margin-top:12px}
+
+/* 장 0 */
+.pp-landing [data-pp-kind="hero"]{padding-top:calc(52px + var(--pp-s6))}
+.pp-landing [data-pp-kind="hero"] .pp-stagewrap{margin-top:var(--pp-s4)}
+.pp-landing .pp-cue{margin-top:20px;font-size:13px;color:var(--pp-ink3);letter-spacing:.08em}
+
+/* 장 1 */
+.pp-landing .pp-tile{border-radius:var(--pp-r-tile);overflow:hidden;background:var(--pp-alt)}
+.pp-landing .pp-tile img{width:100%}
+.pp-landing .pp-strip{display:block;width:100%;border-radius:var(--pp-r-tile)}
+
+/* 장 2: 360 — 흰 바탕 풀블리드. 테두리·둥근 모서리·그림자 없음 */
+.pp-landing [data-pp-kind="s1"]{padding:0;background:#fff}
+.pp-landing .pp-s1-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:var(--pp-s4) 0 8px}
+.pp-landing [data-pp-s1]{display:none;position:relative;width:min(100%,720px);aspect-ratio:1;background:#fff}
+.pp-landing [data-pp-s1] img{display:block;width:100%;height:100%}
+.pp-landing [data-pp-s1] canvas{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0}
+.pp-landing [data-pp-s1].pp-ready canvas{opacity:1}
+.pp-landing.pp-js [data-pp-s1]{display:block}
+.pp-landing .pp-cuts{display:flex;gap:8px;margin:0;padding:0 var(--pp-gutter);list-style:none;width:100%;box-sizing:border-box}
+.pp-landing .pp-cuts li{flex:1;min-width:0}
+.pp-landing .pp-cuts img{width:100%}
+.pp-landing .pp-cuts span,.pp-landing .pp-deg{display:block;font-size:13px;color:var(--pp-link);font-weight:600;letter-spacing:.06em;margin-top:6px}
+.pp-landing.pp-js .pp-cuts{display:none}
+.pp-landing .pp-angles{list-style:none;margin:0;padding:0 var(--pp-gutter);width:100%;box-sizing:border-box;text-align:center;font-size:var(--pp-t-h3)}
+.pp-landing .pp-angles li{padding:18px 0;border-top:1px solid var(--pp-line);font-weight:700;letter-spacing:var(--pp-track-head);line-height:1.2;text-wrap:balance}
+.pp-landing .pp-angles .pp-deg{margin:0 0 4px}
+.pp-landing.pp-js .pp-angles{position:relative;min-height:calc(2.5em + 26px)}
+.pp-landing.pp-js .pp-angles li{position:absolute;left:var(--pp-gutter);right:var(--pp-gutter);top:0;border:0;padding:0;opacity:0;transform:translateY(8px);transition:opacity .22s ease-out,transform .22s ease-out;pointer-events:none}
+.pp-landing.pp-js .pp-angles li.pp-act{opacity:1;transform:none}
+.pp-landing .pp-prog{display:none;width:min(100% - 44px,520px);height:2px;background:var(--pp-line2);border-radius:2px;overflow:hidden;margin-bottom:20px}
+.pp-landing.pp-js .pp-prog{display:block}
+.pp-landing .pp-prog i{display:block;width:100%;height:100%;background:var(--pp-ink);transform-origin:left center;transform:scaleX(0)}
+.pp-landing.pp-js [data-pp-kind="s1"]{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center}
+.pp-landing.pp-js [data-pp-kind="s1"] .pp-s1-wrap{padding-top:52px}
+@media (min-width:769px){.pp-landing.pp-js [data-pp-s1]{width:min(100%,720px,calc(100vh - 250px))}}
+@media (max-width:768px){.pp-landing [data-pp-s1]{overflow:hidden}.pp-landing [data-pp-s1] img,.pp-landing [data-pp-s1] canvas{width:128%;max-width:none;margin-left:-14%}}
+
+/* 장 3: 원본 사진 풀블리드(잡지식), 글자는 사진 위 */
+.pp-landing [data-pp-kind="mood"]{padding:0;background:#000;color:#fff}
+.pp-landing .pp-photo{position:relative;margin:0;padding-top:56px;background:#000}
+.pp-landing .pp-photo>img{width:100%;height:min(150vw,980px);object-fit:cover;object-position:50% 62%}
+.pp-landing .pp-photo-txt{position:absolute;left:0;right:0;top:0;padding:clamp(48px,12vw,88px) var(--pp-gutter) var(--pp-s5);background:linear-gradient(rgba(0,0,0,.66),rgba(0,0,0,.4) 72%,rgba(0,0,0,0))}
+.pp-landing .pp-photo-txt p{font-size:clamp(34px,9.4vw,52px);font-weight:700;letter-spacing:var(--pp-track-head);line-height:1.18}
+.pp-landing .pp-photo-cta{position:absolute;left:0;right:0;bottom:0;padding:var(--pp-s4) 0 36px;text-align:center;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.5))}
+.pp-landing .pp-photo-cta .pp-link{color:#fff;font-size:21px;min-height:44px}
+
+/* 다리: 클릭휠 */
+.pp-landing [data-pp-kind="wheel"]{padding-bottom:var(--pp-section)}
+.pp-landing .pp-wheel{position:absolute;z-index:4;left:calc(var(--wx)*1%);top:calc(var(--wy)*1%);width:calc(var(--wa)*2%);height:calc(var(--wb)*2%);margin:calc(var(--wb)*-1%) 0 0 calc(var(--wa)*-1%);border-radius:50%;touch-action:none;cursor:grab;-webkit-tap-highlight-color:transparent;outline:none;-webkit-user-select:none;user-select:none}
+.pp-landing .pp-wheel:focus-visible{outline:3px solid var(--pp-accent);outline-offset:4px}
+.pp-landing .pp-wheel.pp-down{cursor:grabbing}
+.pp-landing .pp-list{list-style:none;margin:var(--pp-s3) 0 0;padding:0;border-top:1px solid var(--pp-line);text-align:left}
+.pp-landing .pp-list li{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pp-line2);font-size:19px;font-weight:600;letter-spacing:-.02em}
+.pp-landing .pp-list li a,.pp-landing .pp-list li>span:first-child{display:flex;flex:1;align-items:center;min-height:56px;padding:0 4px;color:var(--pp-ink);text-decoration:none}
+.pp-landing .pp-list li>span:last-child{color:var(--pp-ink3);font-size:15px;font-weight:500}
+.pp-landing .pp-list li a::after{content:"\203A";margin-left:auto;font-size:22px;color:var(--pp-ink3);font-weight:500}
+.pp-landing .pp-list li.pp-sel a{color:var(--pp-link)}
+.pp-landing .pp-list li.pp-sel{border-bottom-color:var(--pp-link)}
+.pp-landing .pp-hint{margin-top:var(--pp-s3);font-size:14px;color:var(--pp-ink3)}
+
+/* 2막: 실제 글자 + 원본 사진 */
+.pp-landing .pp-num{background:var(--pp-alt);border-radius:var(--pp-r-tile);padding:var(--pp-s6) var(--pp-gutter) var(--pp-s5);text-align:center}
+.pp-landing [data-pp-scene].pp-alt .pp-num{background:#fff}
+.pp-landing .pp-big{font-variant-numeric:tabular-nums;font-size:var(--pp-t-num);font-weight:700;letter-spacing:-.05em;line-height:1}
+.pp-landing .pp-unit{font-variant-numeric:tabular-nums;font-size:var(--pp-t-h3);font-weight:700;margin-top:8px}
+.pp-landing .pp-num p{margin-top:var(--pp-s3);color:var(--pp-ink2)}
+.pp-landing .pp-num .pp-strong{color:var(--pp-ink);font-weight:600}
+.pp-landing .pp-num s{text-decoration-thickness:2px}
+.pp-landing .pp-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:var(--pp-s4)}
+.pp-landing .pp-chip{font-size:14px;color:var(--pp-ink2);background:#fff;border:1px solid var(--pp-line2);border-radius:var(--pp-r-pill);padding:8px 12px}
+.pp-landing [data-pp-scene].pp-alt .pp-chip{background:var(--pp-alt)}
+.pp-landing .pp-six{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:var(--pp-s5);text-align:left}
+.pp-landing .pp-six>div{background:var(--pp-alt);border-radius:var(--pp-r-card);padding:20px 16px}
+.pp-landing [data-pp-scene].pp-alt .pp-six>div{background:#fff}
+.pp-landing .pp-six svg{width:34px;height:34px;stroke:var(--pp-ink);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.pp-landing .pp-six b{display:block;font-size:18px;font-weight:700;margin-top:12px;letter-spacing:-.02em}
+.pp-landing .pp-six span{display:block;font-size:15px;color:var(--pp-ink2);margin-top:2px;line-height:1.35}
+.pp-landing .pp-dark{background:var(--pp-dark);color:var(--pp-on-dark);border-radius:var(--pp-r-tile);overflow:hidden}
+.pp-landing .pp-dark img{width:100%}
+.pp-landing .pp-note{font-size:19px;font-weight:600;letter-spacing:-.02em}
+.pp-landing .pp-tbl{width:100%;border-collapse:collapse;margin-top:var(--pp-s5);text-align:left}
+.pp-landing .pp-tbl th,.pp-landing .pp-tbl td{padding:16px 8px;border-bottom:1px solid var(--pp-line2);vertical-align:top;font-size:16px;line-height:1.4}
+.pp-landing .pp-tbl thead th{font-weight:600;color:var(--pp-ink3);font-size:14px;border-bottom:1px solid var(--pp-line)}
+.pp-landing .pp-tbl tbody th{font-weight:600;width:20%;white-space:nowrap}
+.pp-landing .pp-tbl td.pp-theirs{color:var(--pp-ink2)}
+.pp-landing .pp-tbl td.pp-ours{font-weight:700;color:var(--pp-ink)}
+.pp-landing .pp-tl{display:grid;grid-template-columns:7fr 23fr 30fr;gap:8px;margin-top:var(--pp-s5);text-align:left}
+.pp-landing .pp-tl>div{border-radius:16px;padding:16px 12px;background:var(--pp-alt);font-size:15px;line-height:1.35;color:var(--pp-ink2)}
+.pp-landing [data-pp-scene].pp-alt .pp-tl>div{background:#fff}
+.pp-landing .pp-tl b{display:block;color:var(--pp-ink);font-size:18px;letter-spacing:-.02em}
+.pp-landing .pp-tl>div.pp-x{background:var(--pp-ink);color:var(--pp-on-dark)}
+.pp-landing .pp-tl>div.pp-y{background:var(--pp-accent);color:#fff}
+.pp-landing .pp-tl .pp-x b,.pp-landing .pp-tl .pp-y b{color:#fff}
+.pp-landing .pp-gap{height:var(--pp-s7)}
+
+/* FAQ */
+.pp-landing [data-pp-kind="faq"] .pp-h2{font-size:clamp(30px,8vw,44px);margin-bottom:var(--pp-s4)}
+.pp-landing details{border-top:1px solid var(--pp-line);text-align:left}
+.pp-landing details:last-of-type{border-bottom:1px solid var(--pp-line)}
+.pp-landing summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:60px;padding:12px 4px;font-size:19px;font-weight:600;letter-spacing:-.02em;-webkit-tap-highlight-color:transparent}
+.pp-landing summary::-webkit-details-marker{display:none}
+.pp-landing summary::after{content:"+";color:var(--pp-ink3);font-size:28px;font-weight:300;line-height:1;transition:transform .2s var(--pp-ease)}
+.pp-landing details[open] summary::after{transform:rotate(45deg)}
+.pp-landing details p{padding:0 4px 22px;color:var(--pp-ink2);font-size:17px}
+
+/* 마무리 */
+.pp-landing .pp-cta{background:var(--pp-alt);border-radius:var(--pp-r-tile);padding:var(--pp-s7) var(--pp-gutter);text-align:center}
+.pp-landing .pp-cta>p{color:var(--pp-ink2);margin-top:var(--pp-s3)}
+.pp-landing .pp-three{margin:var(--pp-s5) auto 0;max-width:420px;text-align:left}
+.pp-landing .pp-three>div{display:flex;gap:16px;align-items:baseline;padding:12px 0;border-top:1px solid var(--pp-line);font-size:18px;font-weight:600;letter-spacing:-.02em}
+.pp-landing .pp-three b{min-width:104px;font-size:20px;font-weight:700;color:var(--pp-ink);white-space:nowrap}
+.pp-landing .pp-proof{margin-top:var(--pp-s4);font-size:15px;color:var(--pp-ink3)}
+.pp-landing .pp-foot{padding:var(--pp-s7) 0 120px;color:var(--pp-ink3);font-size:13px;line-height:1.6;text-align:left}
+
+@media (hover:hover) and (pointer:fine){.pp-landing .pp-link:hover{text-decoration:underline}.pp-landing .pp-btn:hover,.pp-landing .pp-pill:hover{background:var(--pp-accent-hover)}.pp-landing summary:hover{color:var(--pp-link)}.pp-landing .pp-buy:hover{opacity:1}.pp-landing .pp-list li a:hover{color:var(--pp-link)}}
+@media (prefers-reduced-motion:reduce){
+ .pp-landing *,.pp-landing *::before,.pp-landing *::after{transition-duration:.01ms!important;animation:none!important}
+}
+/* v4.3.1 수정 — pp_v43.css 뒤에 붙는다(v4.3 CSS 는 그대로).
+   ① 360 장면(S1) 비율: v4.3 의 @media(max-width:768px) 규칙이 이미지·캔버스에 width:128% 만 주고 height 는 위 기본 규칙의 100% 를 그대로 둬서
+      정사각 프레임(720x720)이 가로로만 28% 늘어나 보였다(폭 375 에서 480x375). 폭·높이를 같이 120% 로 키워 비율을 지킨다. 위치는 가운데가 아니라 아래를 맞춘다(위 -16.8%): 프레임 아래 11% 는 바닥 반사가 흰색으로 사라지는 구간이라 가운데 확대(위아래 11% 잘림)로 자르면 회색 가장자리가 흰 바탕에 선처럼 남는다. 제품 윗끝은 프레임 18% 지점이라 위 14% 잘림은 안전.
+      object-fit:contain 은 어떤 상자 비율이어도 늘어나지 않게 하는 안전장치. */
+.pp-landing .pp-s1-wrap{width:100%}   /* 이미지가 상자 안에서 절대 위치가 되면 안쪽 너비가 0 이라 flex 로 줄어든 래퍼가 44px 로 접힌다 — 래퍼 너비를 고정 */
+.pp-landing [data-pp-s1] img,.pp-landing [data-pp-s1] canvas{object-fit:contain}
+@media (max-width:768px){.pp-landing [data-pp-s1] img,.pp-landing [data-pp-s1] canvas{position:absolute;left:-10%;top:-16.8%;width:120%;height:120%;max-width:none;margin:0}}
+/* ② 장면 04 위쪽 검은 띠: .pp-photo{padding-top:56px;background:#000} 가 영상 타일 위에 순흑 56px 를 남겼다 */
+.pp-landing .pp-photo{padding-top:0}
+/* pp-engine v4.4 — 감기 엔진용 최소 규칙. 모든 선택자는 .pp-landing 아래. 효과가 꺼져도(lite·reduced-motion·JS 꺼짐) 포스터가 보이고 이야기는 그대로 읽힌다. */
+.pp-landing [data-pp-seq],.pp-landing [data-pp-vscrub]{position:relative;overflow:hidden;aspect-ratio:var(--pp-w)/var(--pp-h)}
+.pp-landing [data-pp-seq]>img,.pp-landing [data-pp-seq]>canvas,.pp-landing [data-pp-vscrub]>img,.pp-landing [data-pp-vscrub]>video,.pp-landing [data-pp-vscrub]>canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing [data-pp-seq]>canvas,.pp-landing [data-pp-vscrub]>canvas,.pp-landing [data-pp-vscrub]>video{opacity:0}
+.pp-landing [data-pp-seq].pp-seq-on>canvas,.pp-landing [data-pp-vscrub].pp-seq-on>canvas,.pp-landing [data-pp-vscrub].pp-vid-on>video{opacity:1}
+/* full: 감는 중에는 즉시 보인다. lite: 장면 진입 때 끝 프레임이 천천히 페이드(장면 전환 연출은 길어도 된다) */
+.pp-landing.pp-static [data-pp-seq]>canvas,.pp-landing [data-pp-seq].pp-end>canvas{transition:opacity .9s ease-out}
+.pp-landing [data-pp-vscrub][hidden],.pp-landing [data-pp-vscrub]>video[hidden]{display:none}
+
+
+/* ── 공통: 키 큰 구간 + sticky 한 장 ── */
+.pp-landing{--pw:calc((100svh - 44px)*var(--pp-w,.5625)/var(--pp-h,1));--ftt:#aaa8a9;--ftb:#c9c8cd}
+.pp-landing [data-pp-sticky]{position:relative;height:calc(var(--pp-k,3)*100vh)}
+@supports (height:100svh){.pp-landing [data-pp-sticky]{height:calc(var(--pp-k,3)*100svh)}}
+.pp-landing .pp-st{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--pp-bg)}
+@supports (height:100svh){.pp-landing .pp-st{height:100svh}}
+.pp-landing:not(.pp-js) [data-pp-sticky],.pp-landing.pp-static [data-pp-sticky]{height:auto}
+.pp-landing:not(.pp-js) .pp-st,.pp-landing.pp-static .pp-st{position:relative;height:auto;overflow:visible}
+.pp-landing [data-pp-kind="fs"],.pp-landing [data-pp-kind="stk"],.pp-landing [data-pp-kind="plug"],.pp-landing [data-pp-kind="hold"],.pp-landing [data-pp-kind="s1"]{padding:0}
+.pp-landing .pp-dk{background:#000;color:#fff}
+.pp-landing .pp-dk .pp-st{background:#000}
+.pp-landing .pp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
+.pp-landing .pp-note9{font-size:var(--pp-t-cap);line-height:1.4;color:var(--pp-ink2)}
+
+/* ── 세로 영상 배경(.pp-vb): 세로 화면 = 화면 가득(cover). 가로 화면 = 자르지 않고 높이에 맞춘 테두리 또렷한 세로 판(양옆은 페이지 바탕) ── */
+.pp-landing .pp-vbox{position:relative;width:100%;aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#d6d6d8;container-type:inline-size}
+.pp-landing.pp-js:not(.pp-static) .pp-vb>.pp-vbox{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
+.pp-landing .pp-vbox>img,.pp-landing .pp-vbox>canvas{object-position:var(--op,50% 50%)}
+.pp-landing .pp-words{display:none}
+.pp-landing .pp-vtx{position:absolute;z-index:3;pointer-events:none}
+@media (min-aspect-ratio:11/10){
+ .pp-landing .pp-vb{--stg:#dddcdb}
+ .pp-landing.pp-js:not(.pp-static) .pp-vb{background:var(--stg)}
+ .pp-landing.pp-js:not(.pp-static) .pp-vb>.pp-vbox{left:calc(62% - var(--pw)/2);top:44px;width:var(--pw);height:calc(100svh - 44px);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+}
+
+/* ── 1-0 훅: 영상 가득 + 한 단어씩(아이팟과 안 겹치는 자리: 위 t / 아래 b) ── */
+.pp-landing.pp-js:not(.pp-static) .pp-words{display:block;position:absolute;left:0;right:0;top:0;bottom:0;z-index:3;pointer-events:none;text-align:center;font-size:clamp(44px,15.4vw,110px);font-weight:700;line-height:1.1;letter-spacing:-.04em;color:var(--pp-ink)}
+.pp-landing .pp-wd{position:absolute;left:0;right:0;top:10%;padding:0 var(--pp-gutter);opacity:0;transform:translateY(.28em);transition:opacity .16s ease-in,transform .3s ease-in}
+.pp-landing .pp-wd[data-s="b"]{top:68%}
+.pp-landing .pp-wd.pp-on{opacity:1;transform:none;transition:opacity .35s ease-out .22s,transform .5s var(--pp-ease) .22s}
+.pp-landing .pp-wd.pp-off{opacity:0;transform:translateY(-.2em);transition:opacity .16s ease-in,transform .3s ease-in}
+@media (min-aspect-ratio:11/10){
+ .pp-landing.pp-js:not(.pp-static) .pp-words{right:calc(38% + var(--pw)/2);left:0;font-size:min(16svh,9vw)}
+ .pp-landing .pp-wd,.pp-landing .pp-wd[data-s="b"]{top:calc(50% - .55em)}
+}
+.pp-landing .pp-hero-txt{padding:var(--pp-s5) var(--pp-gutter) 0;text-align:center}
+.pp-landing .pp-hero-txt .pp-h1x{font-size:clamp(40px,12vw,84px)}
+.pp-landing.pp-js:not(.pp-static) .pp-hero-txt{position:absolute;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));z-index:3;padding:0 var(--pp-gutter);pointer-events:none}
+.pp-landing.pp-js:not(.pp-static) .pp-hero-txt .pp-h1x{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pp-landing .pp-hero-txt .pp-name{margin-top:12px}
+.pp-landing .pp-hero-txt,.pp-landing .pp-cue9{transition:opacity .3s ease-out}
+.pp-landing .pp-late .pp-hero-txt,.pp-landing .pp-late .pp-cue9{opacity:0}
+@media (min-aspect-ratio:11/10){.pp-landing.pp-js:not(.pp-static) .pp-hero-txt{right:calc(38% + var(--pw)/2)}}
+.pp-landing .pp-cue9{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:3;text-align:center;font-size:13px;letter-spacing:.08em;color:var(--pp-ink2);display:none}
+.pp-landing.pp-js:not(.pp-static) .pp-cue9{display:block}
+
+/* ── 1-0b 잭: 스크롤로 꽂힘 + '딸깍' 글자·충격선(글자·선만, 아이콘 없음). 글자는 영상 위(그림자만) ── */
+.pp-landing .pp-jackst{background:#000;--stg:#545454}
+.pp-landing .pp-jackst .pp-vbox{background:#000;color:#fff}
+.pp-landing.pp-js:not(.pp-static) .pp-jk:not(.pp-seq-on)>img{opacity:0}
+.pp-landing .pp-jt{position:absolute;left:43%;margin:0;color:#fff;font-weight:700;letter-spacing:-.03em;line-height:1.22;text-align:left;text-shadow:0 1px 10px rgba(0,0,0,.65);z-index:3;pointer-events:none;font-size:8.2cqw}
+.pp-landing .pp-jt1{top:14%}
+.pp-landing .pp-jt1s{top:76%;font-size:4.7cqw;font-weight:600;opacity:0;transition:opacity .3s ease-out}
+.pp-landing .pp-jt2{top:66%}
+.pp-landing .pp-jt2 span{display:block;opacity:0;transform:translateY(.4em);transition:opacity .35s ease-out,transform .5s var(--pp-ease)}
+.pp-landing .pp-jt2 span.pp-on{opacity:1;transform:none}
+.pp-landing .pp-jt1{transition:opacity .3s ease-out}
+.pp-landing .pp-jackst.pp-plugged .pp-jt1{opacity:0;transition-duration:.08s}
+.pp-landing .pp-jackst.pp-plugged:not(.pp-t2) .pp-jt1s{opacity:1}
+.pp-landing .pp-jackst.pp-t2 .pp-jt1s{opacity:0}
+.pp-landing .pp-jclick{position:absolute;left:43.6%;top:24.3%;margin:0;z-index:4;color:#fff;font-weight:800;font-size:19.5cqw;line-height:1;letter-spacing:-.06em;text-shadow:0 2px 14px rgba(0,0,0,.6);opacity:0;transform:rotate(-7deg) scale(.6);transform-origin:0 100%;pointer-events:none;white-space:nowrap}
+.pp-landing .pp-jackst.pp-plugged .pp-jclick{opacity:1;animation:pp-pop .12s ease-out 1 both}
+.pp-landing .pp-jackst.pp-t2 .pp-jclick{font-size:10.3cqw;opacity:.55;animation:none;transform:rotate(-7deg);transition:font-size .3s ease-out,opacity .3s ease-out}
+@keyframes pp-pop{0%{transform:rotate(-7deg) scale(.6)}60%{transform:rotate(-7deg) scale(1.08)}100%{transform:rotate(-7deg) scale(1)}}
+.pp-landing .pp-imp{position:absolute;left:48%;top:47%;width:0;height:0;z-index:4;pointer-events:none}
+.pp-landing .pp-imp i{position:absolute;left:0;top:0;width:11cqw;height:5px;margin-top:-2.5px;border-radius:5px;background:#fff;opacity:0;transform-origin:0 50%}
+.pp-landing .pp-imp i:nth-child(1){--a:-62deg}.pp-landing .pp-imp i:nth-child(2){--a:-38deg}.pp-landing .pp-imp i:nth-child(3){--a:-14deg}.pp-landing .pp-imp i:nth-child(4){--a:-86deg;width:8cqw}
+.pp-landing .pp-jackst.pp-pop .pp-imp i{animation:pp-imp .2s ease-out 1 both}
+@keyframes pp-imp{0%{opacity:1;transform:rotate(var(--a)) translateX(2cqw) scaleX(.3)}70%{opacity:1;transform:rotate(var(--a)) translateX(9cqw) scaleX(1)}100%{opacity:0;transform:rotate(var(--a)) translateX(12cqw) scaleX(.8)}}
+.pp-landing:not(.pp-js) .pp-jt1,.pp-landing.pp-static .pp-jt1,.pp-landing:not(.pp-js) .pp-jt1s,.pp-landing.pp-static .pp-jt1s{display:none}
+.pp-landing:not(.pp-js) .pp-jt2 span,.pp-landing.pp-static .pp-jt2 span{opacity:1;transform:none}
+.pp-landing:not(.pp-js) .pp-jclick,.pp-landing.pp-static .pp-jclick{opacity:.55;font-size:10.3cqw;transform:rotate(-7deg)}
+.pp-landing .pp-sndtog{position:absolute;right:10px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;font:600 12px/1 var(--pp-font);color:var(--pp-ink2);background:var(--pp-white);border:1px solid var(--pp-line);border-radius:var(--pp-r-pill);padding:7px 11px;min-height:30px;cursor:pointer;opacity:.9}
+.pp-landing .pp-sndtog[aria-pressed="true"]{color:var(--pp-white);background:var(--pp-ink);border-color:var(--pp-ink)}
+@media (prefers-reduced-motion:reduce){.pp-landing .pp-jackst.pp-plugged .pp-jclick{animation:none;transform:rotate(-7deg)}.pp-landing .pp-jackst.pp-pop .pp-imp i{animation:none}}
+
+/* ── 1-1 기억 ── */
+.pp-landing .pp-cap9{position:absolute;left:0;right:0;top:96px;margin:0;padding:0 var(--pp-gutter);z-index:3;text-align:center;font-size:clamp(26px,7.7vw,46px);font-weight:700;letter-spacing:-.035em;line-height:1.2;color:var(--pp-ink);text-shadow:0 1px 8px rgba(255,255,255,.55)}
+.pp-landing .pp-cap9 .pp-cl{display:block;text-wrap:balance}
+.pp-landing:not(.pp-js) .pp-cap9,.pp-landing.pp-static .pp-cap9{position:static;padding:var(--pp-s5) var(--pp-gutter)}
+@media (min-aspect-ratio:11/10){.pp-landing.pp-js:not(.pp-static) .pp-cap9{top:50%;transform:translateY(-50%);right:calc(38% + var(--pw)/2);text-align:left;padding-left:56px;font-size:min(9.5svh,120px)}}
+.pp-landing .pp-ch{display:inline-block;white-space:pre}
+.pp-landing .pp-cw{display:inline-block;white-space:nowrap}
+.pp-landing.pp-js:not(.pp-static) .pp-ch{opacity:.0;transform:translateY(.4em);transition:opacity .3s ease-out,transform .45s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-ch.pp-on{opacity:1;transform:none}
+
+/* ── 정면 선명컷 장면(1-2·1-5·1-7·아이팟 안에서): 사진 전체가 한 장. 사진 위·아래가 모자라면 사진 맨 위·맨 아래 줄을 늘려 이어 채움(그라데이션·흐림 없음). 크기·자리는 JS(ftLayout)가 정한다 ── */
+.pp-landing .pp-ft{background:var(--ftt)}
+.pp-landing .pp-ft .ft-ph{position:absolute;left:0;top:0;width:100%;aspect-ratio:1/1}
+.pp-landing:not(.pp-js) .pp-ft .ft-ph,.pp-landing.pp-static .pp-ft .ft-ph{position:relative;max-width:560px;margin:0 auto}
+.pp-landing .ft-img,.pp-landing .ft-front{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;display:block;pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+.pp-landing .ft-ext{position:absolute;left:0;width:100%;height:30vh;max-width:none;display:block;pointer-events:none}
+.pp-landing .ft-ext.ft-et{bottom:100%}.pp-landing .ft-ext.ft-eb{top:100%}
+.pp-landing:not(.pp-js) .ft-ext,.pp-landing.pp-static .ft-ext{display:none}
+.pp-landing .pp-ft .ips-screen{--scr-l:32.0175%}
+.pp-landing .pp-ft .ft-scr{transition:opacity .25s ease-out}
+.pp-landing .pp-ft.ft-play .ft-scr{opacity:0}
+.pp-landing .pp-ft .ips-menu{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.pp-landing .pp-ft-title{position:absolute;left:0;right:0;margin:0;padding:0 var(--pp-gutter);z-index:3;text-align:center;font-size:clamp(26px,8vw,48px);line-height:1.18;color:var(--pp-ink);text-shadow:0 1px 8px rgba(255,255,255,.5)}
+.pp-landing:not(.pp-js) .pp-ft-title,.pp-landing.pp-static .pp-ft-title{position:static;padding:var(--pp-s4) var(--pp-gutter)}
+.pp-landing .pp-ft-hint{position:absolute;left:0;right:0;margin:0;z-index:3;text-align:center;font-size:14px;font-weight:600;color:#3a3a3c;pointer-events:none}
+.pp-landing:not(.pp-js) .pp-ft-hint,.pp-landing.pp-static .pp-ft-hint{display:none}
+@media (min-aspect-ratio:11/10){
+ .pp-landing .pp-ft{background:var(--pp-bg)}
+ .pp-landing.pp-js:not(.pp-static) .pp-ft .ft-ph{overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
+ .pp-landing.pp-js:not(.pp-static) .pp-ft .ft-ext{display:none}
+ .pp-landing.pp-js:not(.pp-static) .pp-ft-title{text-align:left;font-size:min(9.5svh,120px);padding:0}
+}
+/* 1-2 등장: 사진 전체 → 화면+휠이 가득(세로 폰만 확대, 확대는 가장 큰 크기로 깔아 두고 줄이는 방식이라 끝 상태가 또렷) */
+.pp-landing .ft-ph.ft-zoom{transform-origin:50% 50%}
+.pp-landing.pp-js:not(.pp-static) .pp-ft[data-ft-zoom] .ft-ph{will-change:transform}   /* 확대 장면의 큰 사진 층은 한 번만 래스터하고 합성기가 줄이기만(끝 상태는 transform 없음 — 사진이라 글자 흐림 문제 없음) */
+
+/* v4.3 의 s1 장면 flex 가운데 정렬 해제(sticky 구간이 폭 0 이 되던 것) */
+.pp-landing [data-pp-kind="s1"],.pp-landing.pp-js [data-pp-kind="s1"]{display:block;min-height:0;padding:0;background:#fff}
+/* ── 1-3 360(G2): 앞은 화면 / 옆은 두께 / 뒤는 거울 ── */
+.pp-landing .pp-g360{background:#f8f7fa}
+.pp-landing .pp-g360 .pp-vbox{background:#f8f7fa}
+.pp-landing .pp-g360lab{list-style:none;margin:0;padding:0;position:absolute;left:0;right:0;top:calc(44px + 6svh);z-index:3;text-align:center;font-size:clamp(30px,9vw,60px);font-weight:700;letter-spacing:-.04em;color:var(--pp-ink)}
+.pp-landing .pp-g360lab li{position:absolute;left:0;right:0;top:0;opacity:0;transform:translateY(.3em);transition:opacity .25s ease-out,transform .35s var(--pp-ease)}
+.pp-landing .pp-g360lab li.pp-on{opacity:1;transform:none}
+.pp-landing .pp-hint9{display:none;position:absolute;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom,0px));margin:0;z-index:3;font-size:14px;color:var(--pp-ink2);text-align:center}
+.pp-landing.pp-js:not(.pp-static) .pp-hint9{display:block}
+.pp-landing:not(.pp-js) .pp-g360lab,.pp-landing.pp-static .pp-g360lab{position:static;padding:var(--pp-s4) var(--pp-gutter)}
+.pp-landing:not(.pp-js) .pp-g360lab li,.pp-landing.pp-static .pp-g360lab li{position:static;opacity:1;transform:none;font-size:clamp(26px,7vw,40px);padding:6px 0}
+.pp-landing [data-pp-rotate]{touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.pp-landing [data-pp-rotate].pp-grab{cursor:grabbing}
+@media (min-aspect-ratio:11/10){.pp-landing.pp-js:not(.pp-static) .pp-g360lab{right:calc(38% + var(--pw)/2);top:calc(50% - .6em);text-align:center;font-size:min(9.5svh,120px)}}
+
+/* ── 1-4 거울 뒷판 ── */
+.pp-landing [data-pp-kind="mir"]{padding:0}
+.pp-landing .pp-mir-st{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s4);background:#000;touch-action:pan-y}
+.pp-landing:not(.pp-js) .pp-mir-st,.pp-landing.pp-static .pp-mir-st{padding:calc(52px + var(--pp-s6)) 0 var(--pp-s6)}
+.pp-landing .pp-mir-title{padding:0 var(--pp-gutter);text-align:center;color:#fff}
+.pp-landing .pp-mir-title .pp-h2{font-size:clamp(34px,9.6vw,64px);color:#fff}
+.pp-landing .pp-par{position:relative;width:min(100%,720px,calc((100svh - 220px)*var(--pp-w)/var(--pp-h)));aspect-ratio:var(--pp-w)/var(--pp-h);overflow:hidden;background:#111}
+.pp-landing .pp-par>.pp-parin{position:absolute;left:0;top:0;width:100%;height:100%;transform:translate3d(var(--tx,0%),var(--ty,0%),0) scale(1.09);will-change:transform}
+.pp-landing:not(.pp-js) .pp-par>.pp-parin,.pp-landing.pp-static .pp-par>.pp-parin{transform:none}
+.pp-landing .pp-parin>[data-pp-seq]{position:absolute;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
+.pp-landing .pp-mir-hint{display:none;color:rgba(255,255,255,.7);font-size:14px;text-align:center}
+.pp-landing.pp-js:not(.pp-static) .pp-mir-hint{display:block}
+.pp-landing .pp-tilt-btn{font:600 16px/1 var(--pp-font);color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);border-radius:var(--pp-r-pill);padding:12px 20px;min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s var(--pp-ease)}
+.pp-landing .pp-tilt-btn:active{transform:scale(.97)}
+.pp-landing .pp-tilt-btn[hidden]{display:none}
+
+/* ── 1-8 낭만: 사진은 폭 가득(또렷한 가장자리), 글자·곡 수는 그 위·아래 ── */
+.pp-landing .pp-rom-st{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--pp-s3);padding-top:calc(52px + var(--pp-s3));background:#d3d1d4}
+.pp-landing:not(.pp-js) .pp-rom-st,.pp-landing.pp-static .pp-rom-st{padding:var(--pp-s7) 0}
+.pp-landing .pp-rom-txt{padding:0 var(--pp-gutter);text-align:center}
+.pp-landing .pp-rom-txt p{font-size:clamp(28px,8vw,52px);font-weight:700;letter-spacing:-.035em;line-height:1.16;margin:0;text-shadow:0 1px 8px rgba(255,255,255,.5)}
+.pp-landing.pp-js:not(.pp-static) .pp-rl{opacity:0;transform:translateY(.4em);transition:opacity .4s ease-out,transform .55s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-rl.pp-on{opacity:1;transform:none}
+.pp-landing .pp-frontbox{position:relative;width:min(100%,calc((100svh - 330px)*1),520px);aspect-ratio:1/1;overflow:hidden;background:#d3d1d4}
+.pp-landing .pp-frontbox img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.pp-landing.pp-js:not(.pp-static) .pp-frontbox img{transform:scale(var(--zs,1));transform-origin:50% 55%;will-change:transform}
+.pp-landing .pp-songbox{padding:0 var(--pp-gutter);text-align:center;min-height:calc(clamp(44px,13vw,100px) + 30px)}
+.pp-landing .pp-songs{display:none;margin:0;font-size:clamp(44px,13vw,100px);font-weight:800;letter-spacing:-.05em;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--pp-ink)}
+.pp-landing .pp-songs.pp-show{display:block}
+.pp-landing .pp-songnote{margin-top:8px;font-size:var(--pp-t-cap);line-height:1.4;color:#3a3a3c}
+
+/* ── 1-9 넘어가기: 영상 가득(글자는 아래 어두운 면 흰색), 끝은 상자 PEPPER CLUB·뒷판 쪽으로 확대(판 안에서) ── */
+.pp-landing .pp-t9-st{background:#e4e4e6}
+.pp-landing .pp-t9-st .pp-vbox canvas,.pp-landing .pp-t9-st .pp-vbox>img{transform:scale(var(--z,1));transform-origin:var(--zo,45% 28%)}
+.pp-landing .pp-t9t{position:absolute;left:9.2%;top:70%;margin:0;z-index:3;color:#fff;text-align:left;font-size:9.7cqw;font-weight:700;letter-spacing:-.04em;line-height:1.14;text-shadow:0 1px 12px rgba(0,0,0,.55);pointer-events:none}
+.pp-landing .pp-t9t span{display:block;transition:opacity .4s ease-out,transform .5s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-t9t span.pp-out{opacity:0;transform:translateY(-.5em)}
+.pp-landing .pp-t9e{position:absolute;left:0;right:0;top:85%;margin:0;z-index:3;color:#fff;text-align:center;font-size:9.7cqw;font-weight:700;letter-spacing:-.04em;text-shadow:0 1px 12px rgba(0,0,0,.55);pointer-events:none}
+.pp-landing.pp-js:not(.pp-static) .pp-t9e{opacity:0;transform:translateY(.4em);transition:opacity .5s ease-out,transform .6s var(--pp-ease)}
+.pp-landing.pp-js:not(.pp-static) .pp-t9e.pp-on{opacity:1;transform:none}
+.pp-landing:not(.pp-js) .pp-t9t,.pp-landing.pp-static .pp-t9t,.pp-landing:not(.pp-js) .pp-t9e,.pp-landing.pp-static .pp-t9e{position:static;color:var(--pp-ink);text-shadow:none;text-align:center;padding:var(--pp-s4) var(--pp-gutter);font-size:clamp(30px,8vw,52px)}
+
+@media (prefers-reduced-motion:reduce){}

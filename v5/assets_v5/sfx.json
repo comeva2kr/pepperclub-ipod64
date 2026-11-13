@@ -1,0 +1,150 @@
+[
+ {
+  "id": "whoosh",
+  "synth": "whoosh",
+  "gain": 0.9,
+  "v": 14,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "land",
+  "synth": "thud",
+  "gain": 1.0,
+  "v": 320,
+  "on": true,
+  "file": "assets_v5/media/sfx/land.mp3"
+ },
+ {
+  "id": "click",
+  "synth": "click",
+  "gain": 1.0,
+  "v": 774,
+  "on": true,
+  "file": "assets_v5/media/sfx/click.mp3"
+ },
+ {
+  "id": "count1",
+  "synth": "count",
+  "gain": 0.7,
+  "v": 1272,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "logo",
+  "synth": "logo",
+  "gain": 0.35,
+  "v": 1556,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "count2",
+  "synth": "count",
+  "gain": 0.7,
+  "v": 1642,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "shell",
+  "synth": "shutter",
+  "gain": 0.9,
+  "v": 1778,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "ding1",
+  "synth": "ding",
+  "gain": 0.8,
+  "v": 2770,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "ding2",
+  "synth": "ding",
+  "gain": 0.8,
+  "v": 2902,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "box",
+  "synth": "tak",
+  "gain": 1.0,
+  "v": 3030,
+  "on": true,
+  "file": "assets_v5/media/sfx/tak.mp3"
+ },
+ {
+  "id": "buy",
+  "synth": "tiring",
+  "gain": 0.8,
+  "v": 3050,
+  "on": false,
+  "file": null
+ },
+ {
+  "id": "tick",
+  "synth": "tick",
+  "gain": 0.7,
+  "v": null,
+  "on": true,
+  "file": "assets_v5/media/sfx/tick_a.mp3",
+  "files": [
+   "assets_v5/media/sfx/tick_a.mp3",
+   "assets_v5/media/sfx/tick_b.mp3",
+   "assets_v5/media/sfx/tick_c.mp3"
+  ]
+ },
+ {
+  "id": "tok",
+  "synth": "tok",
+  "gain": 0.9,
+  "v": null,
+  "on": true,
+  "file": "assets_v5/media/sfx/tok.mp3"
+ },
+ {
+  "id": "mood",
+  "layer": "mood",
+  "synth": "mood",
+  "file": null,
+  "on": false,
+  "gain_db": -10.5,
+  "curve": [
+   [
+    640,
+    0
+   ],
+   [
+    800,
+    1
+   ],
+   [
+    1340,
+    1
+   ],
+   [
+    1500,
+    0.15
+   ],
+   [
+    3000,
+    0.15
+   ],
+   [
+    3030,
+    0.8
+   ],
+   [
+    3100,
+    0.8
+   ]
+  ],
+  "fade_s": 2.5
+ }
+]
