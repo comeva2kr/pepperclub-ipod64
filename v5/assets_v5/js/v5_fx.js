@@ -146,21 +146,21 @@
   var noCore = function () { return H.classList.contains('pp-no3d'); };
   function fmt(el, v) {
     var dec = +el.getAttribute('data-dec') || 0, s = dec ? v.toFixed(dec) : (el.hasAttribute('data-comma') ? Math.round(v).toLocaleString('ko-KR') : String(Math.round(v)));
-    el.firstChild.nodeValue = s + (el.getAttribute('data-suffix') || '');
+    el.firstChild.nodeValue = (el.getAttribute('data-prefix') || '') + s + (el.getAttribute('data-suffix') || '');
   }
   big.forEach(function (b) {   // 큰 숫자(1950·2·8·180·15)도 같은 방식으로 — 첫 글자 덩어리의 숫자
     var n = b.firstChild; if (!n || n.nodeType !== 3) return; var m = /^(\d+)$/.exec(n.nodeValue.trim()); if (!m) return;
     b.setAttribute('data-fx', 'count'); b.setAttribute('data-to', m[1]); counts.push(b);
   });
-  qa('.cpage .nums b').forEach(function (b) {   // 9쪽 '5억+'·'1,200건+' : 숫자 부분만 올라옴
+  qa('.cpage .nums b').forEach(function (b) {   // 큰 숫자 줄('5억+'·'8,000+' 등): 숫자 부분만 올라옴
     var n = b.firstChild; if (!n || n.nodeType !== 3) return; var m = /^([\d,.]+)(.*)$/.exec(n.nodeValue.trim()); if (!m) return;
     b.setAttribute('data-fx', 'count'); if (m[1].indexOf(',') >= 0) b.setAttribute('data-comma', '1'); b.setAttribute('data-to', m[1].replace(/,/g, '')); b.setAttribute('data-suffix', m[2]); counts.push(b);
   });
   function prog(el, a, b) { var r = el.getBoundingClientRect(), vh = w.innerHeight; return clamp((vh * a - r.top) / (vh * (a - b)), 0, 1); }
   var bars = qa('[data-fx=bar]');
   var raf = 0, stageCmp = [];
-  function cmpTick() {   // 3D 무대판 비교표: 줄마다 우리 칸(core 가 .pc.on 을 켬)이 먼저 → 다른 두 칸이 뒤따른다(tr.go)
-    stageCmp.forEach(function (b) { qa('tr', b).forEach(function (tr) { var pc = tr.querySelector('.pc'); if (pc) tr.classList.toggle('go', pc.classList.contains('on')); }); });
+  function cmpTick() {   // 3D 무대판 비교표: 줄마다 우리 칸(core 가 .pc.on 을 켬)이 먼저 → 다른 두 칸이 뒤따른다(tbody.go)
+    stageCmp.forEach(function (b) { qa('tbody', b).forEach(function (tb) { var pc = tb.querySelector('.pc'); if (pc) tb.classList.toggle('go', pc.classList.contains('on')); }); });
   }
   function tick() {
     raf = 0; var vh = w.innerHeight;
@@ -169,7 +169,7 @@
     wipes.forEach(function (el, i) { var p = RM ? 1 : prog(el, 0.95, 0.6); el.style.clipPath = p >= 1 ? 'none' : 'inset(0 0 ' + ((1 - p) * 100).toFixed(1) + '% 0)'; el.style.transform = p >= 1 ? '' : 'translateY(' + ((1 - p) * 14).toFixed(1) + 'px)'; });
     rises.forEach(function (el) { var p = RM ? 1 : ease(prog(el, 0.97, 0.7)); el.style.transform = p >= 1 ? '' : 'translateY(' + ((1 - p) * 22).toFixed(1) + 'px)'; el.style.clipPath = p >= 1 ? 'none' : 'inset(0 0 ' + ((1 - p) * 100).toFixed(1) + '% 0)'; });
     zfigs.forEach(function (f) { var p = RM ? 1 : prog(f, 1.0, 0.3), s = 0.9 + 0.1 * ease(p); f.style.transform = RM || p >= 1 ? '' : 'scale(' + s.toFixed(3) + ') translateY(' + ((1 - p) * 30).toFixed(1) + 'px)'; });
-    cols.forEach(function (t) { qa('tr', t).forEach(function (tr) { tr.classList.toggle('go', RM || tr.getBoundingClientRect().top < vh * 0.78); }); });   // 흐름판 비교표: 줄이 화면에 올라오면 우리 칸 → 다른 칸
+    cols.forEach(function (t) { qa('tbody', t).forEach(function (tb) { tb.classList.toggle('go', RM || tb.getBoundingClientRect().top < vh * 0.78); }); });   // 흐름판 비교표: 줄이 화면에 올라오면 우리 칸 → 다른 칸
     zimgs.forEach(function (im) { var pg = im.parentNode, r = pg.getBoundingClientRect(), q = clamp((vh - r.top) / (vh + r.height), 0, 1); im.style.transform = RM ? '' : 'scale(' + (1.04 + 0.1 * q).toFixed(3) + ') translateY(' + ((0.5 - q) * 30).toFixed(1) + 'px)'; });
     if (noCore() && !RM) qa('.cpage .bgimg:not(.zoomimg)').forEach(function (pg) { var r = pg.parentNode.getBoundingClientRect(), q = (r.top + r.height / 2 - vh / 2) / vh, k = clamp(1 - Math.abs(q), 0, 1); pg.style.transform = 'translateY(' + (q * -26).toFixed(1) + 'px) scale(' + (1.04 + 0.1 * k).toFixed(3) + ')'; });
     bars.forEach(function (b) { var p = RM ? 1 : ease(prog(b, 1.0, 0.7)), w1 = +getComputedStyle(b).getPropertyValue('--w') || 1; b.style.transform = 'scaleX(' + (w1 * p).toFixed(3) + ')'; });
