@@ -1,5 +1,5 @@
 /* v5 페이지 공통(3D·폴백 둘 다) — 구매 버튼·꼬리표·행사(블프) 자동 전환. 설정은 #pp-buy 마커 한 곳(v4.4 마커 값 그대로).
-   tagUrl·evEnded 는 v4.4 소스의 tag/ev 마커 구간을 빌더가 그대로 가져온 것(원본 수정 0). 네트워크: 같은 출처 HEAD(서버 시간) 한 번뿐, 보내는 데이터 없음. */
+   tagUrl·evEnded 는 v4.4 소스의 tag/ev 마커 구간을 빌더가 그대로 가져온 것(원본 수정 0). 네트워크: 같은 출처 HEAD(서버 시간) 한 번 + 방문·구매 단추 세기(Supabase 넣기 전용, 출처 꼬리표·누른 자리만, IP·기기 정보·쿠키 저장 0 — 운영 주소에서만 보냄). */
 (function () {
   var d = document, w = window, M = d.getElementById('pp-buy');
   if (!M) return;
@@ -26,11 +26,21 @@ function evEnded(now,ends){var e=Date.parse(ends);return e!==e||now>=e+1000}
   var SRC = { ig: 'instagram', yt: 'youtube', tt: 'tiktok', th: 'threads', blog: 'blog', cafe24: 'pepperclub_home', ad: 'ad' }, sq = '';
   try { var mm = /[?&]src=([A-Za-z0-9]+)/.exec(w.location.search); sq = mm ? mm[1].toLowerCase() : ''; if (SRC[sq]) { w.sessionStorage.setItem('pp_src', sq); } else { sq = w.sessionStorage.getItem('pp_src') || ''; } } catch (e) { if (!SRC[sq]) sq = ''; }
   if (SRC[sq]) { tg.nt_source = SRC[sq]; tg.nt_medium = 'landing'; } else { tg.nt_source = 'landing_direct'; tg.nt_medium = 'landing'; }   // 꼬리표 없는 방문 = landing_direct (공홈 유입 pepperclub_home 과 안 섞임)
+  /* 방문·구매 단추 세기(11-17): Supabase 표 landing_events 에 넣기만 가능한 공개 키 — kind(visit|buy)·src(8개)·spot 세 칸만 보낸다(at 은 서버가 채움). 운영 주소(github.io)에서만, 실패해도 화면에 영향 0. */
+  var CNT = { url: 'https://renwkgeyhyrtkzwcnaco.supabase.co/rest/v1/landing_events', key: 'sb_publishable_gQkMSekO6t5l__HI5PhdIg_Or1_2huP' };
+  function cnt(kind, spot) {
+    try {
+      if (!w.fetch || !/\.github\.io$/.test(w.location.hostname)) return;
+      var b = { kind: kind, src: SRC[sq] ? sq : 'direct' }; if (spot) b.spot = String(spot).replace(/[^\w-]/g, '').slice(0, 20);
+      w.fetch(CNT.url, { method: 'POST', keepalive: true, credentials: 'omit', headers: { apikey: CNT.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(b) }).then(function () { }, function () { });
+    } catch (e) { }
+  }
+  (function () { var seen = 0; try { seen = w.sessionStorage.getItem('pp_visit') ? 1 : 0; if (!seen) w.sessionStorage.setItem('pp_visit', '1'); } catch (e) { } if (!seen) cnt('visit'); })();
   function key(k) { return k === 'top' ? (kw.top || 'top') : k === 'end' ? (kw.end || 'cta_end') : (kw.link || 'cta_{scene}').replace('{scene}', k); }
   function nuf(k) { var t = {}, x; for (x in tg) t[x] = tg[x]; t.nt_keyword = key(k); return tagUrl(u0, t); }
   [].slice.call(d.querySelectorAll('[data-pp-buylink]')).forEach(function (a) {
     var k = a.getAttribute('data-pp-buylink'); if (u0) { a.href = nuf(k); a.target = '_blank'; a.rel = 'noopener noreferrer'; }
-    a.addEventListener('click', function () { try { d.dispatchEvent(new CustomEvent('pp:buy', { detail: { event: 'pp_buy_click', where: k, target: 'naver' } })); } catch (x) { } });
+    a.addEventListener('click', function () { try { d.dispatchEvent(new CustomEvent('pp:buy', { detail: { event: 'pp_buy_click', where: k, target: 'naver' } })); } catch (x) { } cnt('buy', k); });
   });
   var evOk = !!(EV && EV.coupon > 0 && EV.normal > 0 && EV.ends);
   function paint(on) {
