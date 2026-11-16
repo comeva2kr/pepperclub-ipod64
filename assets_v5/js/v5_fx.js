@@ -184,7 +184,7 @@
     if (!V5 || V5.tier === 'static' || H.classList.contains('pp-no3d') || RM) { if (ring) ring.style.opacity = 0; return; }
     var pk = w.__proto && w.__proto.parkRect && w.__proto.parkRect();   // 3D 쪽이 실제로 두는 작은 아이팟 자리를 그대로 따른다(자세가 바뀌어도 고리가 어긋나지 않음)
     if (!pk) { if (ring) ring.style.opacity = 0; return; }
-    qa('.cpage.snd, .cpage.dock6b').forEach(function (p) { var r = p.getBoundingClientRect(), vh = w.innerHeight; if (r.top < vh * 0.3 && r.bottom > vh * 0.7) on = true; });
+    qa('.cpage.snd').forEach(function (p) { var r = p.getBoundingClientRect(), vh = w.innerHeight; if (r.top < vh * 0.3 && r.bottom > vh * 0.7) on = true; });
     if (!ring) { ring = d.createElement('div'); ring.id = 'parkhl'; ring.setAttribute('aria-hidden', 'true'); (d.getElementById('stage') || d.body).appendChild(ring); }
     var pad = 6, bar = d.querySelector('.bar'), top = Math.max(pk.cy - pk.h / 2 - pad, bar ? bar.getBoundingClientRect().bottom + 2 : 0);
     ring.style.cssText = 'left:' + (pk.cx - pk.w / 2 - pad) + 'px;top:' + top + 'px;width:' + (pk.w + 2 * pad) + 'px;height:' + (pk.cy + pk.h / 2 + pad - top) + 'px;opacity:' + (on ? 1 : 0);
