@@ -13,7 +13,7 @@
   "gain": 1.0,
   "v": 320,
   "on": true,
-  "file": "assets_v5/media/sfx/land.mp3?v=052e71d6b4"
+  "file": "assets_v5/media/sfx/land.mp3?v=a891f5063f"
  },
  {
   "id": "click",
@@ -21,7 +21,7 @@
   "gain": 1.0,
   "v": 774,
   "on": true,
-  "file": "assets_v5/media/sfx/click.mp3?v=052e71d6b4"
+  "file": "assets_v5/media/sfx/click.mp3?v=a891f5063f"
  },
  {
   "id": "count1",
@@ -77,7 +77,7 @@
   "gain": 1.0,
   "v": 3030,
   "on": true,
-  "file": "assets_v5/media/sfx/tak.mp3?v=052e71d6b4"
+  "file": "assets_v5/media/sfx/tak.mp3?v=a891f5063f"
  },
  {
   "id": "buy",
@@ -93,11 +93,11 @@
   "gain": 0.7,
   "v": null,
   "on": true,
-  "file": "assets_v5/media/sfx/tick_a.mp3?v=052e71d6b4",
+  "file": "assets_v5/media/sfx/tick_a.mp3?v=a891f5063f",
   "files": [
-   "assets_v5/media/sfx/tick_a.mp3?v=052e71d6b4",
-   "assets_v5/media/sfx/tick_b.mp3?v=052e71d6b4",
-   "assets_v5/media/sfx/tick_c.mp3?v=052e71d6b4"
+   "assets_v5/media/sfx/tick_a.mp3?v=a891f5063f",
+   "assets_v5/media/sfx/tick_b.mp3?v=a891f5063f",
+   "assets_v5/media/sfx/tick_c.mp3?v=a891f5063f"
   ]
  },
  {
@@ -106,14 +106,14 @@
   "gain": 0.9,
   "v": null,
   "on": true,
-  "file": "assets_v5/media/sfx/tok.mp3?v=052e71d6b4"
+  "file": "assets_v5/media/sfx/tok.mp3?v=a891f5063f"
  },
  {
   "id": "mood",
   "layer": "mood",
   "synth": "mood",
-  "file": null,
-  "on": false,
+  "file": "assets_v5/media/sfx/mood_loop.mp3?v=a891f5063f",
+  "on": true,
   "gain_db": -10.5,
   "curve": [
    [
