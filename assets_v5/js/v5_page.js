@@ -25,7 +25,7 @@ function evEnded(now,ends){var e=Date.parse(ends);return e!==e||now>=e+1000}
   /* 출처 꼬리표: 주소 뒤 ?src=ig|yt|tt|th|blog|cafe24|ad 를 받으면 구매 버튼의 네이버 주소 nt_source 가 그 출처로 바뀐다(같은 탭 안에서는 기억). 화이트리스트 밖 값은 무시. 보내는 데이터 없음. */
   var SRC = { ig: 'instagram', yt: 'youtube', tt: 'tiktok', th: 'threads', blog: 'blog', cafe24: 'pepperclub_home', ad: 'ad' }, sq = '';
   try { var mm = /[?&]src=([A-Za-z0-9]+)/.exec(w.location.search); sq = mm ? mm[1].toLowerCase() : ''; if (SRC[sq]) { w.sessionStorage.setItem('pp_src', sq); } else { sq = w.sessionStorage.getItem('pp_src') || ''; } } catch (e) { if (!SRC[sq]) sq = ''; }
-  if (SRC[sq]) { tg.nt_source = SRC[sq]; tg.nt_medium = 'landing'; }
+  if (SRC[sq]) { tg.nt_source = SRC[sq]; tg.nt_medium = 'landing'; } else { tg.nt_source = 'landing_direct'; tg.nt_medium = 'landing'; }   // 꼬리표 없는 방문 = landing_direct (공홈 유입 pepperclub_home 과 안 섞임)
   function key(k) { return k === 'top' ? (kw.top || 'top') : k === 'end' ? (kw.end || 'cta_end') : (kw.link || 'cta_{scene}').replace('{scene}', k); }
   function nuf(k) { var t = {}, x; for (x in tg) t[x] = tg[x]; t.nt_keyword = key(k); return tagUrl(u0, t); }
   [].slice.call(d.querySelectorAll('[data-pp-buylink]')).forEach(function (a) {
